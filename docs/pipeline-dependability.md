@@ -24,7 +24,7 @@ The brief asks for `ingest → validate → transform/model → metric output`, 
 | Mode | Command | What it proves | Result on the client pack |
 |---|---|---|---|
 | **Live** | `python run_pipeline.py --start-api` | retrieval from the client systems now, with every check | gate WARN → publish with caveats. A re-run is 0.00 pp vs the last publication, with 46/46 outputs byte-identical |
-| **Replay** | `python run_pipeline.py --replay run_example --run-id run_replay_check` | the published output can be rebuilt from preserved raw inputs alone | **REPRODUCED**: 28/28 artefacts hash-verified, 46/46 outputs byte-identical, no client system contacted ([`output/replay_proof.md`](../output/replay_proof.md)) |
+| **Replay** | `python run_pipeline.py --replay run_example --run-id run_replay_check` | the published output can be rebuilt from preserved raw inputs alone | **REPRODUCED**: 28/28 artefacts hash-verified, 46/46 outputs byte-identical, no client system contacted ([`output/replay_proof.md`](../output/replay_proof.md)). **CI repeats it on Linux** (Python 3.12 and 3.14): the same 46/46, so the Windows run reproduces byte for byte on another OS |
 | **Weekly** | `python run_pipeline.py --start-api --weekly` | the same pipeline works as a scheduled job, one gated run per week | 4/4 weeks published. The partition check passes (1,600 orders, each in exactly one week), and the weeks add up to the month: 1,486 deliveries, 837 late ([`output/scorecard.md`](../output/scorecard.md)) |
 
 ![Reproducibility](../output/visuals/13_reproducibility.png)
