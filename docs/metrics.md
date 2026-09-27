@@ -36,3 +36,18 @@ Computed by `src/flasheats_pipeline/metrics.py`; values for the last run in `out
 | Outcome buckets sum to unique orders; late + on-time = population | arithmetic | pass |
 | Stage identity | pre-pickup + transit overrun = delay | max residual 0.010 min |
 | Denominator > 0 | guard | pass |
+
+## Decision layer (beyond the five metrics)
+
+The five metrics say *how big* the problem is and *where* it sits. The decision layer (`insights.py`) turns them into actions and is recomputed on every run:
+
+| Analysis | Question | Headline (last run) |
+|---|---|---|
+| Early-warning trigger backtest | Can ops see a late order coming, early enough to act, without a model? | k = 10 min after Dispatch's estimated pickup: **96 % precision, 72 % recall on the held-out week, ~45 min of warning** |
+| ETA calibration | Is the promise wrong, and where? | Dispatch's pickup estimate is short by a median **8 min**; padding to reach 80 % on-time would need **+12 min** |
+| Fair ranking | Who is *really* worse than the fleet? | **1 of 59** restaurants (R024) and **1 of 91** drivers |
+| Weather truth | Is the weather label real? | **kappa 0.01** against observed rainfall |
+| GPS feasibility | Can GPS stand in for the arrival event? | **No.** Pings converge on the restaurant in 0.8 % of orders |
+| What-if | What could the trigger be worth? | at an *assumed* 25 % save rate: −10 pp late rate, ~38 fewer support contacts |
+
+Full tables: `output/insights/`; narrative: `output/insights/insights.md`; actions and owners: `output/decision_memo.md`.

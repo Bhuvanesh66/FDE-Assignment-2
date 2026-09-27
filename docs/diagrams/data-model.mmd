@@ -1,0 +1,30 @@
+erDiagram
+    dim_customer ||--o{ fact_order : places
+    dim_restaurant ||--o{ fact_order : fulfils
+    dim_driver ||--o{ fact_order : delivers
+    fact_order ||--o{ fact_event : "lifecycle events"
+    fact_order ||--o{ fact_interaction : "customer interacts"
+    fact_order ||--o{ fact_intervention : "ops intervenes"
+    fact_order ||--|| order_journey : "one row per order"
+
+    fact_order {
+        string order_id PK
+        string customer_id FK
+        string restaurant_id FK
+        string driver_id FK "final driver, from Dispatch"
+        datetime promised_eta
+        datetime estimated_pickup_at "Dispatch plan"
+        datetime pickup_at
+        datetime actual_delivery_at
+        bool kpi_population
+        float delay_min
+        string outcome_bucket
+        float pickup_overrun_min
+        string dq_flags
+    }
+    order_journey {
+        string order_id PK
+        bool support_contact
+        int intervention_count
+        float late_flag
+    }

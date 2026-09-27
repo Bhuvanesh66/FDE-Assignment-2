@@ -1,0 +1,13 @@
+flowchart LR
+    Q1["Q1 How big is the problem?"] --> INF1["promise · delivery time · status"] --> S1[("Orders DB")]
+    Q2["Q2 Where does delay build up?"] --> INF2["assigned · estimated pickup · pickup · delivered"] --> S2["Dispatch API"]
+    INF2 --> S1
+    INF2 --> S5["Driver app JSON"]
+    Q3["Q3 How do customers react?"] --> INF3["ETA views · support opened · tickets"] --> S3["App actions CSV"]
+    INF3 --> S4["Support tickets CSV"]
+    Q4["Q4 What does ops do?"] --> INF4["interventions · reassignments"] --> S6["Interventions CSV"]
+    INF4 --> S2
+    Q5["Q5 Is 'weather' real?"] --> INF5["hourly observed rainfall"] --> S7["Open-Meteo archive (external)"]
+    GAP["GAP: no 'arrived at restaurant' event anywhere"]:::gap
+    S5 -.-> GAP
+    classDef gap fill:#fde2e2,stroke:#c44e52

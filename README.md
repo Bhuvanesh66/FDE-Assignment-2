@@ -1,115 +1,177 @@
-# FlashEats — a dependable late-delivery KPI pipeline
+# FlashEats — from messy client systems to a decision ops can act on
 
 **FDE Data Foundations Assignment (Classes 4–8) · Track A (FlashEats-style) · Bhuvanesh M S**
 
-> *"Late deliveries are increasing and customers say our ETA is unreliable. Figure out what is happening before we invest in an AI delay-prediction system."* — leadership also claims **"Late Delivery Rate is 56 %"**.
+🎥 **Demo video:** _add the Loom link here after recording_ · script: [`docs/demo-script.md`](docs/demo-script.md)
 
-This repository turns FlashEats' fragmented client systems (SQLite application DB, a paginated Dispatch API, CSV exports and nested JSON telemetry) into a **small, explainable, repeatable pipeline** that produces trustworthy business metrics, states what they cannot prove, and supports one decision: *where to intervene first, and whether the AI predictor is justified yet.*
+> Client: *"Late deliveries are increasing and customers say our ETA is unreliable. Figure out what is happening before we invest in an AI delay-prediction system."* Leadership: *"Late Delivery Rate is 56 %."*
 
-## 1. Problem, stakeholders, KPI
+This repository builds a **dependable pipeline** from FlashEats' fragmented systems to a trustworthy KPI. The systems are a SQLite application database, a paginated Dispatch API, CSV exports and nested driver-app JSON, plus one independent public weather API. The pipeline then goes **one step past the classroom**: it turns the KPI into actions the client can take this week, each tested on data the rule never saw.
+
+## 1 · Problem, stakeholders, KPI, decision
 
 | | |
 |---|---|
-| **Problem** | More than half of deliveries miss the promised ETA; nobody agrees on the number, and nobody knows *where* in the workflow the delay is created. |
-| **Users / stakeholders** | VP Operations (KPI owner, proposed) · Support Lead · Finance · Data Team · Dispatch · Fleet Ops · Restaurant Ops · Product / App |
-| **Project KPI** | **Reduce the late delivery rate** — share of validated deliveries with `actual_delivery_at − promised_eta > 0 min` |
-| **Decision the output supports** | Which lifecycle stage to fix first (dispatch → pickup vs transit), whether interventions can be evaluated yet, and whether to fund the AI delay predictor now. |
+| **Problem** | More than half of deliveries miss the promised ETA. Nobody agrees on the number, and nobody knows *where* in the workflow the delay is created or what to do about it. |
+| **Stakeholders** | VP Operations (proposed KPI owner) · Support Lead · Finance · Data Team · Dispatch · Fleet Ops · Restaurant Ops · Product / ETA service |
+| **Project KPI** | **Reduce the late delivery rate**: the share of validated deliveries with `actual_delivery_at − promised_eta > 0 min` |
+| **Decisions supported** | ① Which lifecycle stage to fix first. ② Which orders ops should intervene on, and when. ③ Whether the ETA or the operation is wrong. ④ Who, if anyone, to hold accountable. ⑤ Whether to fund the AI predictor now. |
 
-## 2. Headline evidence (run `run_example`, gate **WARN → publish with caveats**)
+## 2 · What this adds beyond the classroom
 
-| # | Metric | Value | What it answers |
+The four instructor notebooks are completed in [`Challenges/`](Challenges/). The class answers are the starting point; these additions open a different view ([full list and rationale](docs/beyond-the-classroom.md)):
+
+| Addition | Result on the client data |
+|---|---|
+| **Early-warning trigger**: "not picked up *k* min after Dispatch's own estimate", chosen on 1–21 Aug and **proven on the held-out week** | **k = 10 min: 96 % precision, 72 % recall, ~45 min before the promise breaks.** 446 late orders it would catch got *no intervention* today. |
+| **ETA calibration** | Dispatch's pickup estimate is short by a **median 8 min** (plans 18, reality 26). Padding every promise would need +12 min to reach 80 % on time, so fix the estimate instead. |
+| **Independent source: observed weather** (Open-Meteo) checks the client's weather label | The label agrees with real rainfall at chance level (**kappa 0.01**), so "weather causes delays" cannot be defended with this field. |
+| **GPS arrival feasibility test** | Pings converge on the restaurant in **0.8 %** of orders, so a geofence cannot replace the missing *arrived* event. |
+| **Fair ranking** with Wilson intervals and a funnel plot | A naive top-10 would blame 10 restaurants; **only R024** is statistically worse than the fleet. |
+| **Decision memo** generated every run: Situation → Complication → Resolution, with owners and measures | [`output/decision_memo.md`](output/decision_memo.md) |
+| **Stakeholder-owned policy file**, **record ledger**, **run-over-run drift**, **interactive dashboard** with live simulators | [`config/pipeline.yaml`](config/pipeline.yaml) · `streamlit run app/dashboard.py` |
+
+## 3 · Headline evidence (run `run_example`, gate **WARN → publish with caveats**)
+
+| # | Metric | Value | Question answered |
 |---|---|---|---|
-| **M1** | Late delivery rate (validated population) | **56.33 %** (837 / 1 486) — 56.39 % under the historical dashboard definition, so leadership's "56 %" holds for its definition | How large is the problem? |
-| **M2** | Median lateness among late orders · P90 delay | **8.0 min** · 17.9 min | How late is late? |
-| **M3** | Share of lateness accumulated **before pickup** | **98.9 %** (late orders pick up 14 min after Dispatch's estimate, then travel 6 min *faster* than planned) | Where does delay build up? |
-| **M4** | Support contact rate on late orders | **30.7 %** (vs 5.2 % on-time) · 218 frustrated journeys received no intervention | How do customers react? |
-| **M5** | Intervention coverage · late rate with / without | **26.9 %** · 56.4 % / 56.3 % (association only; the interventions log does not reconcile with Dispatch) | Do interventions reach the right orders? |
+| **M1** | Late delivery rate, validated population | **56.33 %** (837 / 1 486); 56.39 % on the dashboard definition, so leadership's 56 % holds for its definition | How large is the problem? |
+| **M2** | Median lateness of late orders · P90 delay | **8.0 min** · 17.9 min | How late is late? |
+| **M3** | Share of lateness accumulated **before pickup** | **98.9 %** | Where does the delay build up? |
+| **M4** | Support contact rate on late orders | **30.7 %** vs 5.2 % on time | How do customers react? |
+| **M5** | Intervention coverage · late rate with / without | **26.9 %** · 56.4 % / 56.3 % (association only; the log does not reconcile with Dispatch) | Does ops reach the right orders? |
 
-Full table with numerators, definitions and Known/Unknown/Assumption/Limitation: [`output/evidence_table.md`](output/evidence_table.md) · dashboard: [`output/dashboard.html`](output/dashboard.html) · gate: [`output/validation_gate.md`](output/validation_gate.md).
+Evidence table with numerators and Known / Unknown / Assumption / Limitation: [`output/evidence_table.md`](output/evidence_table.md) · gate: [`output/validation_gate.md`](output/validation_gate.md) · decision layer: [`output/insights/insights.md`](output/insights/insights.md)
 
-**FDE judgement call:** 37 delivered orders have no delivery timestamp although the driver app recorded a `delivered` event for each. They are **not** back-filled and **not** dropped silently: they are reported as *unknown outcome*, the KPI is bounded (55.0–57.4 %), the back-filled rate (56.5 %) is shown as a sensitivity, and Fleet Ops gets the decision. See [`docs/demo-script.md`](docs/demo-script.md).
+**The FDE judgement call.** The natural next step after the class was "find more signals, build the predictor". The data says the delay is created before pickup, and a simple rule on Dispatch's *own* estimate already catches most late orders 45 minutes early. So the recommendation is: **ship the rule now, and make it the baseline any future model must beat.** A second call is on the 37 delivered orders with no delivery timestamp. They are neither back-filled nor dropped silently: they are reported as unknown, the KPI is bounded at 55.0–57.4 %, and the decision goes to Fleet Ops.
 
-## 3. From client systems to a decision
+## 4 · Architecture
 
+```mermaid
+flowchart LR
+    subgraph SRC["Client systems (source_systems/, read-only)"]
+        DB[("Orders DB<br/>SQLite")]
+        API["Dispatch REST API<br/>paginated · 429/500"]
+        CSV["CSV exports<br/>tickets · restaurant feed<br/>app actions · interventions"]
+        JSON["Driver app JSON<br/>nested events + GPS"]
+    end
+    EXT["Open-Meteo archive<br/>observed weather<br/>(independent source)"]
+    POL["config/pipeline.yaml<br/>stakeholder-owned policy"]
+    subgraph PIPE["python run_pipeline.py (10 logged stages)"]
+        I["1 Ingest + raw preservation"] --> P["2 Profile"] --> C["3 Clean<br/>representation only"] --> V["4 Validate<br/>38 business rules"]
+        V --> M["5 Model<br/>order-grain facts"] --> K["6 Metrics M1-M5<br/>+ independent checks + ledger"]
+        K --> D["7 Decision layer"] --> G{"8 Gate + drift"} --> MEMO["9 Decision memo"] --> O["10 Publish"]
+    end
+    DB --> I
+    API --> I
+    CSV --> I
+    JSON --> I
+    EXT --> I
+    POL -. thresholds .-> PIPE
+    O --> OUT["output/ evidence"] --> DASH["Streamlit dashboard"]
+    G -- FAIL --> STOP["not published"]
 ```
- SOURCE SYSTEMS                 PIPELINE (python run_pipeline.py)                          OUTPUT
- ┌ Orders DB  (SQL) ─────┐   1 ingest      raw snapshot per run (hashes, raw API pages)   metrics.csv / evidence_table.md
- │ Dispatch API (REST) ──┤   2 profile     rows, nulls, layouts, ranges, duplicates        data_quality_report.md (+ quarantine)
- │ Tickets (CSV) ────────┼─► 3 clean       representation only, everything logged      ─► validation_gate.md  PASS/WARN/FAIL/UNKNOWN
- │ Restaurant feed (CSV) │   4 validate    37 business rules → KPI population              breakdowns/*.csv, charts/*.png, dashboard.html
- │ Driver app (JSON) ────┤   5 model       dims + facts + order_journey (order grain)       known_unknown_assumption_limitation.md
- │ App actions (CSV) ────┤   6 metrics     M1–M5 + independent SQL / reference checks     run_manifest.json, pipeline.log
- └ Interventions (CSV) ──┘   7 gate  8 publish                                            data/processed/*.csv + flasheats_model.sqlite
-```
 
-Source map (ownership, grain, gaps): [`docs/source-map.md`](docs/source-map.md) · workflow + data model diagrams: [`docs/data-model.md`](docs/data-model.md).
+- **Source map:** business questions, the information they need, the source systems, their owners and grain, and the gaps. See [`docs/source-map.md`](docs/source-map.md).
+- **Workflow and data model:** entities, events, states, interactions, interventions and outcomes, with ER and workflow diagrams. See [`docs/data-model.md`](docs/data-model.md).
+- **Diagram sources:** the editable `.mmd` files are in [`docs/diagrams/`](docs/diagrams/).
 
-## 4. What the workflow model looks like
-
-```
-customer ──places──► ORDER ──assigned──► driver ──(arrived at restaurant? NOT RECORDED)──► picked up ──► delivered | cancelled
-                        │                                                                        ▲
-                        ├── interactions: ETA_VIEWED · SUPPORT_OPENED · CANCEL_ATTEMPTED · SUPPORT_TICKET
-                        └── interventions: DRIVER_REASSIGNMENT · RESTAURANT_CONTACT · PRIORITY_DISPATCH · CUSTOMER_CREDIT
-   outcome per order: late_flag · delay_min · outcome_bucket (delivered_late / on_time / cancelled / unknown / excluded_dq_rule)
-```
-
-Tables at explicit grain: `dim_customer`, `dim_restaurant`, `dim_driver`, `fact_order`, `fact_event` (21 518 events from 7 systems), `fact_interaction`, `fact_intervention`, `order_journey` (interaction → intervention → outcome, one row per order). Every one-to-many table is aggregated to order grain **before** joining; every merge is cardinality-checked.
-
-**KPI tree:** reduce late rate (M1) ← severity (M2) ← *where* the delay accrues (M3: dispatch→pickup stage) ← customer reaction (M4) ← interventions (M5) ← events from the seven source systems. The missing *driver-arrived-at-restaurant* event is the single biggest limitation: it prevents splitting the pre-pickup stage into kitchen time and rider time.
-
-## 5. What the data-quality work found (nothing silently fixed)
+## 5 · What the data-quality work found (nothing silently fixed)
 
 | Finding | Action |
 |---|---|
-| 1 603 rows for 1 600 orders; the 3 duplicates disagree on `traffic_bucket` | keep first, quarantine the conflict, report |
-| `Delivered`, `HIGH`, `READY / Ready / ready `, `Late Delivery`, `late_delivery ` | representation normalised, every change logged |
-| `handoff` vs `handed_off`, `ETA issue` vs `eta_changed` | **kept separate**, flagged for the owner (semantics, not spelling) |
-| 37 delivered orders without delivery time · 4 promises before order creation · 5 deliveries before pickup | excluded from the validated population with the rule id, listed by order id |
-| `orders.driver_id` = Dispatch's *original* driver for 1 597 orders | Dispatch used as the final driver (95 reassignments) |
-| interventions log: 155 reassignments vs Dispatch: 95, overlap 8 | reported; intervention effectiveness declared not evaluable |
-| 2 restaurants with impossible coordinates, 189 out-of-area GPS pings | flagged; no geo inference |
-| restaurant feed: 31 % coverage, minute precision, updates before order creation | usable for weekly analytics only |
-| four definitions of "late", no owner | all computed side by side; gate = UNKNOWN until VP Operations signs |
+| 1 603 rows for 1 600 orders; the 3 duplicates disagree on `traffic_bucket` | keep the first row, quarantine the conflict |
+| `Delivered`, `HIGH`, `READY / Ready / ready `, `Late Delivery` | representation normalised, every change logged |
+| `handoff` vs `handed_off`, `ETA issue` vs `eta_changed` | **kept separate**, flagged for the owner |
+| 37 delivered orders without a delivery time · 4 promises before creation (−10 min) · 5 deliveries before pickup (−5 min) | excluded from the validated population by rule id, listed by order |
+| `orders.driver_id` = Dispatch's *original* driver for 1 597 orders | Dispatch is used as the final driver |
+| `weather_bucket` vs observed rainfall: kappa 0.01 | rule WX-01 WARN; weather is not used to explain delays |
+| Interventions log: 155 reassignments vs Dispatch 95, overlap 8 | intervention effectiveness declared not evaluable yet |
+| Restaurant feed: 31 % coverage, minute precision, updates before the order exists | weekly analytics only |
 
-Rules with business reason / detection / action / owner: [`docs/data-quality-rules.md`](docs/data-quality-rules.md) · run results: [`output/data_quality_report.md`](output/data_quality_report.md).
+- **Rules:** 38 business rules, each with a reason, an action and an owner. See [`docs/data-quality-rules.md`](docs/data-quality-rules.md).
+- **Run results:** see [`output/data_quality_report.md`](output/data_quality_report.md).
+- **Proof that nothing was lost:** [`output/reconciliation_ledger.csv`](output/reconciliation_ledger.csv) balances every dataset, raw = clean + duplicates + quarantined.
 
-## 6. Setup and run
+## 6 · Setup and run
 
 ```bash
 cd assignment-2
 python -m venv .venv && .venv\Scripts\activate          # Linux/macOS: source .venv/bin/activate
 pip install -r requirements.txt
 
-python run_pipeline.py --start-api                       # full run (~15 s); starts the mock Dispatch API for the run
-python run_pipeline.py --start-api --run-id run_example  # reproduce the committed outputs
-python -m pytest                                         # 73 tests, incl. messy-data and API-failure scenarios
-python notebooks/build_notebooks.py                      # optional: re-execute the Session 5/6/7 challenge notebooks
+python run_pipeline.py --start-api                       # full run (~15 s) using config/pipeline.yaml
+streamlit run app/dashboard.py                           # decision dashboard with live simulators
+python -m pytest                                         # 111 tests: messy data, API and weather failures, decision layer, dashboard
+python notebooks/build_notebooks.py                      # re-execute the 4 challenge notebooks + the walkthrough
 ```
 
-Useful options: `--api-url` (an already running API), `--fallback-snapshot` (API down → reuse last raw pages, gate WARN), `--late-threshold 10` (recompute under the Support Lead definition), `--source-root <dir>` (point at a different client pack — the hidden-data behaviour is described in [`docs/data-quality-rules.md`](docs/data-quality-rules.md#hidden-data-behaviour-tested-in-tests)).
-Exit codes: `0` completed · `1` failed (source missing, API unrecoverable) · `2` gate failed (outputs kept in `output/runs/<run_id>/`, not published).
+**Try a policy change:** set `kpi.late_threshold_min: 10` in `config/pipeline.yaml` and rerun. Every metric, the gate and the memo follow, and `output/run_comparison.md` shows what moved.
 
-## 7. Repository map
+**Useful flags:**
+- `--api-url` points at an API that is already running.
+- `--fallback-snapshot` reuses the last raw pages if the Dispatch API is down; the gate then shows WARN.
+- `--no-weather` skips the external check.
+- `--source-root <dir>` runs on another client pack.
+
+**Exit codes:** `0` completed · `1` failed, such as a missing source or an unrecoverable API · `2` gate failed, outputs kept in `output/runs/<run_id>/` and not published.
+
+## 7 · Repository map
 
 | Path | Content |
 |---|---|
-| `source_systems/` | the client systems as received (SQLite DB, CSV/JSON exports, mock Dispatch API) — read-only inputs |
-| `sql/` | retrieval queries (only needed columns; customers without PII) and the independent SQL KPI check |
-| `src/flasheats_pipeline/` | `ingest/` (SQL, files, API) · `profiling` · `cleaning` · `rules` · `model` · `metrics` · `gate` · `reports` · `pipeline` · `cli` |
-| `run_pipeline.py` | runnable entry point reproducing every output from raw inputs |
-| `data/raw/<run_id>/` | preserved raw inputs per run (SQL extracts + SQL text, byte copies of files with SHA-256, every raw API page, ingestion report) |
-| `data/processed/` | modelled tables (CSV + `flasheats_model.sqlite`) and join checks |
-| `output/` | evidence: metrics, breakdowns, charts, dashboard, data-quality report, quarantine, profile, gate, K/U/A/L, manifest, log |
-| `tests/` | 73 pytest tests with a hand-checkable messy pack and a fault-injecting Dispatch API |
-| `notebooks/` | executed `Session5/6/7_Challenges.ipynb` (+ generator and the classroom originals) |
-| `docs/` | source map · data model · data-quality rules · metrics · session 5/6/7 challenge mapping · assumptions & limitations · testing · pipeline dependability · demo script · requirement traceability |
+| `Challenges/` | the **four instructor notebooks** (Class 5 Starter, Class 5 Student, Class 6 Student, Class 7 Challenge): original cells kept, answers inserted, executed |
+| `notebooks/pipeline_walkthrough.ipynb` | the production pipeline run stage by stage, with each decision's evidence inline |
+| `source_systems/` | the client systems as received (read-only) |
+| `config/pipeline.yaml` | stakeholder-owned business thresholds, each with its owner |
+| `sql/` | retrieval queries (customers without PII) and the independent SQL KPI check |
+| `src/flasheats_pipeline/` | `ingest/` (SQL, files, Dispatch API, weather API) · `profiling` · `cleaning` · `rules` · `model` · `metrics` · **`insights`** (decision layer) · **`monitoring`** (ledger, drift) · `gate` · `reports` · `pipeline` · `cli` |
+| `app/dashboard.py` | Streamlit decision dashboard |
+| `data/raw/run_example/` | preserved raw inputs: SQL extracts, file copies with SHA-256, every raw API page and the weather response |
+| `data/external/` | reference copy of the weather response, used if the public API is unreachable |
+| `data/processed/` | modelled tables (CSV + SQLite) and join checks |
+| `output/` | evidence: metrics, insights, decision memo, gate, data-quality report, ledger, run comparison, charts, dashboard.html, manifest, log |
+| `tests/` | 111 tests with a hand-checkable messy pack and fault-injecting Dispatch and weather APIs |
+| `docs/` | beyond-the-classroom · source map · data model · rules · metrics · session 5/6/7 challenge mapping · assumptions · testing · dependability · demo script · traceability |
 
-## 8. Known / Unknown / Assumption / Limitation (short)
+## 8 · Known / Unknown / Assumption / Limitation
 
-- **Known:** retrieval complete and preserved; 56.33 % late on 1 486 validated deliveries; delay accrues before pickup; the orders table is stale on drivers after reassignment.
-- **Unknown (owner needed):** canonical definition of *late* (VP Ops); back-fill of 37 delivery times (Fleet Ops); the −10 / −5 min timestamp offsets (ETA service); why the intervention log and Dispatch disagree (Support / Dispatch); when drivers arrive at restaurants (nobody records it).
-- **Assumptions:** naive timestamps are IST; late = any delay > 0 (10 min reported alongside); cancelled excluded; representation may be normalised, semantics may not; Dispatch is authoritative for the final driver.
-- **Limitations:** intervention effects are associations with a selection effect; the pre-pickup stage cannot be split; restaurant feed is partial; synthetic single-city data.
+- **Known:**
+  - retrieval is complete and preserved;
+  - 56.33 % of 1 486 validated deliveries were late, and the delay accrues before pickup;
+  - Dispatch's pickup estimate is optimistic by 8 minutes;
+  - the weather label is not real weather;
+  - the orders table keeps a stale driver after a reassignment.
+- **Unknown (owner needed):**
+  - the canonical definition of *late* (VP Operations);
+  - whether to back-fill the 37 missing delivery times (Fleet Ops);
+  - what causes the −10 / −5 minute offsets (ETA service);
+  - who writes `weather_bucket`;
+  - the real save rate of a triggered intervention, to be measured with a pilot;
+  - when drivers arrive at restaurants, since nothing records it.
+- **Assumptions:**
+  - timestamps are in IST;
+  - late means any delay over zero, with the over-10-minute rate reported alongside;
+  - cancelled orders are excluded;
+  - spelling may be normalised, meaning may not;
+  - one weather point stands for the whole city;
+  - the what-if save rates are scenarios.
+- **Limitations:**
+  - intervention effects are associations;
+  - the pre-pickup stage cannot be split into kitchen and rider time;
+  - there is one hold-out week;
+  - the data is synthetic, for one city and one month.
 
-Full list with owners and affected decisions: [`docs/assumptions-limitations.md`](docs/assumptions-limitations.md) · requirement → implementation → test → evidence: [`docs/requirement-traceability.md`](docs/requirement-traceability.md).
+The full list, with owners, is in [`docs/assumptions-limitations.md`](docs/assumptions-limitations.md).
+
+## 9 · Where each grading area is evidenced
+
+| Class | Skill | Where |
+|---|---|---|
+| 4 | Understand sources | [`docs/source-map.md`](docs/source-map.md): 8 sources (7 client + 1 independent), owners, grain, 9 gaps |
+| 5 | Retrieve data | SQL + 2 REST APIs + CSV + JSON; completeness proven (1600 = `total_records`, retries logged); raw preserved per run with hashes |
+| 6 | Profile and validate | profile before cleaning; 38 rules; quarantine; ledger; PASS/WARN/FAIL/UNKNOWN gate; K/U/A/L |
+| 7 | Model workflow | order-grain model (3 dims, 4 facts, journey table); M1–M5; decision layer |
+| 8 | Dependable pipeline | 10 logged stages, rerun-safe, drift vs the last run, explicit failure handling and exit codes, 111 tests |
+
+Requirement-by-requirement evidence: [`docs/requirement-traceability.md`](docs/requirement-traceability.md).

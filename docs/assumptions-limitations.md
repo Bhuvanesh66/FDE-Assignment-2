@@ -56,3 +56,18 @@ The pipeline regenerates a version of this section from the actual run (`output/
 | L6 | The classroom pack is synthetic, one city, one month | magnitudes illustrate the method; do not generalise |
 | L7 | The independent SQL check cannot normalise malformed / tz-suffixed timestamps | on very messy data it reports WARN with the explainable difference instead of PASS |
 | L8 | Traffic and weather are per-order buckets, not measured on the route | associations may be confounded by time-of-day load |
+
+## Additions from the decision layer and the external source
+
+| Type | Item |
+|---|---|
+| **Known** | The client's `weather_bucket` agrees with Open-Meteo's observed Bengaluru rainfall only at chance level (kappa 0.01). |
+| **Known** | Dispatch's pickup estimate is optimistic by a median 8 minutes; a "not picked up 10 min after the estimate" rule would have caught 72 % of late orders with 96 % precision in the held-out week. |
+| **Known** | GPS pings do not converge on the restaurant before pickup, so arrival cannot be inferred from them. |
+| **Unknown** | Who writes `weather_bucket`, and when (a forecast at order time? a manual flag?). Owner: Operations / Data Team. |
+| **Unknown** | The real save rate of an intervention triggered by the rule. Measure it with a switchback pilot (alternate days on and off). Owner: Operations. |
+| **Assumption** | Observed weather comes from one point (Bengaluru centre) per hour; an hour with more than 0.1 mm counts as raining. |
+| **Assumption** | The what-if save rates (25 % and 50 %) are scenarios from `config/pipeline.yaml`, not measurements. |
+| **Assumption** | The trigger is chosen on 1–21 August and judged on 22–28 August; one hold-out week is a small sample. |
+| **Limitation** | A single weather point cannot capture neighbourhood showers; a V2 would geocode each route. |
+| **Limitation** | The backtest shows the trigger *detects* late orders early; it does not show that intervening will *save* them. That needs the pilot. |

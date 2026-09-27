@@ -87,3 +87,40 @@ created_at ──dispatch_wait──► assigned_at ──pickup_wait (prep + ri
 ## 5. Why not mirror the source tables?
 
 The sources are organised by system and disagree on grain (1603 vs 1600 orders), spelling (`Delivered`/`delivered`, `handoff`/`handed_off`) and even on who the driver is. Re-organising them around the order lifecycle gives one auditable table per business question and makes the denominator of every metric explicit (`kpi_population`), which is what the KPI needs.
+
+## 6. Pipeline architecture
+
+The editable sources are in `docs/diagrams/`: `architecture.mmd`, `source-map.mmd` and `data-model.mmd`. GitHub renders the architecture below:
+
+```mermaid
+flowchart LR
+    subgraph SRC["Client systems (source_systems/, read-only)"]
+        DB[("Orders DB<br/>SQLite")]
+        API["Dispatch REST API<br/>paginated · 429/500"]
+        CSV["CSV exports<br/>tickets · restaurant feed<br/>app actions · interventions"]
+        JSON["Driver app JSON<br/>nested events + GPS"]
+    end
+    EXT["Open-Meteo archive<br/>observed weather<br/>(independent source)"]
+    POL["config/pipeline.yaml<br/>stakeholder-owned policy"]
+
+    subgraph PIPE["python run_pipeline.py (10 logged stages)"]
+        I["1 Ingest + raw preservation<br/>SHA-256 · raw API pages"] --> P["2 Profile"] --> C["3 Clean<br/>representation only"] --> V["4 Validate<br/>38 business rules"]
+        V --> M["5 Model<br/>order-grain facts"] --> K["6 Metrics M1-M5<br/>+ independent checks + ledger"]
+        K --> D["7 Decision layer<br/>trigger · ETA · fairness · weather · GPS"]
+        D --> G{"8 Gate<br/>PASS / WARN / FAIL / UNKNOWN<br/>+ drift vs last run"}
+        G --> MEMO["9 Decision memo"] --> O["10 Publish"]
+    end
+
+    DB --> I
+    API --> I
+    CSV --> I
+    JSON --> I
+    EXT --> I
+    POL -. thresholds .-> PIPE
+
+    O --> OUT["output/<br/>evidence table · metrics · insights<br/>data-quality report · gate · memo · charts"]
+    O --> PROC["data/processed/<br/>fact tables + SQLite model"]
+    OUT --> DASH["Streamlit dashboard<br/>app/dashboard.py"]
+    PROC --> DASH
+    G -- FAIL --> STOP["not published<br/>kept in output/runs/&lt;run_id&gt;"]
+```

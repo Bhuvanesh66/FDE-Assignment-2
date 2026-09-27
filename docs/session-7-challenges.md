@@ -1,7 +1,7 @@
 # Session 7 challenges — modelling the business workflow with data
 
 Source: `session-7/` lecture transcript, `data/class7_model_brief.json` (project KPI: *reduce late delivery rate*; question: *where in the order lifecycle do delays accumulate, and which interventions are associated with better outcomes?*) and `FlashEats_Class7_Challenge.ipynb` (six challenges; copied to `notebooks/classroom_originals/`).
-Completed notebook: **`notebooks/Session7_Challenges.ipynb`** (executed on the modelled tables). Productionised in `model.py` and `metrics.py`.
+Completed notebook: **`Challenges/FlashEats_Class7_Challenge.ipynb`**. The instructor's cells are kept, answers are inserted, and the notebook is executed. The timelines and the order-level table are rebuilt **from the raw sources inside the notebook** and reconciled with the pipeline's `order_journey`, which agrees on 1600 rows and 430 intervened orders. Productionised in `model.py` and `metrics.py`.
 
 | Challenge | Required output | Where it is done | Evidence |
 |---|---|---|---|
@@ -24,3 +24,8 @@ Lecture concepts applied:
 | interventions targeted at late-risk orders ⇒ evaluation needs care | M5a/M5b labelled "selection effect", CX-03 finding that logs do not reconcile |
 | outcomes table = late_flag / delay_min / outcome bucket derived from the orders table | rebuilt from primary sources and reconciled with the client's `order_outcomes.csv` (843 = 843) |
 | the instructor's `order_events.csv` / `customer_interactions.csv` are derived artefacts | treated as reference-only sources (see `docs/source-map.md`) |
+
+## Beyond the Class 7 challenges
+
+- **Challenge 5D:** restaurants are ranked with **95 % Wilson intervals** instead of raw counts. Only R024 is statistically worse than the fleet.
+- **Challenge 6:** adds the step the class stopped before. The **pickup-overrun trigger** was chosen on 1–21 August and proven on 22–28 August, reaching 96 % precision and 72 % recall about 45 minutes before the promise breaks. It turns the workflow model into an action ops can take. See `docs/beyond-the-classroom.md`.

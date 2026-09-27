@@ -41,6 +41,7 @@ Status per rule: PASS · WARN (violations exist, decision-safe with caveat) · F
 | **CX-02** | `orders.pickup_at` = driver `picked_up` | two systems, one fact | \|Δ\| > 60 s | retain | 5 (the TS-02 orders) | — | Fleet Ops |
 | **CX-03** | interventions log ⇄ Dispatch reassignments | one log is incomplete otherwise | set comparison | retain | 155 vs 95, overlap 8 | M5 "reassignment" figures cannot be trusted as complete | Support Lead / Dispatch |
 | **FR-01** | restaurant status fresh enough for its use | stale `ready` is useless live and unfair for accountability | `ready/handed_off` > 15 min after pickup; update before creation | flag | 8 stale, 5 before creation, 31 % coverage, minute precision | weekly analytics only | Restaurant Ops |
+| **WX-01** | the order's weather label reflects real weather | weather is blamed for delay; a label that does not match the sky cannot support that story or train a model | join each order's creation hour to Open-Meteo hourly precipitation (Bengaluru); labelled rain vs observed rain > 0.1 mm; Cohen's kappa | retain (gate check) | agreement 53 %, **kappa 0.01** (chance level) | none on M1; weather breakdowns are labelled *client label, unverified* | Operations / Data Team: who writes `weather_bucket` and when? |
 | **KPI-01** | one agreed definition and owner of "late" | four definitions ⇒ four numbers | `client_metric_definitions.json` | retain → gate UNKNOWN | no owner documented | every output states the definition next to the number | VP Operations |
 
 ## How the rules become the KPI population

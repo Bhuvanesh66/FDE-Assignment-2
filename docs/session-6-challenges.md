@@ -1,7 +1,7 @@
 # Session 6 challenges — data profiling and validation
 
 Source: `session-6/` lecture transcript and `FlashEats_Class6_Student.ipynb` (six challenges; copied to `notebooks/classroom_originals/`). The instructor's framing: *validation is decision-dependent; turn assumptions into contracts; separate technical / semantic / organisational validation; never silently fix ambiguity; output a validation gate.*
-Completed notebook: **`notebooks/Session6_Challenges.ipynb`** (executed). Productionised in `profiling.py`, `cleaning.py`, `rules.py`, `gate.py`.
+Completed notebook: **`Challenges/FlashEats_Class6_Student.ipynb`**. The instructor's cells are kept, answers are inserted, and the notebook is executed. Productionised in `profiling.py`, `cleaning.py`, `rules.py`, `gate.py`.
 
 | Challenge | Required output | Where it is done | Evidence |
 |---|---|---|---|
@@ -24,3 +24,8 @@ Also implemented from the lecture (concept walkthrough, not numbered challenges)
 | restaurant `manual_status_updates` and `unknown` status make the feed unreliable | FR-01 detail; `dim_restaurant.manual_status_updates` kept for the accountability caveat |
 | GPS pings after pickup are needed for driver-behaviour investigation | notebook Ch5 (Session 5) counts pings before/after pickup: 1632 / 3739 in this pack version |
 | the `client_metric_definitions.json` file was added for Class 6 | ingested; feeds rule KPI-01 and the gate |
+
+## Beyond the Class 6 challenges
+
+- **Challenge 4:** a mapping can look complete and still be wrong. `orders.driver_id` resolves to a real driver for 99.8 % of orders, yet it is Dispatch's *original* driver for 1597 of 1600 orders. The notebook proves this against the preserved API pages.
+- **Challenge 6:** the gate gains a row the class did not have. It checks the client's weather label against **independently observed rainfall** (rule WX-01, Open-Meteo), and the result is kappa ≈ 0.

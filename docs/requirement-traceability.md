@@ -17,7 +17,7 @@ Every requirement → source → implementation → test → evidence. Paths are
 | Code/notebooks showing retrieval, validation, modelling, joins/aggregations, metrics + runnable script reproducing the output from raw inputs | Submission package | `src/flasheats_pipeline/`, `notebooks/Session{5,6,7}_Challenges.ipynb`, `run_pipeline.py` | full suite | executed notebooks with outputs |
 | Final evidence table/dashboard with 3–5 metrics + Known/Unknown/Assumption/Limitation | Submission package | `reports.py` | e2e test asserts files exist | `output/evidence_table.md`, `output/dashboard.html`, `output/known_unknown_assumption_limitation.md` |
 | 3–5 minute demo explaining one FDE judgement call | Submission package | `docs/demo-script.md` | — | — |
-| Challenge notebooks submitted in the repo (instructor, Class 7 lecture) | `session-7` transcript | `notebooks/` | executed by `build_notebooks.py` | outputs embedded |
+| Challenge notebooks submitted in the repo (instructor, Class 7 lecture): **all four** classroom notebooks | `session-7` transcript; friend's `Challenges/` layout | `Challenges/FlashEats_Class5_Starter.ipynb`, `..._Class5_Student`, `..._Class6_Student`, `..._Class7_Challenge` (original cells kept, answers inserted) | executed by `notebooks/build_notebooks.py` with `allow_errors=False` | outputs embedded |
 | Grading: source reasoning / retrieval / validation / workflow + metrics / dependability (20 % each) | Assignment p.2 | mapped above | — | — |
 
 ## B. Session 5 concepts and challenges → see `docs/session-5-challenges.md`
@@ -78,3 +78,20 @@ Every requirement → source → implementation → test → evidence. Paths are
 | SQL zero rows / missing tables / join duplication | `SqlSource`, `_checked_merge` | `test_sql_source.py`, join-check assertions |
 | API timeout / HTTP error / malformed JSON / missing fields / empty / pagination / partial | `DispatchApiClient` | `test_api_source.py` |
 | independent metric validation | SQL recomputation, reference reconciliation, identities | `metric_checks.csv` |
+
+## G. Additions beyond the classroom → see `docs/beyond-the-classroom.md`
+
+| Addition | Implementation | Test | Evidence |
+|---|---|---|---|
+| Early-warning trigger, backtested on a held-out week | `insights.early_warning_backtest` | `test_insights.py::test_early_warning_backtest_hand_checked` | `output/insights/early_warning_backtest.csv`, `charts/early_warning_tradeoff.png` |
+| ETA calibration | `insights.eta_calibration` | `test_eta_calibration_hand_checked` | `output/insights/eta_calibration.csv`, `charts/eta_padding_curve.png` |
+| Fair ranking (Wilson intervals) | `insights.fair_ranking` | `test_fair_ranking_does_not_blame_small_samples` | `fair_ranking_*.csv`, `charts/restaurant_funnel_plot.png` |
+| Independent source: observed weather + rule WX-01 | `ingest/weather_source.py`, `rules.py` | `test_weather_source.py` (14) | `data/raw/<run>/external/`, `data/external/`, gate row |
+| GPS arrival feasibility | `insights.gps_arrival_feasibility` | `test_gps_feasibility_detects_converging_and_diverging_pings` | `output/insights/gps_arrival_feasibility.csv` |
+| What-if impact (assumption-labelled) | `insights.impact_whatif` | `test_impact_whatif_and_full_insights` | `output/insights/impact_whatif.csv` |
+| Decision memo (Situation → Complication → Resolution) | `reports.write_decision_memo` | e2e asserts the file | `output/decision_memo.md` |
+| Stakeholder policy file | `config/pipeline.yaml`, `config.load_config` | `test_config.py` (9) | `run_manifest.json › config` |
+| Record reconciliation ledger | `monitoring.build_ledger` | `test_monitoring.py` | `output/reconciliation_ledger.csv`, metric checks |
+| Run-over-run drift | `monitoring.compare_runs` | `test_monitoring.py` | `output/run_comparison.md`, gate row |
+| Decision dashboard | `app/dashboard.py` | `test_dashboard.py` | `streamlit run app/dashboard.py` |
+| Guided walkthrough | `notebooks/pipeline_walkthrough.ipynb` | executed by the builder | outputs embedded |

@@ -1,7 +1,7 @@
 # Testing and validation
 
 ```
-python -m pytest            # 73 tests, ~2 minutes (starts a fault-injecting Dispatch API on a free port)
+python -m pytest            # 111 tests, ~2 minutes (starts fault-injecting Dispatch and weather APIs on free ports)
 ```
 
 The fixtures (`tests/conftest.py`) build a **14-order synthetic pack** whose every metric is hand-checkable (`EXPECTED`), plus `FakeDispatchServer`, an HTTP server that can be switched into failure modes (`flaky`, `always_500`, `not_found`, `timeout`, `malformed_json`, `missing_data_key`, `no_has_more`, `wrong_total`, `overlap`, `empty`, `never_ends`, `missing_fields`).
@@ -33,3 +33,15 @@ Business-correctness tests (not just "it runs"): `test_model_metrics.py` checks 
 | Join cardinality (5 merges) | all preserve the left row count |
 | Stage identity | max residual 0.010 min |
 | Rerun | identical headline on rerun; every run keeps its own raw snapshot |
+
+## Tests for the additions beyond the class (38 tests)
+
+| File | What it proves |
+|---|---|
+| `test_config.py` (9) | the repository policy file loads; values and overrides flow into the run; **typos in business thresholds fail loudly** (unknown key, section or shape); the CLI applies a policy file (late = more than 10 min gives 2 late orders on the pack) |
+| `test_weather_source.py` (14) | payload validation (missing arrays, empty, unequal lengths, wrong timezone, API error body); retry on 503; **7 unusable-response modes fall back to the reference copy, or to UNKNOWN without one**; an unreachable API is never fatal; the pipeline's WX-01 counts exactly 5 disagreements on the pack, PASSes when the label agrees and is UNKNOWN when disabled |
+| `test_insights.py` (9) | Wilson interval known values; Cohen's kappa; **early-warning backtest hand-checked** (alerts, precision, recall, lead time, chosen *k*, and an explicit "no hold-out" flag on data without a late-August week); ETA padding hand-checked (+20 min for 80 % on the pack) and monotone; fair ranking refuses to judge small samples and keeps the unknown restaurant; the GPS test tells converging from diverging pings; what-ifs are labelled as assumptions; empty data yields no findings instead of a crash |
+| `test_monitoring.py` (4) | the ledger balances and **detects a silently dropped row**; run comparison states (no baseline, stable, KPI drift, rule got worse); a rerun compares with the previous published run |
+| `test_dashboard.py` (2) | the Streamlit app renders from real pipeline outputs, the trigger slider recomputes precision, the order explorer accepts lower-case ids, and with no runs it tells the user what to run |
+
+The four classroom notebooks and the walkthrough are also **executed end to end** by `python notebooks/build_notebooks.py` (`allow_errors=False`), so a broken answer cell fails the build.

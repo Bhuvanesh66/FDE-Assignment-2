@@ -26,7 +26,9 @@
 | `data/client_metric_definitions.json` | JSON | Leadership | — | — | four competing definitions of "late", no owner | Organisational input |
 | `data/order_outcomes.csv`, `data/order_events.csv`, `data/customer_interactions.csv` | CSV | Data Team (derived) | order / event / interaction | — | **reconciliation only** — these are derived artefacts, not systems of record | Used as an independent cross-check (reference late count matches: 843) |
 
-Retrieval modes used: **SQL + API + CSV + JSON** (the assignment requires at least two).
+| **Open-Meteo historical archive** (public REST API, *not* a client system) | **API** (`ingest/weather_source.py`) | Data Team (our choice of source) | one row per hour, Bengaluru centre | archive, ~5-day lag | independent check of the client's `weather_bucket` label (rule WX-01) | Independent; a single point for the whole city |
+
+Retrieval modes used: **SQL + two REST APIs (client Dispatch + public Open-Meteo) + CSV + nested JSON**. The assignment requires at least two.
 
 ## 3. Important gaps found in the sources
 
@@ -40,6 +42,7 @@ Retrieval modes used: **SQL + API + CSV + JSON** (the assignment requires at lea
 | Interventions log vs Dispatch reassignments overlap on only 8 orders | one of the two logs is incomplete; intervention effectiveness cannot be trusted yet | Support Lead / Dispatch |
 | Restaurant feed covers 31 % of orders, minute precision, mixed spellings, some updates before order creation | usable for weekly analytics, not for live ETA or accountability | Restaurant Ops |
 | Four definitions of "late", no documented KPI owner | any published number is disputable | VP Operations |
+| `weather_bucket` does not match observed rainfall (kappa ≈ 0) | weather-based explanations of lateness cannot be defended | Operations / Data Team |
 
 ## 4. Flow from systems to decision
 
