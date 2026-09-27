@@ -1,0 +1,45 @@
+{
+  "source": "dispatch_api",
+  "base_url": "http://127.0.0.1:8000",
+  "pages_fetched": 16,
+  "records_fetched": 1600,
+  "unique_order_ids": 1600,
+  "expected_total": 1600,
+  "retries": 2,
+  "http_errors": [
+    {
+      "page": 3,
+      "attempt": 1,
+      "status": 500
+    },
+    {
+      "page": 5,
+      "attempt": 1,
+      "status": 429
+    }
+  ],
+  "issues": [],
+  "records_missing_required_fields": 0,
+  "records_missing_expected_fields": 0,
+  "complete": true,
+  "duration_s": 1.827,
+  "raw_pages": [
+    "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\api\\dispatch_page_001.json",
+    "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\api\\dispatch_page_002.json",
+    "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\api\\dispatch_page_003.json",
+    "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\api\\dispatch_page_004.json",
+    "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\api\\dispatch_page_005.json",
+    "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\api\\dispatch_page_006.json",
+    "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\api\\dispatch_page_007.json",
+    "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\api\\dispatch_page_008.json",
+    "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\api\\dispatch_page_009.json",
+    "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\api\\dispatch_page_010.json",
+    "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\api\\dispatch_page_011.json",
+    "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\api\\dispatch_page_012.json",
+    "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\api\\dispatch_page_013.json",
+    "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\api\\dispatch_page_014.json",
+    "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\api\\dispatch_page_015.json",
+    "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\api\\dispatch_page_016.json"
+  ],
+  "mode": "live"
+}

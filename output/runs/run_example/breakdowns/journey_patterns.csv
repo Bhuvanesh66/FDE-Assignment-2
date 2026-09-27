@@ -1,0 +1,7 @@
+pattern,orders
+late orders,837
+late + support contact,257
+late + intervention,225
+late + support contact + intervention (still late),66
+support contact + NO intervention (any outcome),218
+cancel attempted in app,10

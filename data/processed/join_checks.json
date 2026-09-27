@@ -1,0 +1,47 @@
+[
+  {
+    "merge": "fact_order <- dispatch",
+    "left_rows": 1600,
+    "right_rows": 1600,
+    "result_rows": 1600,
+    "right_duplicates_dropped": 0,
+    "matched_rows": 1600,
+    "row_count_preserved": true
+  },
+  {
+    "merge": "fact_order <- driver_events (aggregated)",
+    "left_rows": 1600,
+    "right_rows": 1600,
+    "result_rows": 1600,
+    "right_duplicates_dropped": 0,
+    "matched_rows": 1600,
+    "row_count_preserved": true
+  },
+  {
+    "merge": "order_journey <- app_actions (aggregated)",
+    "left_rows": 1600,
+    "right_rows": 1100,
+    "result_rows": 1600,
+    "right_duplicates_dropped": 0,
+    "matched_rows": 1100,
+    "row_count_preserved": true
+  },
+  {
+    "merge": "order_journey <- tickets (aggregated)",
+    "left_rows": 1600,
+    "right_rows": 198,
+    "result_rows": 1600,
+    "right_duplicates_dropped": 0,
+    "matched_rows": 198,
+    "row_count_preserved": true
+  },
+  {
+    "merge": "order_journey <- interventions (aggregated)",
+    "left_rows": 1600,
+    "right_rows": 430,
+    "result_rows": 1600,
+    "right_duplicates_dropped": 0,
+    "matched_rows": 430,
+    "row_count_preserved": true
+  }
+]

@@ -1,0 +1,1761 @@
+[
+  {
+    "name": "orders",
+    "rows": 1603,
+    "columns": [
+      "order_id",
+      "customer_id",
+      "restaurant_id",
+      "driver_id",
+      "city",
+      "created_at",
+      "promised_eta",
+      "pickup_at",
+      "actual_delivery_at",
+      "final_status",
+      "distance_km_estimate",
+      "traffic_bucket",
+      "weather_bucket"
+    ],
+    "key": "order_id",
+    "duplicate_key_rows": 3,
+    "exact_duplicate_rows": 0,
+    "column_profiles": [
+      {
+        "column": "order_id",
+        "kind": "id",
+        "non_null": 1603,
+        "null_pct": 0.0,
+        "distinct": 1600,
+        "top_values": {
+          "O00120": 2,
+          "O00723": 2,
+          "O01302": 2,
+          "O00001": 1,
+          "O00002": 1,
+          "O00003": 1,
+          "O00004": 1,
+          "O00005": 1,
+          "O00006": 1,
+          "O00007": 1,
+          "O00008": 1,
+          "O00009": 1
+        },
+        "layouts": {
+          "a99999": 1603
+        },
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "customer_id",
+        "kind": "id",
+        "non_null": 1603,
+        "null_pct": 0.0,
+        "distinct": 727,
+        "top_values": {
+          "C0864": 8,
+          "C0499": 6,
+          "C0501": 6,
+          "C0274": 6,
+          "C0316": 6,
+          "C0367": 6,
+          "C0579": 6,
+          "C0168": 5,
+          "C0392": 5,
+          "C0356": 5,
+          "C0581": 5,
+          "C0249": 5
+        },
+        "layouts": {
+          "a9999": 1603
+        },
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "restaurant_id",
+        "kind": "id",
+        "non_null": 1600,
+        "null_pct": 0.19,
+        "distinct": 60,
+        "top_values": {
+          "R030": 39,
+          "R050": 36,
+          "R041": 35,
+          "R023": 34,
+          "R033": 34,
+          "R004": 33,
+          "R011": 32,
+          "R017": 32,
+          "R002": 31,
+          "R020": 31,
+          "R010": 30,
+          "R053": 30
+        },
+        "layouts": {
+          "a999": 1600
+        },
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "driver_id",
+        "kind": "id",
+        "non_null": 1600,
+        "null_pct": 0.19,
+        "distinct": 120,
+        "top_values": {
+          "D010": 27,
+          "D032": 22,
+          "D017": 20,
+          "D001": 20,
+          "D046": 19,
+          "D054": 19,
+          "D028": 18,
+          "D016": 18,
+          "D036": 18,
+          "D027": 18,
+          "D035": 18,
+          "D076": 18
+        },
+        "layouts": {
+          "a999": 1600
+        },
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "city",
+        "kind": "category",
+        "non_null": 1603,
+        "null_pct": 0.0,
+        "distinct": 1,
+        "top_values": {
+          "Bengaluru": 1603
+        },
+        "layouts": {},
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "created_at",
+        "kind": "timestamp",
+        "non_null": 1603,
+        "null_pct": 0.0,
+        "distinct": 1527,
+        "top_values": {},
+        "layouts": {
+          "9999-99-99a99:99:99": 1603
+        },
+        "numeric": {},
+        "timestamp": {
+          "parsed": 1603,
+          "unparseable": 0,
+          "min": "2026-08-01T11:02:00",
+          "max": "2026-08-28T23:33:00"
+        },
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "promised_eta",
+        "kind": "timestamp",
+        "non_null": 1603,
+        "null_pct": 0.0,
+        "distinct": 1592,
+        "top_values": {},
+        "layouts": {
+          "9999-99-99a99:99:99": 813,
+          "9999-99-99a99:99:99.999999": 790
+        },
+        "numeric": {},
+        "timestamp": {
+          "parsed": 1603,
+          "unparseable": 0,
+          "min": "2026-08-01T12:17:48",
+          "max": "2026-08-29T00:42:47.493150"
+        },
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "pickup_at",
+        "kind": "timestamp",
+        "non_null": 1603,
+        "null_pct": 0.0,
+        "distinct": 1600,
+        "top_values": {},
+        "layouts": {
+          "9999-99-99a99:99:99.999999": 1603
+        },
+        "numeric": {},
+        "timestamp": {
+          "parsed": 1603,
+          "unparseable": 0,
+          "min": "2026-08-01T11:21:44.054049",
+          "max": "2026-08-28T23:54:32.108716"
+        },
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "actual_delivery_at",
+        "kind": "timestamp",
+        "non_null": 1498,
+        "null_pct": 6.55,
+        "distinct": 1495,
+        "top_values": {},
+        "layouts": {
+          "9999-99-99a99:99:99.999999": 1498
+        },
+        "numeric": {},
+        "timestamp": {
+          "parsed": 1498,
+          "unparseable": 0,
+          "min": "2026-08-01T12:07:11.607460",
+          "max": "2026-08-29T00:50:53.383274"
+        },
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "final_status",
+        "kind": "category",
+        "non_null": 1603,
+        "null_pct": 0.0,
+        "distinct": 3,
+        "top_values": {
+          "delivered": 1530,
+          "cancelled": 68,
+          "Delivered": 5
+        },
+        "layouts": {},
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "distance_km_estimate",
+        "kind": "numeric",
+        "non_null": 1603,
+        "null_pct": 0.0,
+        "distinct": 617,
+        "top_values": {},
+        "layouts": {},
+        "numeric": {
+          "count": 1603.0,
+          "mean": 14.6301,
+          "std": 4.7426,
+          "min": 0.5,
+          "25%": 11.605,
+          "50%": 18.0,
+          "75%": 18.0,
+          "max": 45.0,
+          "unparseable": 0
+        },
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "traffic_bucket",
+        "kind": "category",
+        "non_null": 1603,
+        "null_pct": 0.0,
+        "distinct": 5,
+        "top_values": {
+          "medium": 635,
+          "high": 448,
+          "low": 381,
+          "severe": 136,
+          "HIGH": 3
+        },
+        "layouts": {},
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "weather_bucket",
+        "kind": "category",
+        "non_null": 1603,
+        "null_pct": 0.0,
+        "distinct": 3,
+        "top_values": {
+          "clear": 1276,
+          "rain": 249,
+          "heavy_rain": 78
+        },
+        "layouts": {},
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      }
+    ],
+    "notes": [
+      "3 rows share an existing order_id (grain is not one row per order_id)"
+    ]
+  },
+  {
+    "name": "restaurants",
+    "rows": 60,
+    "columns": [
+      "restaurant_id",
+      "restaurant_name",
+      "cuisine",
+      "lat",
+      "lon",
+      "manual_status_updates"
+    ],
+    "key": "restaurant_id",
+    "duplicate_key_rows": 0,
+    "exact_duplicate_rows": 0,
+    "column_profiles": [
+      {
+        "column": "restaurant_id",
+        "kind": "id",
+        "non_null": 60,
+        "null_pct": 0.0,
+        "distinct": 60,
+        "top_values": {
+          "R001": 1,
+          "R002": 1,
+          "R003": 1,
+          "R004": 1,
+          "R005": 1,
+          "R006": 1,
+          "R007": 1,
+          "R008": 1,
+          "R009": 1,
+          "R010": 1,
+          "R011": 1,
+          "R012": 1
+        },
+        "layouts": {
+          "a999": 60
+        },
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "restaurant_name",
+        "kind": "text",
+        "non_null": 60,
+        "null_pct": 0.0,
+        "distinct": 60,
+        "top_values": {
+          "Restaurant 001": 1,
+          "Restaurant 002": 1,
+          "Restaurant 003": 1,
+          "Restaurant 004": 1,
+          "Restaurant 005": 1,
+          "Restaurant 006": 1,
+          "Restaurant 007": 1,
+          "Restaurant 008": 1,
+          "Restaurant 009": 1,
+          "Restaurant 010": 1,
+          "Restaurant 011": 1,
+          "Restaurant 012": 1
+        },
+        "layouts": {},
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "cuisine",
+        "kind": "category",
+        "non_null": 60,
+        "null_pct": 0.0,
+        "distinct": 8,
+        "top_values": {
+          "South Indian": 10,
+          "Cafe": 10,
+          "North Indian": 8,
+          "Biryani": 8,
+          "Burgers": 7,
+          "Chinese": 7,
+          "Pizza": 6,
+          "Desserts": 4
+        },
+        "layouts": {},
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "lat",
+        "kind": "numeric",
+        "non_null": 60,
+        "null_pct": 0.0,
+        "distinct": 60,
+        "top_values": {},
+        "layouts": {},
+        "numeric": {
+          "count": 60.0,
+          "mean": 14.328,
+          "std": 10.6075,
+          "min": 12.739,
+          "25%": 12.8929,
+          "50%": 12.9572,
+          "75%": 13.0473,
+          "max": 95.12,
+          "unparseable": 0
+        },
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "lon",
+        "kind": "numeric",
+        "non_null": 60,
+        "null_pct": 0.0,
+        "distinct": 60,
+        "top_values": {},
+        "layouts": {},
+        "numeric": {
+          "count": 60.0,
+          "mean": 79.4729,
+          "std": 14.5545,
+          "min": 77.3858,
+          "25%": 77.5281,
+          "50%": 77.596,
+          "75%": 77.6457,
+          "max": 190.33,
+          "unparseable": 0
+        },
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "manual_status_updates",
+        "kind": "numeric",
+        "non_null": 60,
+        "null_pct": 0.0,
+        "distinct": 2,
+        "top_values": {},
+        "layouts": {},
+        "numeric": {
+          "count": 60.0,
+          "mean": 0.3833,
+          "std": 0.4903,
+          "min": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 1.0,
+          "max": 1.0,
+          "unparseable": 0
+        },
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      }
+    ],
+    "notes": []
+  },
+  {
+    "name": "drivers",
+    "rows": 120,
+    "columns": [
+      "driver_id",
+      "rating",
+      "vehicle_type",
+      "experience_months"
+    ],
+    "key": "driver_id",
+    "duplicate_key_rows": 0,
+    "exact_duplicate_rows": 0,
+    "column_profiles": [
+      {
+        "column": "driver_id",
+        "kind": "id",
+        "non_null": 120,
+        "null_pct": 0.0,
+        "distinct": 120,
+        "top_values": {
+          "D001": 1,
+          "D002": 1,
+          "D003": 1,
+          "D004": 1,
+          "D005": 1,
+          "D006": 1,
+          "D007": 1,
+          "D008": 1,
+          "D009": 1,
+          "D010": 1,
+          "D011": 1,
+          "D012": 1
+        },
+        "layouts": {
+          "a999": 120
+        },
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "rating",
+        "kind": "numeric",
+        "non_null": 120,
+        "null_pct": 0.0,
+        "distinct": 64,
+        "top_values": {},
+        "layouts": {},
+        "numeric": {
+          "count": 120.0,
+          "mean": 4.521,
+          "std": 0.2582,
+          "min": 3.76,
+          "25%": 4.3775,
+          "50%": 4.53,
+          "75%": 4.69,
+          "max": 5.0,
+          "unparseable": 0
+        },
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "vehicle_type",
+        "kind": "category",
+        "non_null": 120,
+        "null_pct": 0.0,
+        "distinct": 3,
+        "top_values": {
+          "bike": 69,
+          "scooter": 40,
+          "ebike": 11
+        },
+        "layouts": {},
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "experience_months",
+        "kind": "numeric",
+        "non_null": 120,
+        "null_pct": 0.0,
+        "distinct": 43,
+        "top_values": {},
+        "layouts": {},
+        "numeric": {
+          "count": 120.0,
+          "mean": 22.3,
+          "std": 13.9877,
+          "min": 1.0,
+          "25%": 12.75,
+          "50%": 19.0,
+          "75%": 30.0,
+          "max": 83.0,
+          "unparseable": 0
+        },
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      }
+    ],
+    "notes": []
+  },
+  {
+    "name": "customers",
+    "rows": 900,
+    "columns": [
+      "customer_id",
+      "lat",
+      "lon"
+    ],
+    "key": "customer_id",
+    "duplicate_key_rows": 0,
+    "exact_duplicate_rows": 0,
+    "column_profiles": [
+      {
+        "column": "customer_id",
+        "kind": "id",
+        "non_null": 900,
+        "null_pct": 0.0,
+        "distinct": 900,
+        "top_values": {
+          "C0001": 1,
+          "C0002": 1,
+          "C0003": 1,
+          "C0004": 1,
+          "C0005": 1,
+          "C0006": 1,
+          "C0007": 1,
+          "C0008": 1,
+          "C0009": 1,
+          "C0010": 1,
+          "C0011": 1,
+          "C0012": 1
+        },
+        "layouts": {
+          "a9999": 900
+        },
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "lat",
+        "kind": "numeric",
+        "non_null": 900,
+        "null_pct": 0.0,
+        "distinct": 897,
+        "top_values": {},
+        "layouts": {},
+        "numeric": {
+          "count": 900.0,
+          "mean": 12.9753,
+          "std": 0.0859,
+          "min": 12.6796,
+          "25%": 12.9174,
+          "50%": 12.9763,
+          "75%": 13.0296,
+          "max": 13.249,
+          "unparseable": 0
+        },
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "lon",
+        "kind": "numeric",
+        "non_null": 900,
+        "null_pct": 0.0,
+        "distinct": 899,
+        "top_values": {},
+        "layouts": {},
+        "numeric": {
+          "count": 900.0,
+          "mean": 77.5997,
+          "std": 0.0946,
+          "min": 77.3245,
+          "25%": 77.5332,
+          "50%": 77.5986,
+          "75%": 77.6619,
+          "max": 77.9508,
+          "unparseable": 0
+        },
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      }
+    ],
+    "notes": []
+  },
+  {
+    "name": "tickets",
+    "rows": 202,
+    "columns": [
+      "ticket_id",
+      "order_id",
+      "created_at",
+      "category",
+      "customer_message"
+    ],
+    "key": "ticket_id",
+    "duplicate_key_rows": 1,
+    "exact_duplicate_rows": 1,
+    "column_profiles": [
+      {
+        "column": "ticket_id",
+        "kind": "id",
+        "non_null": 202,
+        "null_pct": 0.0,
+        "distinct": 201,
+        "top_values": {
+          "T00013": 2,
+          "T00001": 1,
+          "T00002": 1,
+          "T00003": 1,
+          "T00004": 1,
+          "T00005": 1,
+          "T00006": 1,
+          "T00007": 1,
+          "T00008": 1,
+          "T00009": 1,
+          "T00010": 1,
+          "T00011": 1
+        },
+        "layouts": {
+          "a99999": 202
+        },
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "order_id",
+        "kind": "id",
+        "non_null": 199,
+        "null_pct": 1.49,
+        "distinct": 198,
+        "top_values": {
+          "O00090": 2,
+          "O00037": 1,
+          "O00040": 1,
+          "O00041": 1,
+          "O00042": 1,
+          "O00049": 1,
+          "O00058": 1,
+          "O00073": 1,
+          "O00079": 1,
+          "O00083": 1,
+          "O00094": 1,
+          "O00116": 1
+        },
+        "layouts": {
+          "a99999": 199
+        },
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "created_at",
+        "kind": "timestamp",
+        "non_null": 202,
+        "null_pct": 0.0,
+        "distinct": 200,
+        "top_values": {},
+        "layouts": {
+          "9999-99-99a99:99:99": 202
+        },
+        "numeric": {},
+        "timestamp": {
+          "parsed": 202,
+          "unparseable": 0,
+          "min": "2026-08-01T11:39:00",
+          "max": "2026-08-28T20:43:00"
+        },
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "category",
+        "kind": "category",
+        "non_null": 202,
+        "null_pct": 0.0,
+        "distinct": 8,
+        "top_values": {
+          "late_delivery": 39,
+          "eta_changed": 37,
+          "restaurant_delay": 37,
+          "ready_but_waiting": 33,
+          "status_mismatch": 29,
+          "driver_not_moving": 25,
+          "Late Delivery": 1,
+          "ETA issue": 1
+        },
+        "layouts": {},
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "customer_message",
+        "kind": "category",
+        "non_null": 202,
+        "null_pct": 0.0,
+        "distinct": 6,
+        "top_values": {
+          "My order is already past the promised time.": 39,
+          "The ETA keeps changing and the food is still not here.": 37,
+          "Restaurant says they are still preparing my order.": 37,
+          "Restaurant says food is ready but no rider has picked it up.": 33,
+          "The app says picking up but the restaurant says it is ready.": 29,
+          "The rider has not moved for 15 minutes.": 27
+        },
+        "layouts": {},
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      }
+    ],
+    "notes": [
+      "1 rows share an existing ticket_id (grain is not one row per ticket_id)",
+      "1 rows are exact duplicates"
+    ]
+  },
+  {
+    "name": "restaurant_status",
+    "rows": 502,
+    "columns": [
+      "order_id",
+      "restaurant_id",
+      "status",
+      "last_updated_at"
+    ],
+    "key": null,
+    "duplicate_key_rows": 0,
+    "exact_duplicate_rows": 2,
+    "column_profiles": [
+      {
+        "column": "order_id",
+        "kind": "id",
+        "non_null": 502,
+        "null_pct": 0.0,
+        "distinct": 500,
+        "top_values": {
+          "O01484": 2,
+          "O00925": 2,
+          "O00676": 1,
+          "O01506": 1,
+          "O00675": 1,
+          "O00078": 1,
+          "O01016": 1,
+          "O01395": 1,
+          "O00788": 1,
+          "O01168": 1,
+          "O01238": 1,
+          "O01067": 1
+        },
+        "layouts": {
+          "a99999": 502
+        },
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "restaurant_id",
+        "kind": "id",
+        "non_null": 502,
+        "null_pct": 0.0,
+        "distinct": 60,
+        "top_values": {
+          "R040": 15,
+          "R032": 13,
+          "R002": 13,
+          "R055": 12,
+          "R024": 12,
+          "R037": 12,
+          "R019": 12,
+          "R020": 12,
+          "R030": 11,
+          "R041": 11,
+          "R033": 11,
+          "R015": 11
+        },
+        "layouts": {
+          "a999": 502
+        },
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "status",
+        "kind": "category",
+        "non_null": 502,
+        "null_pct": 0.0,
+        "distinct": 7,
+        "top_values": {
+          "preparing": 171,
+          "handed_off": 168,
+          "ready": 159,
+          "READY": 1,
+          "Ready": 1,
+          "handoff": 1,
+          "unknown": 1
+        },
+        "layouts": {},
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "last_updated_at",
+        "kind": "timestamp",
+        "non_null": 502,
+        "null_pct": 0.0,
+        "distinct": 492,
+        "top_values": {},
+        "layouts": {
+          "9999-99-99a99:99:99": 502
+        },
+        "numeric": {},
+        "timestamp": {
+          "parsed": 502,
+          "unparseable": 0,
+          "min": "2026-08-01T11:22:00",
+          "max": "2026-08-28T23:43:00"
+        },
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      }
+    ],
+    "notes": [
+      "2 rows are exact duplicates"
+    ]
+  },
+  {
+    "name": "app_actions",
+    "rows": 2365,
+    "columns": [
+      "action_id",
+      "order_id",
+      "customer_id",
+      "action_type",
+      "action_at",
+      "channel"
+    ],
+    "key": "action_id",
+    "duplicate_key_rows": 0,
+    "exact_duplicate_rows": 0,
+    "column_profiles": [
+      {
+        "column": "action_id",
+        "kind": "id",
+        "non_null": 2365,
+        "null_pct": 0.0,
+        "distinct": 2365,
+        "top_values": {
+          "ACT-00001": 1,
+          "ACT-00002": 1,
+          "ACT-00003": 1,
+          "ACT-00004": 1,
+          "ACT-00005": 1,
+          "ACT-00006": 1,
+          "ACT-00007": 1,
+          "ACT-00008": 1,
+          "ACT-00009": 1,
+          "ACT-00010": 1,
+          "ACT-00011": 1,
+          "ACT-00012": 1
+        },
+        "layouts": {
+          "aaa-99999": 2365
+        },
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "order_id",
+        "kind": "id",
+        "non_null": 2365,
+        "null_pct": 0.0,
+        "distinct": 1100,
+        "top_values": {
+          "O01307": 5,
+          "O01338": 5,
+          "O01578": 4,
+          "O00385": 4,
+          "O00875": 4,
+          "O00411": 4,
+          "O00071": 4,
+          "O01296": 4,
+          "O00090": 4,
+          "O00988": 4,
+          "O00559": 4,
+          "O01089": 4
+        },
+        "layouts": {
+          "a99999": 2365
+        },
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "customer_id",
+        "kind": "id",
+        "non_null": 2365,
+        "null_pct": 0.0,
+        "distinct": 608,
+        "top_values": {
+          "C0864": 14,
+          "C0464": 13,
+          "C0356": 12,
+          "C0099": 12,
+          "C0183": 11,
+          "C0299": 11,
+          "C0834": 11,
+          "C0641": 11,
+          "C0240": 11,
+          "C0704": 11,
+          "C0106": 11,
+          "C0388": 11
+        },
+        "layouts": {
+          "a9999": 2365
+        },
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "action_type",
+        "kind": "category",
+        "non_null": 2365,
+        "null_pct": 0.0,
+        "distinct": 3,
+        "top_values": {
+          "ETA_VIEWED": 2217,
+          "SUPPORT_OPENED": 138,
+          "CANCEL_ATTEMPTED": 10
+        },
+        "layouts": {},
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "action_at",
+        "kind": "timestamp",
+        "non_null": 2365,
+        "null_pct": 0.0,
+        "distinct": 2177,
+        "top_values": {},
+        "layouts": {
+          "9999-99-99a99:99:99": 2292,
+          "9999-99-99a99:99:99.999999": 73
+        },
+        "numeric": {},
+        "timestamp": {
+          "parsed": 2365,
+          "unparseable": 0,
+          "min": "2026-08-01T11:07:00",
+          "max": "2026-08-28T23:56:00"
+        },
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "channel",
+        "kind": "category",
+        "non_null": 2365,
+        "null_pct": 0.0,
+        "distinct": 1,
+        "top_values": {
+          "mobile_app": 2365
+        },
+        "layouts": {},
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      }
+    ],
+    "notes": []
+  },
+  {
+    "name": "interventions",
+    "rows": 430,
+    "columns": [
+      "intervention_id",
+      "order_id",
+      "intervention_type",
+      "intervention_at",
+      "initiated_by",
+      "reason"
+    ],
+    "key": "intervention_id",
+    "duplicate_key_rows": 0,
+    "exact_duplicate_rows": 0,
+    "column_profiles": [
+      {
+        "column": "intervention_id",
+        "kind": "id",
+        "non_null": 430,
+        "null_pct": 0.0,
+        "distinct": 430,
+        "top_values": {
+          "INT-00001": 1,
+          "INT-00002": 1,
+          "INT-00003": 1,
+          "INT-00004": 1,
+          "INT-00005": 1,
+          "INT-00006": 1,
+          "INT-00007": 1,
+          "INT-00008": 1,
+          "INT-00009": 1,
+          "INT-00010": 1,
+          "INT-00011": 1,
+          "INT-00012": 1
+        },
+        "layouts": {
+          "aaa-99999": 430
+        },
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "order_id",
+        "kind": "id",
+        "non_null": 430,
+        "null_pct": 0.0,
+        "distinct": 430,
+        "top_values": {
+          "O00781": 1,
+          "O01476": 1,
+          "O00496": 1,
+          "O00681": 1,
+          "O01188": 1,
+          "O00417": 1,
+          "O01407": 1,
+          "O00782": 1,
+          "O00973": 1,
+          "O00996": 1,
+          "O00514": 1,
+          "O00432": 1
+        },
+        "layouts": {
+          "a99999": 430
+        },
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "intervention_type",
+        "kind": "category",
+        "non_null": 430,
+        "null_pct": 0.0,
+        "distinct": 4,
+        "top_values": {
+          "DRIVER_REASSIGNMENT": 155,
+          "RESTAURANT_CONTACT": 116,
+          "PRIORITY_DISPATCH": 95,
+          "CUSTOMER_CREDIT": 64
+        },
+        "layouts": {},
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "intervention_at",
+        "kind": "timestamp",
+        "non_null": 430,
+        "null_pct": 0.0,
+        "distinct": 425,
+        "top_values": {},
+        "layouts": {
+          "9999-99-99a99:99:99": 408,
+          "9999-99-99a99:99:99.999999": 22
+        },
+        "numeric": {},
+        "timestamp": {
+          "parsed": 430,
+          "unparseable": 0,
+          "min": "2026-08-01T11:39:00",
+          "max": "2026-08-28T23:33:48"
+        },
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "initiated_by",
+        "kind": "category",
+        "non_null": 430,
+        "null_pct": 0.0,
+        "distinct": 3,
+        "top_values": {
+          "support": 180,
+          "dispatch": 155,
+          "operations": 95
+        },
+        "layouts": {},
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "reason",
+        "kind": "category",
+        "non_null": 430,
+        "null_pct": 0.0,
+        "distinct": 12,
+        "top_values": {
+          "slow_progress": 58,
+          "driver_unavailable": 51,
+          "capacity_rebalance": 46,
+          "customer_escalation": 40,
+          "status_stale": 38,
+          "prep_delay": 38,
+          "late_risk": 36,
+          "vip_customer": 33,
+          "support_resolution": 26,
+          "manual_ops_review": 26,
+          "late_delivery": 20,
+          "service_recovery": 18
+        },
+        "layouts": {},
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      }
+    ],
+    "notes": []
+  },
+  {
+    "name": "order_outcomes_ref",
+    "rows": 1600,
+    "columns": [
+      "order_id",
+      "final_status_norm",
+      "delivered_flag",
+      "late_flag",
+      "delay_min",
+      "outcome_bucket"
+    ],
+    "key": "order_id",
+    "duplicate_key_rows": 0,
+    "exact_duplicate_rows": 0,
+    "column_profiles": [
+      {
+        "column": "order_id",
+        "kind": "id",
+        "non_null": 1600,
+        "null_pct": 0.0,
+        "distinct": 1600,
+        "top_values": {
+          "O00001": 1,
+          "O00002": 1,
+          "O00003": 1,
+          "O00004": 1,
+          "O00005": 1,
+          "O00006": 1,
+          "O00007": 1,
+          "O00008": 1,
+          "O00009": 1,
+          "O00010": 1,
+          "O00011": 1,
+          "O00012": 1
+        },
+        "layouts": {
+          "a99999": 1600
+        },
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "final_status_norm",
+        "kind": "category",
+        "non_null": 1600,
+        "null_pct": 0.0,
+        "distinct": 2,
+        "top_values": {
+          "delivered": 1532,
+          "cancelled": 68
+        },
+        "layouts": {},
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "delivered_flag",
+        "kind": "numeric",
+        "non_null": 1600,
+        "null_pct": 0.0,
+        "distinct": 2,
+        "top_values": {},
+        "layouts": {},
+        "numeric": {
+          "count": 1600.0,
+          "mean": 0.9575,
+          "std": 0.2018,
+          "min": 0.0,
+          "25%": 1.0,
+          "50%": 1.0,
+          "75%": 1.0,
+          "max": 1.0,
+          "unparseable": 0
+        },
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "late_flag",
+        "kind": "numeric",
+        "non_null": 1495,
+        "null_pct": 6.56,
+        "distinct": 2,
+        "top_values": {},
+        "layouts": {},
+        "numeric": {
+          "count": 1495.0,
+          "mean": 0.5639,
+          "std": 0.4961,
+          "min": 0.0,
+          "25%": 0.0,
+          "50%": 1.0,
+          "75%": 1.0,
+          "max": 1.0,
+          "unparseable": 0
+        },
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "delay_min",
+        "kind": "numeric",
+        "non_null": 1495,
+        "null_pct": 6.56,
+        "distinct": 1224,
+        "top_values": {},
+        "layouts": {},
+        "numeric": {
+          "count": 1495.0,
+          "mean": 3.1264,
+          "std": 11.539,
+          "min": -22.15,
+          "25%": -4.43,
+          "50%": 1.41,
+          "75%": 9.26,
+          "max": 87.35,
+          "unparseable": 0
+        },
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "outcome_bucket",
+        "kind": "category",
+        "non_null": 1600,
+        "null_pct": 0.0,
+        "distinct": 4,
+        "top_values": {
+          "delivered_late": 843,
+          "delivered_on_time": 652,
+          "cancelled": 68,
+          "unknown": 37
+        },
+        "layouts": {},
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      }
+    ],
+    "notes": []
+  },
+  {
+    "name": "driver_events",
+    "rows": 10035,
+    "columns": [
+      "driver_id",
+      "order_id",
+      "type",
+      "timestamp",
+      "lat",
+      "lon"
+    ],
+    "key": null,
+    "duplicate_key_rows": 0,
+    "exact_duplicate_rows": 0,
+    "column_profiles": [
+      {
+        "column": "driver_id",
+        "kind": "id",
+        "non_null": 10035,
+        "null_pct": 0.0,
+        "distinct": 120,
+        "top_values": {
+          "D010": 174,
+          "D017": 149,
+          "D076": 136,
+          "D001": 135,
+          "D032": 128,
+          "D046": 124,
+          "D054": 122,
+          "D089": 119,
+          "D024": 118,
+          "D064": 118,
+          "D113": 116,
+          "D036": 113
+        },
+        "layouts": {
+          "a999": 10035
+        },
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "order_id",
+        "kind": "id",
+        "non_null": 10035,
+        "null_pct": 0.0,
+        "distinct": 1600,
+        "top_values": {
+          "O00327": 8,
+          "O00581": 8,
+          "O00956": 8,
+          "O00991": 8,
+          "O01170": 8,
+          "O01200": 8,
+          "O01244": 8,
+          "O00431": 8,
+          "O00941": 8,
+          "O01345": 8,
+          "O00214": 8,
+          "O00412": 8
+        },
+        "layouts": {
+          "a99999": 10035
+        },
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "type",
+        "kind": "category",
+        "non_null": 10035,
+        "null_pct": 0.0,
+        "distinct": 4,
+        "top_values": {
+          "gps_ping": 5371,
+          "assigned": 1600,
+          "picked_up": 1532,
+          "delivered": 1532
+        },
+        "layouts": {},
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "timestamp",
+        "kind": "timestamp",
+        "non_null": 10035,
+        "null_pct": 0.0,
+        "distinct": 10035,
+        "top_values": {},
+        "layouts": {
+          "9999-99-99a99:99:99.999999": 10035
+        },
+        "numeric": {},
+        "timestamp": {
+          "parsed": 10035,
+          "unparseable": 0,
+          "min": "2026-08-01T11:03:07.731329",
+          "max": "2026-08-29T00:50:53.383274"
+        },
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "lat",
+        "kind": "numeric",
+        "non_null": 5371,
+        "null_pct": 46.48,
+        "distinct": 5288,
+        "top_values": {},
+        "layouts": {},
+        "numeric": {
+          "count": 5371.0,
+          "mean": 13.6743,
+          "std": 5.8125,
+          "min": 12.7441,
+          "25%": 12.9204,
+          "50%": 12.97,
+          "75%": 13.023,
+          "max": 81.4469,
+          "unparseable": 0
+        },
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "lon",
+        "kind": "numeric",
+        "non_null": 5371,
+        "null_pct": 46.48,
+        "distinct": 5293,
+        "top_values": {},
+        "layouts": {},
+        "numeric": {
+          "count": 5371.0,
+          "mean": 78.3483,
+          "std": 7.0133,
+          "min": 77.3665,
+          "25%": 77.5517,
+          "50%": 77.602,
+          "75%": 77.6521,
+          "max": 171.5392,
+          "unparseable": 0
+        },
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      }
+    ],
+    "notes": []
+  },
+  {
+    "name": "dispatch",
+    "rows": 1600,
+    "columns": [
+      "assigned_at",
+      "current_delivery_eta",
+      "dispatch_status",
+      "driver_id",
+      "estimated_pickup_at",
+      "eta_model_version",
+      "order_id",
+      "original_driver_id",
+      "reassigned_at"
+    ],
+    "key": "order_id",
+    "duplicate_key_rows": 0,
+    "exact_duplicate_rows": 0,
+    "column_profiles": [
+      {
+        "column": "assigned_at",
+        "kind": "timestamp",
+        "non_null": 1600,
+        "null_pct": 0.0,
+        "distinct": 1600,
+        "top_values": {},
+        "layouts": {
+          "9999-99-99a99:99:99.999999": 1600
+        },
+        "numeric": {},
+        "timestamp": {
+          "parsed": 1600,
+          "unparseable": 0,
+          "min": "2026-08-01T11:03:07.731329",
+          "max": "2026-08-28T23:34:06.081673"
+        },
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "current_delivery_eta",
+        "kind": "timestamp",
+        "non_null": 1600,
+        "null_pct": 0.0,
+        "distinct": 1600,
+        "top_values": {},
+        "layouts": {
+          "9999-99-99a99:99:99.999999": 1230,
+          "9999-99-99a99:99:99": 370
+        },
+        "numeric": {},
+        "timestamp": {
+          "parsed": 1600,
+          "unparseable": 0,
+          "min": "2026-08-01T12:17:48",
+          "max": "2026-08-29T00:53:27.108992"
+        },
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "dispatch_status",
+        "kind": "category",
+        "non_null": 1600,
+        "null_pct": 0.0,
+        "distinct": 2,
+        "top_values": {
+          "completed": 1532,
+          "cancelled": 68
+        },
+        "layouts": {},
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "driver_id",
+        "kind": "id",
+        "non_null": 1600,
+        "null_pct": 0.0,
+        "distinct": 120,
+        "top_values": {
+          "D010": 26,
+          "D017": 22,
+          "D076": 21,
+          "D001": 20,
+          "D016": 19,
+          "D024": 19,
+          "D032": 19,
+          "D089": 19,
+          "D046": 19,
+          "D034": 18,
+          "D070": 18,
+          "D064": 18
+        },
+        "layouts": {
+          "a999": 1600
+        },
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "estimated_pickup_at",
+        "kind": "timestamp",
+        "non_null": 1600,
+        "null_pct": 0.0,
+        "distinct": 1527,
+        "top_values": {},
+        "layouts": {
+          "9999-99-99a99:99:99": 1600
+        },
+        "numeric": {},
+        "timestamp": {
+          "parsed": 1600,
+          "unparseable": 0,
+          "min": "2026-08-01T11:20:00",
+          "max": "2026-08-28T23:51:00"
+        },
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "eta_model_version",
+        "kind": "category",
+        "non_null": 1600,
+        "null_pct": 0.0,
+        "distinct": 2,
+        "top_values": {
+          "eta-v3.2": 800,
+          "eta-v3.1": 800
+        },
+        "layouts": {},
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "order_id",
+        "kind": "id",
+        "non_null": 1600,
+        "null_pct": 0.0,
+        "distinct": 1600,
+        "top_values": {
+          "O00001": 1,
+          "O00002": 1,
+          "O00003": 1,
+          "O00004": 1,
+          "O00005": 1,
+          "O00006": 1,
+          "O00007": 1,
+          "O00008": 1,
+          "O00009": 1,
+          "O00010": 1,
+          "O00011": 1,
+          "O00012": 1
+        },
+        "layouts": {
+          "a99999": 1600
+        },
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "original_driver_id",
+        "kind": "id",
+        "non_null": 1600,
+        "null_pct": 0.0,
+        "distinct": 120,
+        "top_values": {
+          "D010": 27,
+          "D032": 22,
+          "D017": 20,
+          "D001": 20,
+          "D046": 19,
+          "D054": 19,
+          "D094": 18,
+          "D028": 18,
+          "D016": 18,
+          "D036": 18,
+          "D027": 18,
+          "D035": 18
+        },
+        "layouts": {
+          "a999": 1600
+        },
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "reassigned_at",
+        "kind": "timestamp",
+        "non_null": 95,
+        "null_pct": 94.06,
+        "distinct": 95,
+        "top_values": {},
+        "layouts": {
+          "9999-99-99a99:99:99.999999": 95
+        },
+        "numeric": {},
+        "timestamp": {
+          "parsed": 95,
+          "unparseable": 0,
+          "min": "2026-08-01T11:35:17.515941",
+          "max": "2026-08-28T17:32:01.398186"
+        },
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      }
+    ],
+    "notes": []
+  }
+]

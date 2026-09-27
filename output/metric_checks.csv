@@ -1,0 +1,12 @@
+check,status,evidence
+KPI denominator > 0,PASS,validated population = 1486
+late + on-time == validated population,PASS,837 + 649 == 1486
+outcome buckets sum to unique orders,PASS,1600 == 1600
+stage decomposition is exact (pre-pickup + transit overrun == delay),PASS,max abs residual = 0.010 min over 1486 orders
+independent reconciliation vs client order_outcomes.csv (historical definition),PASS,pipeline late=843 vs reference late=843; max |delay diff| = 0.000 min over 1495 orders
+join cardinality: fact_order <- dispatch,PASS,left=1600 right=1600 result=1600 (right duplicates dropped=0)
+join cardinality: fact_order <- driver_events (aggregated),PASS,left=1600 right=1600 result=1600 (right duplicates dropped=0)
+join cardinality: order_journey <- app_actions (aggregated),PASS,left=1600 right=1100 result=1600 (right duplicates dropped=0)
+join cardinality: order_journey <- tickets (aggregated),PASS,left=1600 right=198 result=1600 (right duplicates dropped=0)
+join cardinality: order_journey <- interventions (aggregated),PASS,left=1600 right=430 result=1600 (right duplicates dropped=0)
+independent SQL re-computation of M1 on the raw database,PASS,"SQL: {'valid_delivered': 1486.0, 'late_orders': 837.0, 'late_rate_pct': 56.33, 'late_over_10_orders': 344.0} | pipeline: population=1486, late=837 | difference pop=0 late=0, explainable by unparseable/tz/padded values=0"

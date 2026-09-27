@@ -1,0 +1,65 @@
+{
+  "overall_status": "WARN",
+  "publish_decision": "PUBLISH WITH CAVEATS: late delivery rate = 56.33% of 1486 validated deliveries (historical definition: 56.39%). State the definition, the excluded orders and the unresolved owner questions next to the number.",
+  "blocking": [],
+  "unresolved": [
+    "Business grain (one row per order)",
+    "Timestamp chronology & completeness",
+    "KPI definition ownership",
+    "Category semantics",
+    "Cross-source mapping",
+    "Freshness (restaurant status feed)"
+  ],
+  "checks": [
+    {
+      "check": "Retrieval completeness",
+      "status": "PASS",
+      "evidence": "API: 1600 records / expected 1600 in 16 pages, retries=2, mode=live; missing files=none; missing optional reference files=none; empty files=none; zero-row SQL extracts=none",
+      "action": "raw pages + file copies + SQL extracts preserved under data/raw/<run_id>"
+    },
+    {
+      "check": "Business grain (one row per order)",
+      "status": "WARN",
+      "evidence": "raw duplicate rows removed by cleaning: 3 (corrected; conflicting copies kept in quarantine)",
+      "action": "exact duplicates dropped; conflicting duplicates keep first row, conflict recorded in quarantine"
+    },
+    {
+      "check": "Timestamp chronology & completeness",
+      "status": "WARN",
+      "evidence": "TS-00=0; TS-01=4; TS-02=5; TS-03=0; TS-04=37; TS-05=0",
+      "action": "violating orders excluded from the KPI population (reject) and listed in the data-quality report; nothing deleted"
+    },
+    {
+      "check": "KPI definition ownership",
+      "status": "UNKNOWN",
+      "evidence": "no canonical KPI owner documented; 4 stakeholder definitions found: VP Operations: Any delivered order after the promised ETA is late.; Support Lead: Only more than 10 minutes beyond ETA should count as meaningfully late.; Finance: Cancelled/refunded orders should not count in operational performance.; Data Team: Historical dashboard uses delivered orders with non-null actual delivery time. | pipeline publishes late = delay > 0 min and reports > 10 min alongside",
+      "action": "VP Operations to sign off the definition; until then every output states the definition next to the number"
+    },
+    {
+      "check": "Category semantics",
+      "status": "WARN",
+      "evidence": "ST-01: fixes=5, unexpected={}; ST-02: fixes=3, unexpected={}; ST-04: fixes=2, unexpected={'handoff': 1}; ST-05: fixes=2, unexpected={'eta_issue': 1}",
+      "action": "representation normalised; semantic look-alikes NOT merged, owner decision required: {'ST-04': {'handoff': 'handed_off'}, 'ST-05': {'eta_issue': 'eta_changed'}}"
+    },
+    {
+      "check": "Cross-source mapping",
+      "status": "WARN",
+      "evidence": "coverage %: ID-02=100.0, ID-03=99.81, ID-04=99.81, ID-05=98.51, ID-06=100.0, ID-07=100.0, ID-08=100.0, ID-09=100.0, ID-10=100.0; CX-01: orders.driver_id equals dispatch ORIGINAL driver for 1597 orders -> the orders table is not updated after reassignment; Dispatch is authoritative for the final driver; CX-02: compared 1532 orders; CX-03: dispatch reassigned=95, intervention DRIVER_REASSIGNMENT=155, in both=8, only in interventions=147, only in dispatch=87",
+      "action": "unmapped records retained and flagged; Dispatch treated as authoritative for the final driver"
+    },
+    {
+      "check": "Freshness (restaurant status feed)",
+      "status": "WARN",
+      "evidence": "status rows joined=500 covering 500 of 1600 orders (31.2%); ready/handed_off written >15 min after pickup=8; updated before order creation=5; median lag vs pickup=-6.4 min; timestamps have minute precision only",
+      "action": "restaurant status usable for weekly analytics only; not for live ETA or accountability"
+    },
+    {
+      "check": "Metric sanity & independent checks",
+      "status": "PASS",
+      "evidence": "11 checks passed",
+      "action": "see output/metric_checks.csv"
+    }
+  ],
+  "leadership_claim": "Late Delivery Rate is 56%",
+  "run_id": "run_example"
+}

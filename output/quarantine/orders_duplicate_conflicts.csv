@@ -1,0 +1,7 @@
+order_id,customer_id,restaurant_id,driver_id,city,created_at,promised_eta,pickup_at,actual_delivery_at,final_status,distance_km_estimate,traffic_bucket,weather_bucket,conflicting_columns
+O00120,C0501,R040,D045,Bengaluru,2026-08-13 18:15:00,2026-08-13 19:40:24.000000,2026-08-13 18:29:08.055622,2026-08-13 19:34:08.431508,delivered,18.0,severe,clear,traffic_bucket
+O00120,C0501,R040,D045,Bengaluru,2026-08-13 18:15:00,2026-08-13 19:40:24.000000,2026-08-13 18:29:08.055622,2026-08-13 19:34:08.431508,delivered,18.0,medium,clear,traffic_bucket
+O00723,C0467,R028,D068,Bengaluru,2026-08-05 21:04:00,2026-08-05 22:19:36.000000,2026-08-05 21:15:24.433874,2026-08-05 22:04:30.928322,delivered,18.0,medium,clear,traffic_bucket
+O00723,C0467,R028,D068,Bengaluru,2026-08-05 21:04:00,2026-08-05 22:19:36.000000,2026-08-05 21:15:24.433874,2026-08-05 22:04:30.928322,delivered,18.0,high,clear,traffic_bucket
+O01302,C0116,R010,D088,Bengaluru,2026-08-26 21:07:00,2026-08-26 22:15:50.273095,2026-08-26 21:35:26.474087,2026-08-26 22:20:27.428561,delivered,14.78,medium,clear,traffic_bucket
+O01302,C0116,R010,D088,Bengaluru,2026-08-26 21:07:00,2026-08-26 22:15:50.273095,2026-08-26 21:35:26.474087,2026-08-26 22:20:27.428561,delivered,14.78,high,clear,traffic_bucket

@@ -1,0 +1,6 @@
+definition,late_rate_pct,late,population
+VP Operations: any delivered order after promised ETA (validated population),56.33,837,1486
+Data Team: delivered orders with non-null actual delivery time (historical dashboard),56.39,843,1495
+Support Lead: only > 10 min beyond ETA,23.15,344,1486
+Finance: cancelled/refunded excluded (already true in every definition above),56.33,837,1486
+Sensitivity: back-fill missing delivery time from driver telemetry,56.53,861,1523
