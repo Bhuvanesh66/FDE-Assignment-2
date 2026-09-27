@@ -26,3 +26,6 @@ output/runs/*/
 .vscode/
 .DS_Store
 Thumbs.db
+# scratch outputs of the challenge notebooks and the walkthrough run
+Challenges/output/
+notebooks/walkthrough_run/
