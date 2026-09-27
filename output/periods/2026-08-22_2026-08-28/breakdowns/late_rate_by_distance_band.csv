@@ -1,0 +1,5 @@
+distance_band,orders,late_orders,late_rate_pct,median_delay_min,mean_delay_min
+0-3 km,7,3,42.9,-2.3,0.5
+3-6 km,11,4,36.4,-7.0,0.2
+6-10 km,49,28,57.1,2.3,2.6
+10-20 km,308,172,55.8,1.6,2.7

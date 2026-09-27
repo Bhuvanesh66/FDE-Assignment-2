@@ -1,0 +1,4 @@
+weather_bucket,orders,observed_rain_share_pct,mean_observed_mm
+clear,324,48.1,0.26
+heavy_rain,23,52.2,0.28
+rain,62,50.0,0.28

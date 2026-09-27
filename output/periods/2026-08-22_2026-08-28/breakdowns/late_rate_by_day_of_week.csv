@@ -1,0 +1,8 @@
+day_of_week,orders,late_orders,late_rate_pct,median_delay_min,mean_delay_min
+Friday,52,25,48.1,-0.8,2.2
+Monday,51,33,64.7,2.1,2.8
+Saturday,59,38,64.4,3.7,5.6
+Sunday,54,29,53.7,1.5,2.1
+Thursday,52,26,50.0,-0.3,3.1
+Tuesday,45,23,51.1,0.4,0.9
+Wednesday,62,33,53.2,1.1,0.9

@@ -1,0 +1,5 @@
+period,run_id,status,gate,orders,validated_population,late_orders,late_rate_pct,median_lateness_min,share_before_pickup_pct,support_contact_late_pct,intervention_coverage_pct,pickup_estimate_bias_min,error,wow_change_pp,drift_flag
+2026-08-01_2026-08-07,run_weekly_2026-08-01_2026-08-07,PUBLISHED,WARN,372,345,188,54.49,8.0,98.49,32.45,24.93,7.7,,,False
+2026-08-08_2026-08-14,run_weekly_2026-08-08_2026-08-14,PUBLISHED,WARN,409,381,228,59.84,8.0,99.09,30.26,27.03,8.3,,5.35,True
+2026-08-15_2026-08-21,run_weekly_2026-08-15_2026-08-21,PUBLISHED,WARN,412,385,214,55.58,8.3,99.53,29.91,28.31,8.2,,-4.26,True
+2026-08-22_2026-08-28,run_weekly_2026-08-22_2026-08-28,PUBLISHED,WARN,407,375,207,55.2,7.6,98.43,30.43,26.93,8.0,,-0.38,False

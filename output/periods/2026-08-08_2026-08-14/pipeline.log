@@ -1,0 +1,191 @@
+2026-09-27 22:27:28 | INFO    | FlashEats pipeline v1.0.0 run_id=run_weekly_2026-08-08_2026-08-14 source_root=B:\Trimester-9\FDE\assignment-2\source_systems config=B:\Trimester-9\FDE\assignment-2\config\pipeline.yaml
+2026-09-27 22:27:28 | INFO    | ==============================================================================
+2026-09-27 22:27:28 | INFO    | STAGE 1/10 INGEST + RAW PRESERVATION  [period 2026-08-08..2026-08-14]
+2026-09-27 22:27:28 | INFO    | ==============================================================================
+2026-09-27 22:27:28 | INFO    | SQL extract orders_extract         table=orders       rows=  410 cols=13 -> orders_extract.csv
+2026-09-27 22:27:28 | INFO    | SQL extract restaurants_extract    table=restaurants  rows=   60 cols=6 -> restaurants_extract.csv
+2026-09-27 22:27:28 | INFO    | SQL extract drivers_extract        table=drivers      rows=  120 cols=4 -> drivers_extract.csv
+2026-09-27 22:27:28 | INFO    | SQL extract customers_extract      table=customers    rows=  900 cols=3 -> customers_extract.csv
+2026-09-27 22:27:28 | INFO    | CSV  tickets                rows=  202 cols= 5 malformed=0 extra=['customer_message'] sha256=ee2f43a9d69e
+2026-09-27 22:27:28 | INFO    | CSV  restaurant_status      rows=  502 cols= 4 malformed=0 extra=- sha256=6551c775e4ec
+2026-09-27 22:27:28 | INFO    | CSV  app_actions            rows= 2365 cols= 6 malformed=0 extra=['channel'] sha256=154a6640ab93
+2026-09-27 22:27:28 | INFO    | CSV  interventions          rows=  430 cols= 6 malformed=0 extra=['reason'] sha256=d66af21244f9
+2026-09-27 22:27:28 | INFO    | CSV  order_outcomes_ref     rows= 1600 cols= 6 malformed=0 extra=['final_status_norm', 'delivered_flag', 'outcome_bucket'] sha256=dbe10b2f532b
+2026-09-27 22:27:28 | INFO    | JSON driver_events          top-level=list items=120 sha256=8102eaec0ec2
+2026-09-27 22:27:28 | INFO    | JSON client_metric_definitions top-level=dict items=4 sha256=2c5e4e37f7dc
+2026-09-27 22:27:29 | INFO    | weather live: 192 hourly observations 2026-08-08T00:00:00 -> 2026-08-15T23:00:00, retries=0
+2026-09-27 22:27:29 | INFO    | API page=  1 rows=100 running_total=  100 has_more=True
+2026-09-27 22:27:29 | INFO    | API page=  2 rows=100 running_total=  200 has_more=True
+2026-09-27 22:27:29 | INFO    | API page=  3 rows=100 running_total=  300 has_more=True
+2026-09-27 22:27:29 | INFO    | API page=  4 rows=100 running_total=  400 has_more=True
+2026-09-27 22:27:29 | INFO    | API page=  5 rows=100 running_total=  500 has_more=True
+2026-09-27 22:27:29 | INFO    | API page=  6 rows=100 running_total=  600 has_more=True
+2026-09-27 22:27:29 | INFO    | API page=  7 rows=100 running_total=  700 has_more=True
+2026-09-27 22:27:29 | INFO    | API page=  8 rows=100 running_total=  800 has_more=True
+2026-09-27 22:27:29 | INFO    | API page=  9 rows=100 running_total=  900 has_more=True
+2026-09-27 22:27:29 | INFO    | API page= 10 rows=100 running_total= 1000 has_more=True
+2026-09-27 22:27:29 | INFO    | API page= 11 rows=100 running_total= 1100 has_more=True
+2026-09-27 22:27:30 | INFO    | API page= 12 rows=100 running_total= 1200 has_more=True
+2026-09-27 22:27:30 | INFO    | API page= 13 rows=100 running_total= 1300 has_more=True
+2026-09-27 22:27:30 | INFO    | API page= 14 rows=100 running_total= 1400 has_more=True
+2026-09-27 22:27:30 | INFO    | API page= 15 rows=100 running_total= 1500 has_more=True
+2026-09-27 22:27:30 | INFO    | API page= 16 rows=100 running_total= 1600 has_more=False
+2026-09-27 22:27:30 | INFO    | API ingestion COMPLETE: pages=16 records=1600 unique=1600 expected=1600 retries=0
+2026-09-27 22:27:30 | INFO    | control totals PASS: orders_rows 1603/1603; unique_orders 1600/1600; support_tickets_rows 202/202; dispatch_records 1600/1600; drivers 120/120; restaurants 60/60
+2026-09-27 22:27:30 | INFO    | ==============================================================================
+2026-09-27 22:27:30 | INFO    | STAGE 2/10 PROFILE (raw)
+2026-09-27 22:27:30 | INFO    | ==============================================================================
+2026-09-27 22:27:31 | INFO    | profile orders             rows=   410 dup_key=  1 exact_dup=  0 1 rows share an existing order_id (grain is not one row per order_id)
+2026-09-27 22:27:31 | INFO    | profile restaurants        rows=    60 dup_key=  0 exact_dup=  0 
+2026-09-27 22:27:31 | INFO    | profile drivers            rows=   120 dup_key=  0 exact_dup=  0 
+2026-09-27 22:27:31 | INFO    | profile customers          rows=   900 dup_key=  0 exact_dup=  0 
+2026-09-27 22:27:31 | INFO    | profile tickets            rows=   202 dup_key=  1 exact_dup=  1 1 rows share an existing ticket_id (grain is not one row per ticket_id); 1 rows are exact duplicates
+2026-09-27 22:27:31 | INFO    | profile restaurant_status  rows=   502 dup_key=  0 exact_dup=  2 2 rows are exact duplicates
+2026-09-27 22:27:31 | INFO    | profile app_actions        rows=  2365 dup_key=  0 exact_dup=  0 
+2026-09-27 22:27:31 | INFO    | profile interventions      rows=   430 dup_key=  0 exact_dup=  0 
+2026-09-27 22:27:31 | INFO    | profile order_outcomes_ref rows=  1600 dup_key=  0 exact_dup=  0 
+2026-09-27 22:27:31 | INFO    | profile driver_events      rows= 10035 dup_key=  0 exact_dup=  0 
+2026-09-27 22:27:31 | INFO    | profile weather_obs        rows=   192 dup_key=  0 exact_dup=  0 
+2026-09-27 22:27:31 | INFO    | profile dispatch           rows=  1600 dup_key=  0 exact_dup=  0 
+2026-09-27 22:27:31 | INFO    | ==============================================================================
+2026-09-27 22:27:31 | INFO    | STAGE 3/10 CLEAN / STANDARDISE
+2026-09-27 22:27:31 | INFO    | ==============================================================================
+2026-09-27 22:27:31 | INFO    | clean orders           raw=  410 -> clean=  409
+2026-09-27 22:27:31 | INFO    | clean restaurants      raw=   60 -> clean=   60
+2026-09-27 22:27:31 | INFO    | clean drivers          raw=  120 -> clean=  120
+2026-09-27 22:27:31 | INFO    | clean customers        raw=  900 -> clean=  900
+2026-09-27 22:27:31 | INFO    | clean tickets          raw=  202 -> clean=  201
+2026-09-27 22:27:31 | INFO    | clean restaurant_status raw=  502 -> clean=  500
+2026-09-27 22:27:31 | INFO    | clean app_actions      raw= 2365 -> clean= 2365
+2026-09-27 22:27:31 | INFO    | clean interventions    raw=  430 -> clean=  430
+2026-09-27 22:27:31 | INFO    | clean driver_events    raw=10035 -> clean=10035
+2026-09-27 22:27:31 | INFO    | clean weather_obs      raw=  192 -> clean=  192
+2026-09-27 22:27:31 | INFO    | clean dispatch         raw= 1600 -> clean= 1600
+2026-09-27 22:27:31 | INFO    |   action orders           final_status           normalise_category (trim, case, spaces->_)              n=2 'Delivered'->'delivered'
+2026-09-27 22:27:31 | INFO    |   action orders           traffic_bucket         normalise_category (trim, case, spaces->_)              n=1 'HIGH'->'high'
+2026-09-27 22:27:31 | INFO    |   action orders           order_id               drop_conflicting_duplicate_key_rows (keep first)        n=1 1 keys duplicated; differing columns: ['traffic_bucket']
+2026-09-27 22:27:31 | INFO    |   action tickets          category               normalise_category (trim, case, spaces->_)              n=2 'ETA issue'->'eta_issue'; 'Late Delivery'->'late_delivery'
+2026-09-27 22:27:31 | INFO    |   action tickets          *                      drop_exact_duplicate_rows                               n=1 
+2026-09-27 22:27:31 | INFO    |   action restaurant_status status                 normalise_category (trim, case, spaces->_)              n=2 'READY'->'ready'; 'Ready'->'ready'
+2026-09-27 22:27:31 | INFO    |   action restaurant_status *                      drop_exact_duplicate_rows                               n=2 
+2026-09-27 22:27:31 | WARNING |   unexpected categories in tickets.category: {'eta_issue': 1} (retained + flagged)
+2026-09-27 22:27:31 | WARNING |   unexpected categories in restaurant_status.status: {'handoff': 1} (retained + flagged)
+2026-09-27 22:27:31 | INFO    | period scope 2026-08-08..2026-08-14: 409 orders in window
+2026-09-27 22:27:31 | INFO    | ==============================================================================
+2026-09-27 22:27:31 | INFO    | STAGE 4/10 VALIDATE (business rules)
+2026-09-27 22:27:31 | INFO    | ==============================================================================
+2026-09-27 22:27:31 | INFO    | rule GR-01  WARN    viol=    0 /   409  One row per business order
+2026-09-27 22:27:31 | INFO    | rule ID-01  PASS    viol=    0 /   409  order_id present and well-formed
+2026-09-27 22:27:31 | INFO    | rule ID-02  PASS    viol=    0 /   409  orders.customer_id maps to a known customer
+2026-09-27 22:27:31 | INFO    | rule ID-03  PASS    viol=    0 /   409  orders.restaurant_id maps to a known restaurant
+2026-09-27 22:27:31 | INFO    | rule ID-04  PASS    viol=    0 /   409  orders.driver_id maps to a known driver
+2026-09-27 22:27:31 | INFO    | rule ID-05  PASS    viol=    0 /    53  tickets.order_id maps to an order
+2026-09-27 22:27:31 | INFO    | rule ID-06  PASS    viol=    0 /   120  restaurant_status rows map to an order and agree on the restaurant
+2026-09-27 22:27:31 | INFO    | rule ID-07  PASS    viol=    0 /   562  app actions map to an order and its customer
+2026-09-27 22:27:31 | INFO    | rule ID-08  PASS    viol=    0 /   111  interventions map to an order
+2026-09-27 22:27:31 | INFO    | rule ID-09  PASS    viol=    0 /   409  orders and Dispatch cover each other
+2026-09-27 22:27:31 | INFO    | rule ID-10  PASS    viol=    0 /  2538  driver events map to an order
+2026-09-27 22:27:31 | INFO    | rule ST-01  WARN    viol=    0 /   409  final_status uses an agreed vocabulary
+2026-09-27 22:27:31 | INFO    | rule ST-02  WARN    viol=    0 /   409  traffic_bucket uses an agreed vocabulary
+2026-09-27 22:27:31 | INFO    | rule ST-03  PASS    viol=    0 /   409  weather_bucket uses an agreed vocabulary
+2026-09-27 22:27:31 | INFO    | rule ST-04  WARN    viol=    0 /   120  restaurant status uses an agreed vocabulary
+2026-09-27 22:27:31 | INFO    | rule ST-05  WARN    viol=    0 /    53  ticket category uses an agreed vocabulary
+2026-09-27 22:27:31 | INFO    | rule ST-06  PASS    viol=    0 /   562  app action_type uses an agreed vocabulary
+2026-09-27 22:27:31 | INFO    | rule ST-07  PASS    viol=    0 /   111  intervention_type uses an agreed vocabulary
+2026-09-27 22:27:31 | INFO    | rule ST-08  PASS    viol=    0 /   409  dispatch_status uses an agreed vocabulary
+2026-09-27 22:27:31 | INFO    | rule ST-09  PASS    viol=    0 /  2538  driver event type uses an agreed vocabulary
+2026-09-27 22:27:31 | INFO    | rule TS-00  PASS    viol=    0 /   409  KPI timestamps are parseable
+2026-09-27 22:27:31 | INFO    | rule TS-01  WARN    viol=    2 /   409  Promised ETA is after order creation
+2026-09-27 22:27:31 | INFO    | rule TS-02  WARN    viol=    1 /   409  Delivery happens after pickup
+2026-09-27 22:27:31 | INFO    | rule TS-03  PASS    viol=    0 /   409  Pickup happens after order creation
+2026-09-27 22:27:31 | INFO    | rule TS-04  WARN    viol=    4 /   409  Delivered orders carry an actual delivery time
+2026-09-27 22:27:31 | INFO    | rule TS-05  PASS    viol=    0 /   409  Cancelled orders carry no delivery time
+2026-09-27 22:27:31 | INFO    | rule TS-06  PASS    viol=    0 /   409  Dispatch chronology (created <= assigned <= reassigned)
+2026-09-27 22:27:31 | INFO    | rule TS-07  WARN    viol=    2 /   409  Driver-event chronology (assigned <= picked_up <= delivered)
+2026-09-27 22:27:31 | INFO    | rule RG-01  PASS    viol=    0 /   409  Delivery distance is plausible
+2026-09-27 22:27:31 | INFO    | rule RG-02  WARN    viol=    2 /    60  Restaurant coordinates are inside the service area
+2026-09-27 22:27:31 | INFO    | rule RG-03  WARN    viol=   42 /  1353  GPS pings are inside the service area
+2026-09-27 22:27:31 | INFO    | rule RG-04  PASS    viol=    0 /   120  Driver attributes in range
+2026-09-27 22:27:31 | INFO    | rule CX-01  WARN    viol=   26 /   409  orders.driver_id agrees with Dispatch's final driver
+2026-09-27 22:27:31 | INFO    | rule CX-02  WARN    viol=    1 /   388  orders.pickup_at agrees with the driver picked_up event
+2026-09-27 22:27:31 | INFO    | rule CX-03  WARN    viol=   66 /    68  Intervention log agrees with Dispatch reassignments
+2026-09-27 22:27:31 | INFO    | rule FR-01  WARN    viol=    4 /   120  Restaurant status updates are fresh enough for the intended use
+2026-09-27 22:27:31 | INFO    | rule WX-01  WARN    viol=  198 /   409  Order weather label agrees with independently observed rainfall
+2026-09-27 22:27:31 | INFO    | rule KPI-01 UNKNOWN viol=    0 /     0  'Late' has one agreed definition and owner
+2026-09-27 22:27:31 | INFO    | ==============================================================================
+2026-09-27 22:27:31 | INFO    | STAGE 5/10 BUSINESS MODEL
+2026-09-27 22:27:31 | INFO    | ==============================================================================
+2026-09-27 22:27:32 | INFO    | model dim_customer       rows=   900 cols=  3
+2026-09-27 22:27:32 | INFO    | model dim_restaurant     rows=    60 cols=  7
+2026-09-27 22:27:32 | INFO    | model dim_driver         rows=   120 cols=  4
+2026-09-27 22:27:32 | INFO    | model fact_order         rows=   409 cols= 52
+2026-09-27 22:27:32 | INFO    | model fact_event         rows=  5430 cols=  7
+2026-09-27 22:27:32 | INFO    | model fact_interaction   rows=   615 cols=  8
+2026-09-27 22:27:32 | INFO    | model fact_intervention  rows=   111 cols=  9
+2026-09-27 22:27:32 | INFO    | model order_journey      rows=   409 cols= 33
+2026-09-27 22:27:32 | INFO    | join-check fact_order <- dispatch                               left=  409 right=  409 result=  409 preserved=True
+2026-09-27 22:27:32 | INFO    | join-check fact_order <- driver_events (aggregated)             left=  409 right=  409 result=  409 preserved=True
+2026-09-27 22:27:32 | INFO    | join-check order_journey <- app_actions (aggregated)            left=  409 right=  264 result=  409 preserved=True
+2026-09-27 22:27:32 | INFO    | join-check order_journey <- tickets (aggregated)                left=  409 right=   53 result=  409 preserved=True
+2026-09-27 22:27:32 | INFO    | join-check order_journey <- interventions (aggregated)          left=  409 right=  111 result=  409 preserved=True
+2026-09-27 22:27:32 | INFO    | ==============================================================================
+2026-09-27 22:27:32 | INFO    | STAGE 6/10 METRICS
+2026-09-27 22:27:32 | INFO    | ==============================================================================
+2026-09-27 22:27:33 | INFO    | metric M1   Late delivery rate (validated population)                              = 59.84 % (n=228/381)
+2026-09-27 22:27:33 | INFO    | metric M1a  Late delivery rate (historical dashboard definition)                   = 60.16 % (n=231/384)
+2026-09-27 22:27:33 | INFO    | metric M1b  Meaningfully late rate (> 10 min)                                      = 25.98 % (n=99/381)
+2026-09-27 22:27:33 | INFO    | metric M1c  Late delivery rate (sensitivity: back-fill missing delivery time from  = 60.0 % (n=231/385)
+2026-09-27 22:27:33 | INFO    | metric M2   Median lateness among late orders                                      = 8.0 min (n=None/228)
+2026-09-27 22:27:33 | INFO    | metric M2a  P90 delay across all validated deliveries                              = 20.3 min (n=None/381)
+2026-09-27 22:27:33 | INFO    | metric M2b  Worst single delay                                                     = 50.3 min (n=None/381)
+2026-09-27 22:27:33 | INFO    | metric M3   Share of lateness accumulated before pickup (vs in transit)            = 99.09 % (n=3748.5/3782.8)
+2026-09-27 22:27:33 | INFO    | metric M3a  Median pre-pickup overrun on late orders                               = 14.1 min (n=None/228)
+2026-09-27 22:27:33 | INFO    | metric M3b  Median transit overrun on late orders                                  = -6.0 min (n=None/228)
+2026-09-27 22:27:33 | INFO    | metric M4   Support contact rate on late orders                                    = 30.26 % (n=69/228)
+2026-09-27 22:27:33 | INFO    | metric M4a  Support contact rate on on-time orders                                 = 3.92 % (n=6/153)
+2026-09-27 22:27:33 | INFO    | metric M4b  Frustrated journeys with no intervention                               = 57 orders (n=57/75)
+2026-09-27 22:27:33 | INFO    | metric M4c  Median ETA views per order (late vs on-time)                           = 1 vs 1 views (n=None/None)
+2026-09-27 22:27:33 | INFO    | metric M5   Intervention coverage of delivered orders                              = 27.03 % (n=103/381)
+2026-09-27 22:27:33 | INFO    | metric M5a  Late rate WITH an intervention                                         = 60.19 % (n=62/103)
+2026-09-27 22:27:33 | INFO    | metric M5b  Late rate WITHOUT an intervention                                      = 59.71 % (n=166/278)
+2026-09-27 22:27:33 | INFO    | metric M5c  Most common intervention type                                          = DRIVER_REASSIGNMENT (44) type (n=44/111)
+2026-09-27 22:27:33 | INFO    | check PASS    KPI denominator > 0 | validated population = 381
+2026-09-27 22:27:33 | INFO    | check PASS    late + on-time == validated population | 228 + 153 == 381
+2026-09-27 22:27:33 | INFO    | check PASS    outcome buckets sum to unique orders | 409 == 409
+2026-09-27 22:27:33 | INFO    | check PASS    stage decomposition is exact (pre-pickup + transit overrun == delay) | max abs residual = 0.010 min over 381 orders
+2026-09-27 22:27:33 | INFO    | check PASS    independent reconciliation vs client order_outcomes.csv (historical definition) | pipeline late=231 vs reference late=231; max |delay diff| = 0.000 min over 384 orders
+2026-09-27 22:27:33 | INFO    | check PASS    join cardinality: fact_order <- dispatch | left=409 right=409 result=409 (right duplicates dropped=0)
+2026-09-27 22:27:33 | INFO    | check PASS    join cardinality: fact_order <- driver_events (aggregated) | left=409 right=409 result=409 (right duplicates dropped=0)
+2026-09-27 22:27:33 | INFO    | check PASS    join cardinality: order_journey <- app_actions (aggregated) | left=409 right=264 result=409 (right duplicates dropped=0)
+2026-09-27 22:27:33 | INFO    | check PASS    join cardinality: order_journey <- tickets (aggregated) | left=409 right=53 result=409 (right duplicates dropped=0)
+2026-09-27 22:27:33 | INFO    | check PASS    join cardinality: order_journey <- interventions (aggregated) | left=409 right=111 result=409 (right duplicates dropped=0)
+2026-09-27 22:27:33 | INFO    | independent SQL check PASS: {'valid_delivered': 381.0, 'late_orders': 228.0, 'late_rate_pct': 59.84, 'late_over_10_orders': 99.0}
+2026-09-27 22:27:33 | INFO    | ==============================================================================
+2026-09-27 22:27:33 | INFO    | STAGE 7/10 DECISION LAYER (beyond the classroom)
+2026-09-27 22:27:33 | INFO    | ==============================================================================
+2026-09-27 22:27:34 | INFO    | insight D1 A proactive trigger that works today, without AI | Alerting when an order is still not picked up 10 min after Dispatch's own estimated pickup catches 71.9% of late orders with 98.2% precision on the he
+2026-09-27 22:27:34 | INFO    | insight D2 The promise is optimistic before the food even leaves | Dispatch's pickup estimate is short by a median 8.3 min (planned 18.0 min vs actual 26.3 min from order to pickup). Reaching 80% on-time by padding al
+2026-09-27 22:27:34 | INFO    | insight D3 Do not publish a restaurant or driver blame list | Only 0 of 0 judgeable restaurants (none) and 0 of 0 drivers are statistically worse than the fleet; a naive top-10 list would name 10 restaurants, of 
+2026-09-27 22:27:34 | INFO    | insight D4 The weather label does not match the weather | Against Open-Meteo's observed hourly rainfall, the client's weather_bucket agrees 51.6% of the time (Cohen's kappa 0.016, i.e. no better than chance).
+2026-09-27 22:27:34 | INFO    | insight D5 GPS pings look drawn, not measured - they cannot show arrival at the restaurant | Before pickup, the last ping is FARTHER from the restaurant than the first in 99.0% of orders (closer in only 1.0%) - a rider cannot leave with the fo
+2026-09-27 22:27:36 | INFO    | ==============================================================================
+2026-09-27 22:27:36 | INFO    | STAGE 8/10 VALIDATION GATE
+2026-09-27 22:27:36 | INFO    | ==============================================================================
+2026-09-27 22:27:36 | INFO    | run comparison PASS: KPI moved +0.00 pp vs run_weekly_2026-08-08_2026-08-14 (its previous publication, 2026-09-27T22:03:42); no rule got worse; 0/46 deterministic outputs byte-identical
+2026-09-27 22:27:36 | INFO    | gate PASS     Retrieval completeness
+2026-09-27 22:27:36 | WARNING | gate WARN     Business grain (one row per order)
+2026-09-27 22:27:36 | WARNING | gate WARN     Timestamp chronology & completeness
+2026-09-27 22:27:36 | WARNING | gate UNKNOWN  KPI definition ownership
+2026-09-27 22:27:36 | WARNING | gate WARN     Category semantics
+2026-09-27 22:27:36 | WARNING | gate WARN     Cross-source mapping
+2026-09-27 22:27:36 | WARNING | gate WARN     Freshness (restaurant status feed)
+2026-09-27 22:27:36 | INFO    | gate PASS     Metric sanity & independent checks
+2026-09-27 22:27:36 | WARNING | gate WARN     Independent cross-check (observed weather vs client label)
+2026-09-27 22:27:36 | INFO    | gate PASS     Run-over-run stability (vs last published run)
+2026-09-27 22:27:36 | INFO    | GATE OVERALL = WARN | PUBLISH WITH CAVEATS: late delivery rate = 59.84% of 381 validated deliveries (historical definition: 60.16%). State the definition, the excluded orders and the unresolved owner questions next to the number.
+2026-09-27 22:27:36 | INFO    | ==============================================================================
+2026-09-27 22:27:36 | INFO    | STAGE 9/10 DECISION MEMO
+2026-09-27 22:27:36 | INFO    | ==============================================================================
+2026-09-27 22:27:36 | INFO    | ==============================================================================
+2026-09-27 22:27:36 | INFO    | STAGE 10/10 OUTPUTS
+2026-09-27 22:27:36 | INFO    | ==============================================================================

@@ -22,7 +22,7 @@
   "records_missing_required_fields": 0,
   "records_missing_expected_fields": 0,
   "complete": true,
-  "duration_s": 1.818,
+  "duration_s": 2.225,
   "raw_pages": [
     "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\api\\dispatch_page_001.json",
     "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\api\\dispatch_page_002.json",
@@ -41,5 +41,23 @@
     "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\api\\dispatch_page_015.json",
     "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\api\\dispatch_page_016.json"
   ],
+  "raw_page_sha256": {
+    "dispatch_page_001.json": "029c0a51bce03c7ce362b5e5d9bc481cefc17065685c60aaa43eab362466983d",
+    "dispatch_page_002.json": "4e04f3e6aa10c9cec178e8ba7dd00eb7b8bbf93ab2b0b16030fc112535577b59",
+    "dispatch_page_003.json": "f03b6f6121de841c63f76dab4e0bbdd951a5a4535919bdc84f8ca4d307a73162",
+    "dispatch_page_004.json": "2eb32aeedca1b2f8a60eb985a9d3696268a3de4e0feb2f27e8f5ff21ae7fb43f",
+    "dispatch_page_005.json": "f33d7908216cea8c66faa93620096482d55d1d8bb58e9d5d64a729119813e94f",
+    "dispatch_page_006.json": "83511d18238e62ac0d37b81244e4d6d0cfaac00996367fd1286f89a56ef01b5c",
+    "dispatch_page_007.json": "0a9ec78715079c641fa8a38a255e2719678c6bb4c1907b50e9a494e899b85719",
+    "dispatch_page_008.json": "db9b4c78df4f64d7c9c10c718845b8f8084e6c823e906d35c85799f89818b686",
+    "dispatch_page_009.json": "d73f51dd02654c494fc0d593fbc805a89d565b23983438916c7eac810e565e26",
+    "dispatch_page_010.json": "bf97904f16a958290388be64fcc5841ccf0c856190140366851fef38e543ec2f",
+    "dispatch_page_011.json": "0294196062a28ec1f9d8fd4cf2d710da18a80f10c25efcc88eb03afbb969eedb",
+    "dispatch_page_012.json": "117b240b6e8192c8af17be4a5496b9cf86fc7a22eb60a41c9ab46292125f2c3a",
+    "dispatch_page_013.json": "dbc3795b99752354754ad83fcc0d8d19c12fbc9e2a4f742b2755b92b05c1fc9e",
+    "dispatch_page_014.json": "dff73b02b382bb90b994ee726c0fb2a6f90db0b8d3047f0f9459137b30cacaef",
+    "dispatch_page_015.json": "af52fa3b79a88acd302befcaa9200ff2dcf40295348a5335c4a901585d08685b",
+    "dispatch_page_016.json": "f9075203e478a96abe5e81bbf3cfe7a1f06772bdf39766e275348f87e4c2b7dd"
+  },
   "mode": "live"
 }

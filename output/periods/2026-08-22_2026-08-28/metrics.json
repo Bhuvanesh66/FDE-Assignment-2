@@ -1,0 +1,325 @@
+{
+  "headline": {
+    "late_delivery_rate_pct": 55.2,
+    "late_orders": 207,
+    "validated_population": 375,
+    "historical_definition_pct": 55.41,
+    "median_lateness_min": 7.6,
+    "share_lateness_before_pickup_pct": 98.43,
+    "support_contact_rate_late_pct": 30.43,
+    "intervention_coverage_pct": 26.93
+  },
+  "metrics": [
+    {
+      "metric_id": "M1",
+      "metric": "Late delivery rate (validated population)",
+      "category": "outcome",
+      "value": 55.2,
+      "unit": "%",
+      "numerator": 207.0,
+      "denominator": 375.0,
+      "population": "delivered orders with valid promised_eta + actual_delivery_at, passing chronology rules TS-01/02/03",
+      "definition": "late = actual_delivery_at - promised_eta > 0 min",
+      "kpi_link": "PROJECT KPI",
+      "notes": "cancelled orders excluded (Finance); delivered orders without a delivery timestamp are 'unknown', not on-time"
+    },
+    {
+      "metric_id": "M1a",
+      "metric": "Late delivery rate (historical dashboard definition)",
+      "category": "outcome",
+      "value": 55.41,
+      "unit": "%",
+      "numerator": 210.0,
+      "denominator": 379.0,
+      "population": "delivered orders with non-null actual delivery time (Data Team definition, no chronology rules)",
+      "definition": "same formula as M1 on the historical population",
+      "kpi_link": "PROJECT KPI (comparison)",
+      "notes": "reproduces the leadership claim; differs from M1 only by the chronology-violating orders"
+    },
+    {
+      "metric_id": "M1b",
+      "metric": "Meaningfully late rate (> 10 min)",
+      "category": "outcome",
+      "value": 22.13,
+      "unit": "%",
+      "numerator": 83.0,
+      "denominator": 375.0,
+      "population": "validated population",
+      "definition": "delay_min > 10",
+      "kpi_link": "PROJECT KPI (Support Lead definition)",
+      "notes": ""
+    },
+    {
+      "metric_id": "M1c",
+      "metric": "Late delivery rate (sensitivity: back-fill missing delivery time from driver telemetry)",
+      "category": "outcome",
+      "value": 55.01,
+      "unit": "%",
+      "numerator": 214.0,
+      "denominator": 389.0,
+      "population": "validated population + delivered orders whose missing actual_delivery_at is back-filled from the driver 'delivered' event",
+      "definition": "delay computed on the back-filled timestamp",
+      "kpi_link": "PROJECT KPI (sensitivity)",
+      "notes": "14 orders back-filled; NOT the published number - needs Fleet Ops to confirm the driver event is authoritative"
+    },
+    {
+      "metric_id": "M2",
+      "metric": "Median lateness among late orders",
+      "category": "outcome",
+      "value": 7.6,
+      "unit": "min",
+      "numerator": NaN,
+      "denominator": 207.0,
+      "population": "late orders in the validated population",
+      "definition": "median(delay_min | late)",
+      "kpi_link": "severity of the KPI",
+      "notes": ""
+    },
+    {
+      "metric_id": "M2a",
+      "metric": "P90 delay across all validated deliveries",
+      "category": "outcome",
+      "value": 16.8,
+      "unit": "min",
+      "numerator": NaN,
+      "denominator": 375.0,
+      "population": "validated population",
+      "definition": "90th percentile of delay_min (negative = early)",
+      "kpi_link": "severity of the KPI",
+      "notes": ""
+    },
+    {
+      "metric_id": "M2b",
+      "metric": "Worst single delay",
+      "category": "outcome",
+      "value": 36.9,
+      "unit": "min",
+      "numerator": NaN,
+      "denominator": 375.0,
+      "population": "validated population",
+      "definition": "max(delay_min)",
+      "kpi_link": "severity of the KPI",
+      "notes": ""
+    },
+    {
+      "metric_id": "M3",
+      "metric": "Share of lateness accumulated before pickup (vs in transit)",
+      "category": "workflow",
+      "value": 98.43,
+      "unit": "%",
+      "numerator": 3230.5,
+      "denominator": 3282.2,
+      "population": "late orders with Dispatch estimated_pickup_at (207 orders)",
+      "definition": "delay = (pickup_at - estimated_pickup_at) + ((actual - pickup) - (promised - estimated_pickup)); share = sum(max(pre-pickup overrun,0)) / sum(all positive overruns)",
+      "kpi_link": "WHERE delay accumulates -> which stage to fix first",
+      "notes": "pre-pickup mixes restaurant prep and driver travel-to-restaurant: no 'arrived at restaurant' event exists to split them"
+    },
+    {
+      "metric_id": "M3a",
+      "metric": "Median pre-pickup overrun on late orders",
+      "category": "workflow",
+      "value": 14.4,
+      "unit": "min",
+      "numerator": NaN,
+      "denominator": 207.0,
+      "population": "late orders with dispatch estimates",
+      "definition": "median(pickup_at - estimated_pickup_at)",
+      "kpi_link": "stage diagnosis",
+      "notes": ""
+    },
+    {
+      "metric_id": "M3b",
+      "metric": "Median transit overrun on late orders",
+      "category": "workflow",
+      "value": -6.1,
+      "unit": "min",
+      "numerator": NaN,
+      "denominator": 207.0,
+      "population": "late orders with dispatch estimates",
+      "definition": "median((actual - pickup) - (promised - estimated_pickup))",
+      "kpi_link": "stage diagnosis",
+      "notes": ""
+    },
+    {
+      "metric_id": "M4",
+      "metric": "Support contact rate on late orders",
+      "category": "interaction",
+      "value": 30.43,
+      "unit": "%",
+      "numerator": 63.0,
+      "denominator": 207.0,
+      "population": "late orders (validated population)",
+      "definition": "order has a support ticket OR a SUPPORT_OPENED app action",
+      "kpi_link": "customer impact of the KPI",
+      "notes": "on-time comparison: 7.74% of on-time orders had a support contact"
+    },
+    {
+      "metric_id": "M4a",
+      "metric": "Support contact rate on on-time orders",
+      "category": "interaction",
+      "value": 7.74,
+      "unit": "%",
+      "numerator": 13.0,
+      "denominator": 168.0,
+      "population": "on-time orders",
+      "definition": "same definition as M4",
+      "kpi_link": "baseline for M4",
+      "notes": ""
+    },
+    {
+      "metric_id": "M4b",
+      "metric": "Frustrated journeys with no intervention",
+      "category": "interaction",
+      "value": 61,
+      "unit": "orders",
+      "numerator": 61.0,
+      "denominator": 78.0,
+      "population": "all orders with a support contact",
+      "definition": "support contact AND intervention_count == 0",
+      "kpi_link": "missed opportunities for the ops team",
+      "notes": ""
+    },
+    {
+      "metric_id": "M4c",
+      "metric": "Median ETA views per order (late vs on-time)",
+      "category": "interaction",
+      "value": "1 vs 1",
+      "unit": "views",
+      "numerator": NaN,
+      "denominator": NaN,
+      "population": "validated population",
+      "definition": "median(eta_view_count)",
+      "kpi_link": "early-warning signal candidate",
+      "notes": "association only"
+    },
+    {
+      "metric_id": "M5",
+      "metric": "Intervention coverage of delivered orders",
+      "category": "intervention",
+      "value": 26.93,
+      "unit": "%",
+      "numerator": 101.0,
+      "denominator": 375.0,
+      "population": "validated population",
+      "definition": "orders with >= 1 intervention / orders",
+      "kpi_link": "how much of the workflow the ops team touches",
+      "notes": ""
+    },
+    {
+      "metric_id": "M5a",
+      "metric": "Late rate WITH an intervention",
+      "category": "intervention",
+      "value": 49.5,
+      "unit": "%",
+      "numerator": 50.0,
+      "denominator": 101.0,
+      "population": "validated orders with an intervention",
+      "definition": "late orders / orders (with intervention)",
+      "kpi_link": "does intervening coincide with better outcomes?",
+      "notes": "ASSOCIATION ONLY: interventions target late-risk orders (selection effect)"
+    },
+    {
+      "metric_id": "M5b",
+      "metric": "Late rate WITHOUT an intervention",
+      "category": "intervention",
+      "value": 57.3,
+      "unit": "%",
+      "numerator": 157.0,
+      "denominator": 274.0,
+      "population": "validated orders without an intervention",
+      "definition": "late orders / orders (no intervention)",
+      "kpi_link": "baseline for M5a",
+      "notes": ""
+    },
+    {
+      "metric_id": "M5c",
+      "metric": "Most common intervention type",
+      "category": "intervention",
+      "value": "DRIVER_REASSIGNMENT (43)",
+      "unit": "type",
+      "numerator": 43.0,
+      "denominator": 113.0,
+      "population": "all interventions",
+      "definition": "mode(intervention_type)",
+      "kpi_link": "what the ops team actually does",
+      "notes": ""
+    }
+  ],
+  "checks": [
+    {
+      "check": "KPI denominator > 0",
+      "status": "PASS",
+      "evidence": "validated population = 375"
+    },
+    {
+      "check": "late + on-time == validated population",
+      "status": "PASS",
+      "evidence": "207 + 168 == 375"
+    },
+    {
+      "check": "outcome buckets sum to unique orders",
+      "status": "PASS",
+      "evidence": "407 == 407"
+    },
+    {
+      "check": "stage decomposition is exact (pre-pickup + transit overrun == delay)",
+      "status": "PASS",
+      "evidence": "max abs residual = 0.010 min over 375 orders"
+    },
+    {
+      "check": "independent reconciliation vs client order_outcomes.csv (historical definition)",
+      "status": "PASS",
+      "evidence": "pipeline late=210 vs reference late=210; max |delay diff| = 0.000 min over 379 orders"
+    },
+    {
+      "check": "join cardinality: fact_order <- dispatch",
+      "status": "PASS",
+      "evidence": "left=407 right=407 result=407 (right duplicates dropped=0)"
+    },
+    {
+      "check": "join cardinality: fact_order <- driver_events (aggregated)",
+      "status": "PASS",
+      "evidence": "left=407 right=407 result=407 (right duplicates dropped=0)"
+    },
+    {
+      "check": "join cardinality: order_journey <- app_actions (aggregated)",
+      "status": "PASS",
+      "evidence": "left=407 right=280 result=407 (right duplicates dropped=0)"
+    },
+    {
+      "check": "join cardinality: order_journey <- tickets (aggregated)",
+      "status": "PASS",
+      "evidence": "left=407 right=52 result=407 (right duplicates dropped=0)"
+    },
+    {
+      "check": "join cardinality: order_journey <- interventions (aggregated)",
+      "status": "PASS",
+      "evidence": "left=407 right=113 result=407 (right duplicates dropped=0)"
+    },
+    {
+      "check": "independent SQL re-computation of M1 on the raw database",
+      "status": "PASS",
+      "evidence": "SQL: {'valid_delivered': 375.0, 'late_orders': 207.0, 'late_rate_pct': 55.2, 'late_over_10_orders': 83.0} | pipeline: population=375, late=207 | difference pop=0 late=0, explainable by unparseable/tz/padded values=0"
+    },
+    {
+      "check": "SQL metric layer (sql/40_metric_views.sql) == pandas metrics",
+      "status": "PASS",
+      "evidence": "6 quantities agree"
+    },
+    {
+      "check": "retrieval complete vs client control totals (source_systems/manifest.json)",
+      "status": "PASS",
+      "evidence": "orders_rows: published 1603 / observed 1603; unique_orders: published 1600 / observed 1600; support_tickets_rows: published 202 / observed 202; dispatch_records: published 1600 / observed 1600; drivers: published 120 / observed 120; restaurants: published 60 / observed 60"
+    },
+    {
+      "check": "record ledger: raw = clean + dropped duplicates + quarantined + out of period (every dataset)",
+      "status": "PASS",
+      "evidence": "orders: 408=407+0+1+0+0; tickets: 202=55+1+0+0+146; restaurant_status: 502=127+2+0+0+373; app_actions: 2365=607+0+0+0+1758; interventions: 430=113+0+0+0+317; driver_events: 10035=2568+0+0+0+7467; dispatch: 1600=407+0+0+0+1193"
+    },
+    {
+      "check": "order ledger: every unique order in exactly one outcome bucket; population = late + on time",
+      "status": "PASS",
+      "evidence": "407 orders = 207 delivered_late + 168 delivered_on_time + 14 cancelled + 14 unknown_missing_timestamp + 4 excluded_dq_rule; KPI population 375"
+    }
+  ]
+}

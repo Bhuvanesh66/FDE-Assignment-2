@@ -1,0 +1,10 @@
+{
+  "replayed_run": "run_example",
+  "replay_run": "run_replay_check",
+  "artifacts_verified": 28,
+  "artifacts": 28,
+  "outputs_compared": 46,
+  "outputs_identical": 46,
+  "changed": [],
+  "verdict": "REPRODUCED"
+}

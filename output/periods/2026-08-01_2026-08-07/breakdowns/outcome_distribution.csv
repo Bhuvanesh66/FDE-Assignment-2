@@ -1,0 +1,6 @@
+outcome_bucket,orders,share_pct
+delivered_late,188,50.5
+delivered_on_time,157,42.2
+cancelled,14,3.8
+unknown_missing_timestamp,12,3.2
+excluded_dq_rule,1,0.3

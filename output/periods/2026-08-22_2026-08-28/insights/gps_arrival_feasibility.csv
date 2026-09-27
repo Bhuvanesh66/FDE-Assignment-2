@@ -1,0 +1,13 @@
+check,value
+orders with pre-pickup GPS pings,290.0
+orders with >= 2 pre-pickup pings,100.0
+"of those, last ping closer to the restaurant than the first (%)",1.0
+orders with any pre-pickup ping within 1 km of the restaurant (%),4.8
+median distance of the last pre-pickup ping to the restaurant (km),4.47
+"of orders with >= 2 pre-pickup pings, last ping FARTHER from the restaurant than the first (%)",99.0
+GPS pings recorded before pickup (%) - Class 6 expected pings only before pickup,31.0
+orders with >= 3 in-area pings,288.0
+"of those, perfectly straight constant-speed track, R^2 >= 0.999 (%)",91.0
+"of those, perfectly even time gaps between pings, CV < 0.05 (%)",90.6
+delivered orders with GPS pings between pickup and delivery (%),99.2
+"of those with >= 2 pings, last ping closer to the customer than the first (%)",99.1

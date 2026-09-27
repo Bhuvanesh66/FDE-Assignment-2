@@ -34,11 +34,11 @@ Transparent, non-ML analyses that turn the model into actions the client can tak
 
 **Owner.** Operations / Data Team
 
-## D5 · GPS cannot replace the missing arrival event
+## D5 · GPS pings look drawn, not measured - they cannot show arrival at the restaurant
 
-**Finding.** Before pickup, the last GPS ping is closer to the restaurant than the first in only 0.8% of orders; the median last ping is 4.35 km away.
+**Finding.** Before pickup, the last ping is FARTHER from the restaurant than the first in 99.2% of orders (closer in only 0.8%) - a rider cannot leave with the food before picking it up. 91.3% of tracks with 3+ pings are perfectly straight, constant-speed lines and 90.7% have perfectly even time gaps - real device tracks are never that clean. Class 6 found pings only before pickup; here 30.8% of pings fall before pickup and the rest after it (99.4% of post-pickup tracks close in on the customer).
 
-**So what.** A geofence built on this feed would invent arrivals. Instrument an explicit 'arrived at restaurant' tap instead.
+**So what.** Do not build a geofence or a live GPS ETA on this feed: it would invent arrivals. Ask Fleet Ops whether pings are device readings or app interpolation, and instrument an explicit 'arrived at restaurant' tap - the one event that splits kitchen delay from rider delay, which is where the lateness builds.
 
 **Owner.** Fleet Ops / Product
 
@@ -182,6 +182,13 @@ Transparent, non-ML analyses that turn the model into actions the client can tak
 | of those, last ping closer to the restaurant than the first (%) | 0.80 |
 | orders with any pre-pickup ping within 1 km of the restaurant (%) | 5.90 |
 | median distance of the last pre-pickup ping to the restaurant (km) | 4.35 |
+| of orders with >= 2 pre-pickup pings, last ping FARTHER from the restaurant than the first (%) | 99.20 |
+| GPS pings recorded before pickup (%) - Class 6 expected pings only before pickup | 30.80 |
+| orders with >= 3 in-area pings | 1,111.00 |
+| of those, perfectly straight constant-speed track, R^2 >= 0.999 (%) | 91.30 |
+| of those, perfectly even time gaps between pings, CV < 0.05 (%) | 90.70 |
+| delivered orders with GPS pings between pickup and delivery (%) | 99.10 |
+| of those with >= 2 pings, last ping closer to the customer than the first (%) | 99.40 |
 
 ### late_rate_heatmap_weekday_hour
 

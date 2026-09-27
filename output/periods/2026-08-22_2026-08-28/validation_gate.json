@@ -1,0 +1,78 @@
+{
+  "overall_status": "WARN",
+  "publish_decision": "PUBLISH WITH CAVEATS: late delivery rate = 55.2% of 375 validated deliveries (historical definition: 55.41%). State the definition, the excluded orders and the unresolved owner questions next to the number.",
+  "blocking": [],
+  "unresolved": [
+    "Business grain (one row per order)",
+    "Timestamp chronology & completeness",
+    "KPI definition ownership",
+    "Category semantics",
+    "Cross-source mapping",
+    "Freshness (restaurant status feed)",
+    "Independent cross-check (observed weather vs client label)"
+  ],
+  "checks": [
+    {
+      "check": "Retrieval completeness",
+      "status": "PASS",
+      "evidence": "API: 1600 records / expected 1600 in 16 pages, retries=0, mode=live; client control totals PASS (observed/published: orders_rows 1603/1603; unique_orders 1600/1600; support_tickets_rows 202/202; dispatch_records 1600/1600; drivers 120/120; restaurants 60/60); orders extract vs server COUNT(*): 408/408; schema-contract failures=none; missing files=none; missing optional reference files=none; empty files=none; zero-row SQL extracts=none",
+      "action": "a count mismatch against the owner's control totals refuses publication; raw pages + file copies + SQL extracts preserved with SHA-256 under data/raw/<run_id>"
+    },
+    {
+      "check": "Business grain (one row per order)",
+      "status": "WARN",
+      "evidence": "raw duplicate rows removed by cleaning: 1 (corrected; conflicting copies kept in quarantine)",
+      "action": "exact duplicates dropped; conflicting duplicates keep first row, conflict recorded in quarantine"
+    },
+    {
+      "check": "Timestamp chronology & completeness",
+      "status": "WARN",
+      "evidence": "TS-00=0; TS-01=2; TS-02=2; TS-03=0; TS-04=14; TS-05=0",
+      "action": "violating orders excluded from the KPI population (reject) and listed in the data-quality report; nothing deleted"
+    },
+    {
+      "check": "KPI definition ownership",
+      "status": "UNKNOWN",
+      "evidence": "no canonical KPI owner documented; 4 stakeholder definitions found: VP Operations: Any delivered order after the promised ETA is late.; Support Lead: Only more than 10 minutes beyond ETA should count as meaningfully late.; Finance: Cancelled/refunded orders should not count in operational performance.; Data Team: Historical dashboard uses delivered orders with non-null actual delivery time. | pipeline publishes late = delay > 0 min and reports > 10 min alongside",
+      "action": "VP Operations to sign off the definition; until then every output states the definition next to the number"
+    },
+    {
+      "check": "Category semantics",
+      "status": "WARN",
+      "evidence": "ST-01: fixes=2, unexpected={}; ST-02: fixes=2, unexpected={}; ST-04: fixes=2, unexpected={'handoff': 1}; ST-05: fixes=2, unexpected={}",
+      "action": "representation normalised; semantic look-alikes NOT merged, owner decision required: {'ST-04': {'handoff': 'handed_off'}, 'ST-05': {'eta_issue': 'eta_changed'}}"
+    },
+    {
+      "check": "Cross-source mapping",
+      "status": "WARN",
+      "evidence": "coverage %: ID-02=100.0, ID-03=99.75, ID-04=100.0, ID-05=94.55, ID-06=100.0, ID-07=100.0, ID-08=100.0, ID-09=100.0, ID-10=100.0; CX-01: orders.driver_id equals dispatch ORIGINAL driver for 407 orders -> the orders table is not updated after reassignment; Dispatch is authoritative for the final driver; CX-02: compared 393 orders; CX-03: dispatch reassigned=18, intervention DRIVER_REASSIGNMENT=43, in both=0, only in interventions=43, only in dispatch=18",
+      "action": "unmapped records retained and flagged; Dispatch treated as authoritative for the final driver"
+    },
+    {
+      "check": "Freshness (restaurant status feed)",
+      "status": "WARN",
+      "evidence": "status rows joined=127 covering 127 of 407 orders (31.2%); ready/handed_off written >15 min after pickup=3; updated before order creation=0; median lag vs pickup=-4.9 min; timestamps have minute precision only",
+      "action": "restaurant status usable for weekly analytics only; not for live ETA or accountability"
+    },
+    {
+      "check": "Metric sanity & independent checks",
+      "status": "PASS",
+      "evidence": "15 checks passed",
+      "action": "see output/metric_checks.csv"
+    },
+    {
+      "check": "Independent cross-check (observed weather vs client label)",
+      "status": "WARN",
+      "evidence": "hours covered=100.0%; agreement=54.1%; Cohen's kappa=-0.004; mean observed mm by label={'clear': 0.45, 'heavy_rain': 0.34, 'rain': 0.55}; source mode=live",
+      "action": "weather_bucket is not used to explain lateness until Operations confirms how it is produced"
+    },
+    {
+      "check": "Run-over-run stability (vs last published run)",
+      "status": "PASS",
+      "evidence": "KPI moved +0.00 pp vs run_weekly_2026-08-22_2026-08-28 (its previous publication, 2026-09-27T22:04:13); no rule got worse; 0/46 deterministic outputs byte-identical",
+      "action": "see output/run_comparison.md"
+    }
+  ],
+  "leadership_claim": "Late Delivery Rate is 56%",
+  "run_id": "run_weekly_2026-08-22_2026-08-28"
+}

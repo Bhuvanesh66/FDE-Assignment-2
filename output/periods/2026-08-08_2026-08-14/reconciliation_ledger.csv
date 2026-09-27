@@ -1,0 +1,12 @@
+dataset,raw_rows,exact_duplicates_dropped,conflicting_duplicates_dropped,quarantined,out_of_period,clean_rows,balanced
+orders,410,0,1,0,0,409,True
+restaurants,60,0,0,0,0,60,True
+drivers,120,0,0,0,0,120,True
+customers,900,0,0,0,0,900,True
+tickets,202,1,0,0,148,53,True
+restaurant_status,502,2,0,0,380,120,True
+app_actions,2365,0,0,0,1803,562,True
+interventions,430,0,0,0,319,111,True
+driver_events,10035,0,0,0,7497,2538,True
+weather_obs,192,0,0,0,0,192,True
+dispatch,1600,0,0,0,1191,409,True

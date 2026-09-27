@@ -1,0 +1,6 @@
+intervention_type,orders,late_orders,median_delay_min,before_promised_eta_pct,late_rate_pct
+CUSTOMER_CREDIT,17,11,2.7,0.0,64.7
+DRIVER_REASSIGNMENT,32,19,1.9,100.0,59.4
+PRIORITY_DISPATCH,14,8,3.4,100.0,57.1
+(no intervention),259,140,0.7,,54.05
+RESTAURANT_CONTACT,23,10,-2.1,100.0,43.5

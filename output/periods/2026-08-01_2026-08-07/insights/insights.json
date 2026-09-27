@@ -1,0 +1,109 @@
+{
+  "headline": {
+    "early_warning": {
+      "chosen_grace_min": 10,
+      "holdout": false,
+      "train_until_day": null,
+      "train_orders": 345,
+      "test_orders": 345,
+      "test_precision_pct": 96.5,
+      "test_recall_pct": 72.9,
+      "test_alert_rate_pct": 41.2,
+      "test_median_lead_min": 45.0,
+      "all_caught_late": 137,
+      "all_alerts": 142,
+      "caught_late_without_intervention": 104,
+      "interventions_on_unflagged_on_time": 36
+    },
+    "eta": {
+      "target_on_time_rate_pct": 80,
+      "padding_needed_min": 12,
+      "late_rate_at_needed_padding_pct": 18.8,
+      "pickup_estimate_bias_median_min": 7.7,
+      "pickup_estimate_bias_p75_min": 14.7,
+      "planned_pickup_median_min": 18.0,
+      "actual_pickup_median_min": 25.7,
+      "promised_window_median_min": 72.8
+    },
+    "restaurants": {
+      "entity": "restaurant_id",
+      "fleet_late_rate_pct": 54.5,
+      "entities": 60,
+      "judgeable": 0,
+      "significantly_worse": 0,
+      "significantly_better": 0,
+      "naive_top10_significant": 0,
+      "worse_list": []
+    },
+    "drivers": {
+      "entity": "driver_id",
+      "fleet_late_rate_pct": 54.5,
+      "entities": 113,
+      "judgeable": 1,
+      "significantly_worse": 0,
+      "significantly_better": 0,
+      "naive_top10_significant": 0,
+      "worse_list": []
+    },
+    "weather": {
+      "orders_covered": 372,
+      "kappa": 0.019,
+      "agreement_pct": 42.7,
+      "late_rate_observed_rain_pct": 54.1,
+      "late_rate_observed_dry_pct": 55.2,
+      "mean_mm_label_clear": 1.02,
+      "mean_mm_label_heavy_rain": 0.96
+    },
+    "gps": {
+      "orders_with_pre_pickup_pings": 272,
+      "approaching_pct": 1.2,
+      "moving_away_before_pickup_pct": 98.8,
+      "pings_before_pickup_pct": 29.8,
+      "within_1km_pct": 6.6,
+      "median_last_ping_km": 4.26,
+      "verdict": "GPS pings look interpolated, not measured: each track is a straight constant-speed line from the restaurant to the customer that ignores the pickup time, so GPS cannot show when the rider reached the restaurant",
+      "orders_with_3plus_pings": 265,
+      "straight_line_tracks_pct": 88.3,
+      "evenly_spaced_tracks_pct": 87.5,
+      "orders_with_post_pickup_pings_pct": 98.6,
+      "post_pickup_converging_pct": 99.7
+    }
+  },
+  "findings": [
+    {
+      "id": "D1",
+      "title": "A proactive trigger that works today, without AI",
+      "finding": "Alerting when an order is still not picked up 10 min after Dispatch's own estimated pickup catches 72.9% of late orders with 96.5% precision on the held-out week, a median 45.0 min before the promise breaks.",
+      "so_what": "104 late orders the trigger would have caught received no intervention at all; 36 interventions went to orders that were never at risk.",
+      "owner": "Operations"
+    },
+    {
+      "id": "D2",
+      "title": "The promise is optimistic before the food even leaves",
+      "finding": "Dispatch's pickup estimate is short by a median 7.7 min (planned 18.0 min vs actual 25.7 min from order to pickup). Reaching 80% on-time by padding alone needs +12 min on every promise.",
+      "so_what": "Fix the pickup estimate (the input) rather than padding the promise (the output); padding trades lateness for longer quoted times, whose effect on conversion is unknown.",
+      "owner": "Product / ETA service"
+    },
+    {
+      "id": "D3",
+      "title": "Do not publish a restaurant or driver blame list",
+      "finding": "Only 0 of 0 judgeable restaurants (none) and 0 of 1 drivers are statistically worse than the fleet; a naive top-10 list would name 10 restaurants, of which 0 survive the test.",
+      "so_what": "Lateness is systemic; accountability conversations should start with the significant few, with the confidence interval shown.",
+      "owner": "Restaurant Ops / Fleet Ops"
+    },
+    {
+      "id": "D4",
+      "title": "The weather label does not match the weather",
+      "finding": "Against Open-Meteo's observed hourly rainfall, the client's weather_bucket agrees 42.7% of the time (Cohen's kappa 0.019, i.e. no better than chance). Orders labelled heavy rain saw 0.96 mm on average, orders labelled clear 1.02 mm. Observed rain: 54.1% late vs 55.2% when dry.",
+      "so_what": "'Weather causes delays' cannot be defended with this field; ask who writes weather_bucket and when, before any weather-aware ETA or staffing plan.",
+      "owner": "Operations / Data Team"
+    },
+    {
+      "id": "D5",
+      "title": "GPS pings look drawn, not measured - they cannot show arrival at the restaurant",
+      "finding": "Before pickup, the last ping is FARTHER from the restaurant than the first in 98.8% of orders (closer in only 1.2%) - a rider cannot leave with the food before picking it up. 88.3% of tracks with 3+ pings are perfectly straight, constant-speed lines and 87.5% have perfectly even time gaps - real device tracks are never that clean. Class 6 found pings only before pickup; here 29.8% of pings fall before pickup and the rest after it (99.7% of post-pickup tracks close in on the customer).",
+      "so_what": "Do not build a geofence or a live GPS ETA on this feed: it would invent arrivals. Ask Fleet Ops whether pings are device readings or app interpolation, and instrument an explicit 'arrived at restaurant' tap - the one event that splits kitchen delay from rider delay, which is where the lateness builds.",
+      "owner": "Fleet Ops / Product"
+    }
+  ]
+}

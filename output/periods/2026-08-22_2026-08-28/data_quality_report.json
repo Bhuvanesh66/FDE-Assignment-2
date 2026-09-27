@@ -1,0 +1,1082 @@
+{
+  "cleaning": {
+    "actions": [
+      {
+        "dataset": "orders",
+        "column": "final_status",
+        "action": "normalise_category (trim, case, spaces->_)",
+        "count": 2,
+        "detail": "'Delivered'->'delivered'"
+      },
+      {
+        "dataset": "orders",
+        "column": "traffic_bucket",
+        "action": "normalise_category (trim, case, spaces->_)",
+        "count": 2,
+        "detail": "'HIGH'->'high'"
+      },
+      {
+        "dataset": "orders",
+        "column": "order_id",
+        "action": "drop_conflicting_duplicate_key_rows (keep first)",
+        "count": 1,
+        "detail": "1 keys duplicated; differing columns: ['traffic_bucket']"
+      },
+      {
+        "dataset": "tickets",
+        "column": "category",
+        "action": "normalise_category (trim, case, spaces->_)",
+        "count": 2,
+        "detail": "'ETA issue'->'eta_issue'; 'Late Delivery'->'late_delivery'"
+      },
+      {
+        "dataset": "tickets",
+        "column": "*",
+        "action": "drop_exact_duplicate_rows",
+        "count": 1,
+        "detail": ""
+      },
+      {
+        "dataset": "restaurant_status",
+        "column": "status",
+        "action": "normalise_category (trim, case, spaces->_)",
+        "count": 2,
+        "detail": "'READY'->'ready'; 'Ready'->'ready'"
+      },
+      {
+        "dataset": "restaurant_status",
+        "column": "*",
+        "action": "drop_exact_duplicate_rows",
+        "count": 2,
+        "detail": ""
+      },
+      {
+        "dataset": "tickets",
+        "column": "order_id",
+        "action": "out_of_period (record of another period's order)",
+        "count": 146,
+        "detail": ""
+      },
+      {
+        "dataset": "restaurant_status",
+        "column": "order_id",
+        "action": "out_of_period (record of another period's order)",
+        "count": 373,
+        "detail": ""
+      },
+      {
+        "dataset": "app_actions",
+        "column": "order_id",
+        "action": "out_of_period (record of another period's order)",
+        "count": 1758,
+        "detail": ""
+      },
+      {
+        "dataset": "interventions",
+        "column": "order_id",
+        "action": "out_of_period (record of another period's order)",
+        "count": 317,
+        "detail": ""
+      },
+      {
+        "dataset": "driver_events",
+        "column": "order_id",
+        "action": "out_of_period (record of another period's order)",
+        "count": 7467,
+        "detail": ""
+      },
+      {
+        "dataset": "dispatch",
+        "column": "order_id",
+        "action": "out_of_period (record of another period's order)",
+        "count": 1193,
+        "detail": ""
+      }
+    ],
+    "timestamp_stats": [
+      {
+        "column": "orders.created_at",
+        "total": 408,
+        "null_or_blank": 0,
+        "parsed": 408,
+        "unparseable": 0,
+        "tz_aware_converted": 0,
+        "formats_seen": {
+          "9999-99-99T99:99:99": 408
+        },
+        "unparseable_samples": []
+      },
+      {
+        "column": "orders.promised_eta",
+        "total": 408,
+        "null_or_blank": 0,
+        "parsed": 408,
+        "unparseable": 0,
+        "tz_aware_converted": 0,
+        "formats_seen": {
+          "9999-99-99T99:99:99.999999": 209,
+          "9999-99-99T99:99:99": 199
+        },
+        "unparseable_samples": []
+      },
+      {
+        "column": "orders.pickup_at",
+        "total": 408,
+        "null_or_blank": 0,
+        "parsed": 408,
+        "unparseable": 0,
+        "tz_aware_converted": 0,
+        "formats_seen": {
+          "9999-99-99T99:99:99.999999": 408
+        },
+        "unparseable_samples": []
+      },
+      {
+        "column": "orders.actual_delivery_at",
+        "total": 408,
+        "null_or_blank": 28,
+        "parsed": 380,
+        "unparseable": 0,
+        "tz_aware_converted": 0,
+        "formats_seen": {
+          "9999-99-99T99:99:99.999999": 380
+        },
+        "unparseable_samples": []
+      },
+      {
+        "column": "tickets.created_at",
+        "total": 202,
+        "null_or_blank": 0,
+        "parsed": 202,
+        "unparseable": 0,
+        "tz_aware_converted": 0,
+        "formats_seen": {
+          "9999-99-99T99:99:99": 202
+        },
+        "unparseable_samples": []
+      },
+      {
+        "column": "restaurant_status.last_updated_at",
+        "total": 502,
+        "null_or_blank": 0,
+        "parsed": 502,
+        "unparseable": 0,
+        "tz_aware_converted": 0,
+        "formats_seen": {
+          "9999-99-99T99:99:99": 502
+        },
+        "unparseable_samples": []
+      },
+      {
+        "column": "app_actions.action_at",
+        "total": 2365,
+        "null_or_blank": 0,
+        "parsed": 2365,
+        "unparseable": 0,
+        "tz_aware_converted": 0,
+        "formats_seen": {
+          "9999-99-99T99:99:99": 2292,
+          "9999-99-99T99:99:99.999999": 73
+        },
+        "unparseable_samples": []
+      },
+      {
+        "column": "interventions.intervention_at",
+        "total": 430,
+        "null_or_blank": 0,
+        "parsed": 430,
+        "unparseable": 0,
+        "tz_aware_converted": 0,
+        "formats_seen": {
+          "9999-99-99T99:99:99": 408,
+          "9999-99-99T99:99:99.999999": 22
+        },
+        "unparseable_samples": []
+      },
+      {
+        "column": "driver_events.timestamp",
+        "total": 10035,
+        "null_or_blank": 0,
+        "parsed": 10035,
+        "unparseable": 0,
+        "tz_aware_converted": 0,
+        "formats_seen": {
+          "9999-99-99T99:99:99.999999": 10035
+        },
+        "unparseable_samples": []
+      },
+      {
+        "column": "dispatch.assigned_at",
+        "total": 1600,
+        "null_or_blank": 0,
+        "parsed": 1600,
+        "unparseable": 0,
+        "tz_aware_converted": 0,
+        "formats_seen": {
+          "9999-99-99T99:99:99.999999": 1600
+        },
+        "unparseable_samples": []
+      },
+      {
+        "column": "dispatch.reassigned_at",
+        "total": 1600,
+        "null_or_blank": 1505,
+        "parsed": 95,
+        "unparseable": 0,
+        "tz_aware_converted": 0,
+        "formats_seen": {
+          "9999-99-99T99:99:99.999999": 95
+        },
+        "unparseable_samples": []
+      },
+      {
+        "column": "dispatch.estimated_pickup_at",
+        "total": 1600,
+        "null_or_blank": 0,
+        "parsed": 1600,
+        "unparseable": 0,
+        "tz_aware_converted": 0,
+        "formats_seen": {
+          "9999-99-99T99:99:99": 1600
+        },
+        "unparseable_samples": []
+      },
+      {
+        "column": "dispatch.current_delivery_eta",
+        "total": 1600,
+        "null_or_blank": 0,
+        "parsed": 1600,
+        "unparseable": 0,
+        "tz_aware_converted": 0,
+        "formats_seen": {
+          "9999-99-99T99:99:99.999999": 1230,
+          "9999-99-99T99:99:99": 370
+        },
+        "unparseable_samples": []
+      }
+    ],
+    "unexpected_categories": {
+      "tickets.category": {
+        "eta_issue": 1
+      },
+      "restaurant_status.status": {
+        "handoff": 1
+      }
+    },
+    "semantic_candidates": {
+      "tickets.category": {
+        "eta_issue": "eta_changed"
+      },
+      "restaurant_status.status": {
+        "handoff": "handed_off"
+      }
+    },
+    "quarantine_counts": {},
+    "duplicate_conflict_counts": {
+      "orders": 2
+    },
+    "raw_row_counts": {
+      "orders": 408,
+      "restaurants": 60,
+      "drivers": 120,
+      "customers": 900,
+      "tickets": 202,
+      "restaurant_status": 502,
+      "app_actions": 2365,
+      "interventions": 430,
+      "driver_events": 10035,
+      "weather_obs": 192,
+      "dispatch": 1600
+    },
+    "clean_row_counts": {
+      "orders": 407,
+      "restaurants": 60,
+      "drivers": 120,
+      "customers": 900,
+      "tickets": 55,
+      "restaurant_status": 127,
+      "app_actions": 607,
+      "interventions": 113,
+      "driver_events": 2568,
+      "weather_obs": 192,
+      "dispatch": 407
+    }
+  },
+  "rules": [
+    {
+      "rule_id": "GR-01",
+      "rule": "One row per business order",
+      "dataset": "orders",
+      "action": "correct",
+      "owner": "Data Team",
+      "status": "WARN",
+      "violations": 0,
+      "population": 407,
+      "violation_pct": 0.0,
+      "business_reason": "Every KPI denominator counts orders; a repeated order would count twice.",
+      "detection": "order_id duplicated after cleaning (raw duplicates reported by the cleaning stage)",
+      "detail": "raw duplicate rows removed by cleaning: 1 (corrected; conflicting copies kept in quarantine)",
+      "sample_keys": [],
+      "extra": {}
+    },
+    {
+      "rule_id": "ID-01",
+      "rule": "order_id present and well-formed",
+      "dataset": "orders",
+      "action": "flag",
+      "owner": "Data Team",
+      "status": "PASS",
+      "violations": 0,
+      "population": 407,
+      "violation_pct": 0.0,
+      "business_reason": "An order without an identifier cannot be joined to any other system.",
+      "detection": "null order_id (quarantined) or layout not matching the O##### pattern",
+      "detail": "0 rows quarantined for null order_id; 0 ids with a different layout (kept)",
+      "sample_keys": [],
+      "extra": {}
+    },
+    {
+      "rule_id": "ID-02",
+      "rule": "orders.customer_id maps to a known customer",
+      "dataset": "orders",
+      "action": "flag",
+      "owner": "Data Team",
+      "status": "PASS",
+      "violations": 0,
+      "population": 407,
+      "violation_pct": 0.0,
+      "business_reason": "Customer-level metrics and app-interaction joins need a real customer.",
+      "detection": "customer_id not in customers",
+      "detail": "null=0, unknown=0",
+      "sample_keys": [],
+      "extra": {
+        "coverage_pct": 100.0
+      }
+    },
+    {
+      "rule_id": "ID-03",
+      "rule": "orders.restaurant_id maps to a known restaurant",
+      "dataset": "orders",
+      "action": "flag",
+      "owner": "Restaurant Ops",
+      "status": "WARN",
+      "violations": 1,
+      "population": 407,
+      "violation_pct": 0.25,
+      "business_reason": "Restaurant attribution of delay is impossible for an unknown restaurant.",
+      "detection": "restaurant_id null or not in restaurants",
+      "detail": "null=1, unknown=0",
+      "sample_keys": [
+        "O00401"
+      ],
+      "extra": {
+        "coverage_pct": 99.75
+      }
+    },
+    {
+      "rule_id": "ID-04",
+      "rule": "orders.driver_id maps to a known driver",
+      "dataset": "orders",
+      "action": "flag",
+      "owner": "Fleet Ops",
+      "status": "PASS",
+      "violations": 0,
+      "population": 407,
+      "violation_pct": 0.0,
+      "business_reason": "Driver attribution and telemetry joins need a real driver.",
+      "detection": "driver_id null or not in drivers",
+      "detail": "null=0, unknown=0",
+      "sample_keys": [],
+      "extra": {
+        "coverage_pct": 100.0
+      }
+    },
+    {
+      "rule_id": "ID-05",
+      "rule": "tickets.order_id maps to an order",
+      "dataset": "tickets",
+      "action": "flag",
+      "owner": "Support Lead",
+      "status": "WARN",
+      "violations": 3,
+      "population": 55,
+      "violation_pct": 5.45,
+      "business_reason": "A complaint that cannot be tied to an order cannot be reconciled with the operational story.",
+      "detection": "order_id null or not in orders",
+      "detail": "null=3, unknown=0",
+      "sample_keys": [
+        "T00001",
+        "T00002",
+        "T00003"
+      ],
+      "extra": {
+        "coverage_pct": 94.55
+      }
+    },
+    {
+      "rule_id": "ID-06",
+      "rule": "restaurant_status rows map to an order and agree on the restaurant",
+      "dataset": "restaurant_status",
+      "action": "flag",
+      "owner": "Restaurant Ops",
+      "status": "PASS",
+      "violations": 0,
+      "population": 127,
+      "violation_pct": 0.0,
+      "business_reason": "Status events for a foreign order (another platform?) would corrupt restaurant metrics.",
+      "detection": "order_id not in orders OR restaurant_id differs from the order's restaurant",
+      "detail": "unknown order=0, restaurant mismatch=0",
+      "sample_keys": [],
+      "extra": {
+        "coverage_pct": 100.0
+      }
+    },
+    {
+      "rule_id": "ID-07",
+      "rule": "app actions map to an order and its customer",
+      "dataset": "app_actions",
+      "action": "flag",
+      "owner": "Product / App",
+      "status": "PASS",
+      "violations": 0,
+      "population": 607,
+      "violation_pct": 0.0,
+      "business_reason": "Customer interaction counts must belong to the right order.",
+      "detection": "order_id not in orders OR customer_id differs from the order's customer",
+      "detail": "unknown order=0, customer mismatch=0",
+      "sample_keys": [],
+      "extra": {
+        "coverage_pct": 100.0
+      }
+    },
+    {
+      "rule_id": "ID-08",
+      "rule": "interventions map to an order",
+      "dataset": "interventions",
+      "action": "flag",
+      "owner": "Support Lead",
+      "status": "PASS",
+      "violations": 0,
+      "population": 113,
+      "violation_pct": 0.0,
+      "business_reason": "An intervention without an order cannot be linked to an outcome.",
+      "detection": "order_id not in orders",
+      "detail": "",
+      "sample_keys": [],
+      "extra": {
+        "coverage_pct": 100.0
+      }
+    },
+    {
+      "rule_id": "ID-09",
+      "rule": "orders and Dispatch cover each other",
+      "dataset": "orders",
+      "action": "flag",
+      "owner": "Dispatch",
+      "status": "PASS",
+      "violations": 0,
+      "population": 407,
+      "violation_pct": 0.0,
+      "business_reason": "Assignment/reassignment context comes only from Dispatch; missing coverage hides reassignments.",
+      "detection": "order missing in dispatch, or dispatch record whose order is unknown",
+      "detail": "orders without dispatch record=0; dispatch records for unknown orders=0",
+      "sample_keys": [],
+      "extra": {
+        "orders_coverage_pct": 100.0,
+        "dispatch_unknown_orders": 0
+      }
+    },
+    {
+      "rule_id": "ID-10",
+      "rule": "driver events map to an order",
+      "dataset": "driver_events",
+      "action": "flag",
+      "owner": "Fleet Ops",
+      "status": "PASS",
+      "violations": 0,
+      "population": 2568,
+      "violation_pct": 0.0,
+      "business_reason": "Telemetry for unknown orders cannot be used for pickup/delivery inference.",
+      "detection": "order_id not in orders",
+      "detail": "",
+      "sample_keys": [],
+      "extra": {
+        "coverage_pct": 100.0
+      }
+    },
+    {
+      "rule_id": "ST-01",
+      "rule": "final_status uses an agreed vocabulary",
+      "dataset": "orders",
+      "action": "flag",
+      "owner": "VP Operations",
+      "status": "WARN",
+      "violations": 0,
+      "population": 407,
+      "violation_pct": 0.0,
+      "business_reason": "The KPI counts 'delivered' orders only; a new status ('suspended', 'Delivered') would silently leave the population.",
+      "detection": "value not in {delivered, cancelled} after representation normalisation",
+      "detail": "representation fixes=2; unexpected values={}; semantic candidates (owner decision)={}",
+      "sample_keys": [],
+      "extra": {
+        "unexpected": {},
+        "semantic_candidates": {},
+        "representation_fixes": 2
+      }
+    },
+    {
+      "rule_id": "ST-02",
+      "rule": "traffic_bucket uses an agreed vocabulary",
+      "dataset": "orders",
+      "action": "flag",
+      "owner": "Operations",
+      "status": "WARN",
+      "violations": 0,
+      "population": 407,
+      "violation_pct": 0.0,
+      "business_reason": "Traffic breakdowns need consistent buckets.",
+      "detection": "value not in {low, medium, high, severe}",
+      "detail": "representation fixes=2; unexpected values={}; semantic candidates (owner decision)={}",
+      "sample_keys": [],
+      "extra": {
+        "unexpected": {},
+        "semantic_candidates": {},
+        "representation_fixes": 2
+      }
+    },
+    {
+      "rule_id": "ST-03",
+      "rule": "weather_bucket uses an agreed vocabulary",
+      "dataset": "orders",
+      "action": "flag",
+      "owner": "Operations",
+      "status": "PASS",
+      "violations": 0,
+      "population": 407,
+      "violation_pct": 0.0,
+      "business_reason": "Weather breakdowns need consistent buckets.",
+      "detection": "value not in {clear, rain, heavy_rain}",
+      "detail": "representation fixes=0; unexpected values={}; semantic candidates (owner decision)={}",
+      "sample_keys": [],
+      "extra": {
+        "unexpected": {},
+        "semantic_candidates": {},
+        "representation_fixes": 0
+      }
+    },
+    {
+      "rule_id": "ST-04",
+      "rule": "restaurant status uses an agreed vocabulary",
+      "dataset": "restaurant_status",
+      "action": "flag",
+      "owner": "Restaurant Ops",
+      "status": "WARN",
+      "violations": 1,
+      "population": 127,
+      "violation_pct": 0.79,
+      "business_reason": "'handoff' vs 'handed_off' may be two systems or two meanings.",
+      "detection": "value not in {preparing, ready, handed_off, unknown}",
+      "detail": "representation fixes=2; unexpected values={'handoff': 1}; semantic candidates (owner decision)={'handoff': 'handed_off'}",
+      "sample_keys": [
+        "O00675"
+      ],
+      "extra": {
+        "unexpected": {
+          "handoff": 1
+        },
+        "semantic_candidates": {
+          "handoff": "handed_off"
+        },
+        "representation_fixes": 2
+      }
+    },
+    {
+      "rule_id": "ST-05",
+      "rule": "ticket category uses an agreed vocabulary",
+      "dataset": "tickets",
+      "action": "flag",
+      "owner": "Support Lead",
+      "status": "WARN",
+      "violations": 0,
+      "population": 55,
+      "violation_pct": 0.0,
+      "business_reason": "Complaint mix by category drives the customer-view comparison.",
+      "detection": "value not in the six support categories",
+      "detail": "representation fixes=2; unexpected values={}; semantic candidates (owner decision)={'eta_issue': 'eta_changed'}",
+      "sample_keys": [],
+      "extra": {
+        "unexpected": {},
+        "semantic_candidates": {
+          "eta_issue": "eta_changed"
+        },
+        "representation_fixes": 2
+      }
+    },
+    {
+      "rule_id": "ST-06",
+      "rule": "app action_type uses an agreed vocabulary",
+      "dataset": "app_actions",
+      "action": "flag",
+      "owner": "Product / App",
+      "status": "PASS",
+      "violations": 0,
+      "population": 607,
+      "violation_pct": 0.0,
+      "business_reason": "support_opened / cancel_attempted flags depend on it.",
+      "detection": "value not in {ETA_VIEWED, SUPPORT_OPENED, CANCEL_ATTEMPTED}",
+      "detail": "representation fixes=0; unexpected values={}; semantic candidates (owner decision)={}",
+      "sample_keys": [],
+      "extra": {
+        "unexpected": {},
+        "semantic_candidates": {},
+        "representation_fixes": 0
+      }
+    },
+    {
+      "rule_id": "ST-07",
+      "rule": "intervention_type uses an agreed vocabulary",
+      "dataset": "interventions",
+      "action": "flag",
+      "owner": "Support Lead",
+      "status": "PASS",
+      "violations": 0,
+      "population": 113,
+      "violation_pct": 0.0,
+      "business_reason": "Intervention metrics are grouped by type.",
+      "detection": "value not in the four intervention types",
+      "detail": "representation fixes=0; unexpected values={}; semantic candidates (owner decision)={}",
+      "sample_keys": [],
+      "extra": {
+        "unexpected": {},
+        "semantic_candidates": {},
+        "representation_fixes": 0
+      }
+    },
+    {
+      "rule_id": "ST-08",
+      "rule": "dispatch_status uses an agreed vocabulary",
+      "dataset": "dispatch",
+      "action": "flag",
+      "owner": "Dispatch",
+      "status": "PASS",
+      "violations": 0,
+      "population": 407,
+      "violation_pct": 0.0,
+      "business_reason": "Cross-check of order status against Dispatch.",
+      "detection": "value not in {completed, cancelled}",
+      "detail": "representation fixes=0; unexpected values={}; semantic candidates (owner decision)={}",
+      "sample_keys": [],
+      "extra": {
+        "unexpected": {},
+        "semantic_candidates": {},
+        "representation_fixes": 0
+      }
+    },
+    {
+      "rule_id": "ST-09",
+      "rule": "driver event type uses an agreed vocabulary",
+      "dataset": "driver_events",
+      "action": "flag",
+      "owner": "Fleet Ops",
+      "status": "PASS",
+      "violations": 0,
+      "population": 2568,
+      "violation_pct": 0.0,
+      "business_reason": "Lifecycle reconstruction relies on assigned/picked_up/delivered.",
+      "detection": "value not in {assigned, gps_ping, picked_up, delivered}",
+      "detail": "representation fixes=0; unexpected values={}; semantic candidates (owner decision)={}",
+      "sample_keys": [],
+      "extra": {
+        "unexpected": {},
+        "semantic_candidates": {},
+        "representation_fixes": 0
+      }
+    },
+    {
+      "rule_id": "TS-00",
+      "rule": "KPI timestamps are parseable",
+      "dataset": "orders",
+      "action": "reject",
+      "owner": "Data Team",
+      "status": "PASS",
+      "violations": 0,
+      "population": 407,
+      "violation_pct": 0.0,
+      "business_reason": "Unparseable promised_eta / actual_delivery_at silently shrink the KPI population.",
+      "detection": "value present but not parseable as a datetime",
+      "detail": "orders.created_at: unparseable=0, tz-aware=0; orders.promised_eta: unparseable=0, tz-aware=0; orders.pickup_at: unparseable=0, tz-aware=0; orders.actual_delivery_at: unparseable=0, tz-aware=0",
+      "sample_keys": [],
+      "extra": {}
+    },
+    {
+      "rule_id": "TS-01",
+      "rule": "Promised ETA is after order creation",
+      "dataset": "orders",
+      "action": "reject",
+      "owner": "Product / ETA service",
+      "status": "WARN",
+      "violations": 2,
+      "population": 407,
+      "violation_pct": 0.49,
+      "business_reason": "A promise made before the order exists is not a promise; lateness against it is meaningless.",
+      "detection": "promised_eta < created_at",
+      "detail": "minutes early: [10.0]",
+      "sample_keys": [
+        "O00101",
+        "O00103"
+      ],
+      "extra": {}
+    },
+    {
+      "rule_id": "TS-02",
+      "rule": "Delivery happens after pickup",
+      "dataset": "orders",
+      "action": "reject",
+      "owner": "Fleet Ops",
+      "status": "WARN",
+      "violations": 2,
+      "population": 407,
+      "violation_pct": 0.49,
+      "business_reason": "A delivery timestamp earlier than pickup means one of the two clocks is wrong.",
+      "detection": "actual_delivery_at < pickup_at",
+      "detail": "minutes before pickup: [5.0]",
+      "sample_keys": [
+        "O00052",
+        "O00054"
+      ],
+      "extra": {}
+    },
+    {
+      "rule_id": "TS-03",
+      "rule": "Pickup happens after order creation",
+      "dataset": "orders",
+      "action": "reject",
+      "owner": "Fleet Ops",
+      "status": "PASS",
+      "violations": 0,
+      "population": 407,
+      "violation_pct": 0.0,
+      "business_reason": "Stage durations would be negative.",
+      "detection": "pickup_at < created_at",
+      "detail": "",
+      "sample_keys": [],
+      "extra": {}
+    },
+    {
+      "rule_id": "TS-04",
+      "rule": "Delivered orders carry an actual delivery time",
+      "dataset": "orders",
+      "action": "reject",
+      "owner": "Data Team / Fleet Ops",
+      "status": "WARN",
+      "violations": 14,
+      "population": 407,
+      "violation_pct": 3.44,
+      "business_reason": "Without actual_delivery_at the order's lateness is unknown; excluding it biases the rate if the missing ones are not random.",
+      "detection": "final_status == delivered and actual_delivery_at is null",
+      "detail": "14 delivered orders lack actual_delivery_at; 14 of them have a driver 'delivered' event that could back-fill it (owner decision)",
+      "sample_keys": [
+        "O00206",
+        "O00286",
+        "O00341",
+        "O00675",
+        "O00740",
+        "O00830",
+        "O00910",
+        "O01034",
+        "O01080",
+        "O01149"
+      ],
+      "extra": {
+        "recoverable_from_driver_events": 14
+      }
+    },
+    {
+      "rule_id": "TS-05",
+      "rule": "Cancelled orders carry no delivery time",
+      "dataset": "orders",
+      "action": "flag",
+      "owner": "Data Team",
+      "status": "PASS",
+      "violations": 0,
+      "population": 407,
+      "violation_pct": 0.0,
+      "business_reason": "A cancelled order with a delivery time is a status bug.",
+      "detection": "final_status == cancelled and actual_delivery_at not null",
+      "detail": "",
+      "sample_keys": [],
+      "extra": {}
+    },
+    {
+      "rule_id": "TS-06",
+      "rule": "Dispatch chronology (created <= assigned <= reassigned)",
+      "dataset": "dispatch",
+      "action": "flag",
+      "owner": "Dispatch",
+      "status": "PASS",
+      "violations": 0,
+      "population": 407,
+      "violation_pct": 0.0,
+      "business_reason": "Assignment timing feeds the dispatch-wait stage.",
+      "detection": "assigned_at < created_at OR reassigned_at < assigned_at",
+      "detail": "",
+      "sample_keys": [],
+      "extra": {}
+    },
+    {
+      "rule_id": "TS-07",
+      "rule": "Driver-event chronology (assigned <= picked_up <= delivered)",
+      "dataset": "driver_events",
+      "action": "flag",
+      "owner": "Fleet Ops",
+      "status": "WARN",
+      "violations": 4,
+      "population": 407,
+      "violation_pct": 0.98,
+      "business_reason": "Telemetry used to recover missing delivery times must be internally consistent.",
+      "detection": "picked_up < assigned OR delivered < picked_up per order",
+      "detail": "picked_up<assigned=4, delivered<picked_up=0",
+      "sample_keys": [
+        "O00654",
+        "O00964",
+        "O01013",
+        "O01225"
+      ],
+      "extra": {}
+    },
+    {
+      "rule_id": "RG-01",
+      "rule": "Delivery distance is plausible",
+      "dataset": "orders",
+      "action": "flag",
+      "owner": "Operations",
+      "status": "PASS",
+      "violations": 0,
+      "population": 407,
+      "violation_pct": 0.0,
+      "business_reason": "A 999 km 'estimate' would distort any distance analysis.",
+      "detection": "distance <= 0 or > max_plausible_distance_km or null",
+      "detail": "null=0, <=0=0, >50km=0",
+      "sample_keys": [],
+      "extra": {}
+    },
+    {
+      "rule_id": "RG-02",
+      "rule": "Restaurant coordinates are inside the service area",
+      "dataset": "restaurants",
+      "action": "flag",
+      "owner": "Restaurant Ops",
+      "status": "WARN",
+      "violations": 2,
+      "population": 60,
+      "violation_pct": 3.33,
+      "business_reason": "Geo-based prep/travel inference is impossible with lat=95.",
+      "detection": "lat/lon outside the Bengaluru bounding box",
+      "detail": "R007: (95.12, 77.694095); R019: (12.847954, 190.33)",
+      "sample_keys": [
+        "R007",
+        "R019"
+      ],
+      "extra": {}
+    },
+    {
+      "rule_id": "RG-03",
+      "rule": "GPS pings are inside the service area",
+      "dataset": "driver_events",
+      "action": "flag",
+      "owner": "Fleet Ops",
+      "status": "WARN",
+      "violations": 51,
+      "population": 1375,
+      "violation_pct": 3.71,
+      "business_reason": "Outlier pings would corrupt any route/arrival inference.",
+      "detection": "lat/lon outside the Bengaluru bounding box",
+      "detail": "",
+      "sample_keys": [
+        "O00101",
+        "O00135",
+        "O00414",
+        "O00466",
+        "O00550",
+        "O00567",
+        "O00577",
+        "O00707",
+        "O00747",
+        "O00781"
+      ],
+      "extra": {}
+    },
+    {
+      "rule_id": "RG-04",
+      "rule": "Driver attributes in range",
+      "dataset": "drivers",
+      "action": "flag",
+      "owner": "Fleet Ops",
+      "status": "PASS",
+      "violations": 0,
+      "population": 120,
+      "violation_pct": 0.0,
+      "business_reason": "Sanity of the driver dimension.",
+      "detection": "rating outside 0-5 or experience_months < 0",
+      "detail": "",
+      "sample_keys": [],
+      "extra": {}
+    },
+    {
+      "rule_id": "CX-01",
+      "rule": "orders.driver_id agrees with Dispatch's final driver",
+      "dataset": "orders",
+      "action": "retain",
+      "owner": "Dispatch / Data Team",
+      "status": "WARN",
+      "violations": 18,
+      "population": 407,
+      "violation_pct": 4.42,
+      "business_reason": "If the orders table keeps the ORIGINAL driver after a reassignment, driver-level metrics blame the wrong person.",
+      "detection": "orders.driver_id != dispatch.driver_id",
+      "detail": "orders.driver_id equals dispatch ORIGINAL driver for 407 orders -> the orders table is not updated after reassignment; Dispatch is authoritative for the final driver",
+      "sample_keys": [
+        "O00118",
+        "O00147",
+        "O00231",
+        "O00246",
+        "O00332",
+        "O00436",
+        "O00465",
+        "O00503",
+        "O00584",
+        "O00692"
+      ],
+      "extra": {
+        "matches_original_driver": 407
+      }
+    },
+    {
+      "rule_id": "CX-02",
+      "rule": "orders.pickup_at agrees with the driver picked_up event",
+      "dataset": "orders",
+      "action": "retain",
+      "owner": "Fleet Ops",
+      "status": "WARN",
+      "violations": 2,
+      "population": 393,
+      "violation_pct": 0.51,
+      "business_reason": "Two systems, one fact - they should agree.",
+      "detection": "abs difference > 60 s",
+      "detail": "compared 393 orders",
+      "sample_keys": [
+        "O00052",
+        "O00054"
+      ],
+      "extra": {}
+    },
+    {
+      "rule_id": "CX-03",
+      "rule": "Intervention log agrees with Dispatch reassignments",
+      "dataset": "interventions",
+      "action": "retain",
+      "owner": "Support Lead / Dispatch",
+      "status": "WARN",
+      "violations": 61,
+      "population": 61,
+      "violation_pct": 100.0,
+      "business_reason": "If DRIVER_REASSIGNMENT interventions do not appear in Dispatch (or vice versa), one log is incomplete.",
+      "detection": "orders with a DRIVER_REASSIGNMENT intervention vs orders with dispatch.reassigned_at",
+      "detail": "dispatch reassigned=18, intervention DRIVER_REASSIGNMENT=43, in both=0, only in interventions=43, only in dispatch=18",
+      "sample_keys": [
+        "O00017",
+        "O00022",
+        "O00115",
+        "O00185",
+        "O00197",
+        "O00118",
+        "O00147",
+        "O00231",
+        "O00246",
+        "O00332"
+      ],
+      "extra": {
+        "dispatch_reassigned": 18,
+        "intervention_reassignments": 43,
+        "overlap": 0
+      }
+    },
+    {
+      "rule_id": "FR-01",
+      "rule": "Restaurant status updates are fresh enough for the intended use",
+      "dataset": "restaurant_status",
+      "action": "flag",
+      "owner": "Restaurant Ops",
+      "status": "WARN",
+      "violations": 3,
+      "population": 127,
+      "violation_pct": 2.36,
+      "business_reason": "'ready' recorded after the driver already picked up is useless for live ETA and unfair for restaurant accountability.",
+      "detection": "status in {ready, handed_off} with last_updated_at later than the order's pickup_at (+ SLA)",
+      "detail": "status rows joined=127 covering 127 of 407 orders (31.2%); ready/handed_off written >15 min after pickup=3; updated before order creation=0; median lag vs pickup=-4.9 min; timestamps have minute precision only",
+      "sample_keys": [
+        "O00722",
+        "O00735",
+        "O00918"
+      ],
+      "extra": {
+        "orders_covered": 127,
+        "coverage_pct": 31.2,
+        "median_lag_vs_pickup_min": -4.9,
+        "p90_lag_vs_pickup_min": 12.87
+      }
+    },
+    {
+      "rule_id": "WX-01",
+      "rule": "Order weather label agrees with independently observed rainfall",
+      "dataset": "orders+weather",
+      "action": "retain",
+      "owner": "Operations / Data Team",
+      "status": "WARN",
+      "violations": 187,
+      "population": 407,
+      "violation_pct": 45.95,
+      "business_reason": "Operations attributes lateness to weather using weather_bucket; if the label does not match what actually fell from the sky, weather-based explanations and any model trained on the label are built on sand.",
+      "detection": "join each order's creation hour to Open-Meteo hourly precipitation for Bengaluru; compare labelled rain (rain/heavy_rain) with observed rain (> threshold mm); Cohen's kappa < 0.2 = no better than chance",
+      "detail": "hours covered=100.0%; agreement=54.1%; Cohen's kappa=-0.004; mean observed mm by label={'clear': 0.45, 'heavy_rain': 0.34, 'rain': 0.55}",
+      "sample_keys": [
+        "O00008",
+        "O00010",
+        "O00012",
+        "O00013",
+        "O00047",
+        "O00050",
+        "O00052",
+        "O00073",
+        "O00078",
+        "O00097"
+      ],
+      "extra": {
+        "kappa": -0.0036395764376984862,
+        "agreement": 0.5405405405405406,
+        "coverage": 1.0,
+        "mean_mm_by_label": {
+          "clear": 0.45,
+          "heavy_rain": 0.34,
+          "rain": 0.55
+        }
+      }
+    },
+    {
+      "rule_id": "KPI-01",
+      "rule": "'Late' has one agreed definition and owner",
+      "dataset": "orders",
+      "action": "retain",
+      "owner": "VP Operations (proposed)",
+      "status": "UNKNOWN",
+      "violations": 0,
+      "population": 0,
+      "violation_pct": 0.0,
+      "business_reason": "Four stakeholders define late differently; publishing one number without an owner invites disputes.",
+      "detection": "client_metric_definitions.json lists conflicting definitions and no canonical owner",
+      "detail": "no canonical KPI owner documented; 4 stakeholder definitions found: VP Operations: Any delivered order after the promised ETA is late.; Support Lead: Only more than 10 minutes beyond ETA should count as meaningfully late.; Finance: Cancelled/refunded orders should not count in operational performance.; Data Team: Historical dashboard uses delivered orders with non-null actual delivery time.",
+      "sample_keys": [],
+      "extra": {}
+    }
+  ]
+}

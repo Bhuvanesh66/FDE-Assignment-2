@@ -1,7 +1,64 @@
 {
-  "status": "UNKNOWN",
-  "baseline_run": null,
-  "summary": "no previous published run to compare with (first run)",
-  "headline": [],
-  "rules": []
+  "status": "PASS",
+  "baseline_run": "run_example",
+  "summary": "KPI moved +0.00 pp vs run_example (its previous publication, 2026-09-27T22:26:19); no rule got worse; 46/46 deterministic outputs byte-identical",
+  "headline": [
+    {
+      "metric": "historical_definition_pct",
+      "previous": 56.39,
+      "current": 56.39,
+      "delta": 0.0
+    },
+    {
+      "metric": "intervention_coverage_pct",
+      "previous": 26.85,
+      "current": 26.85,
+      "delta": 0.0
+    },
+    {
+      "metric": "late_delivery_rate_pct",
+      "previous": 56.33,
+      "current": 56.33,
+      "delta": 0.0
+    },
+    {
+      "metric": "late_orders",
+      "previous": 837,
+      "current": 837,
+      "delta": 0
+    },
+    {
+      "metric": "median_lateness_min",
+      "previous": 8.0,
+      "current": 8.0,
+      "delta": 0.0
+    },
+    {
+      "metric": "share_lateness_before_pickup_pct",
+      "previous": 98.91,
+      "current": 98.91,
+      "delta": 0.0
+    },
+    {
+      "metric": "support_contact_rate_late_pct",
+      "previous": 30.7,
+      "current": 30.7,
+      "delta": 0.0
+    },
+    {
+      "metric": "validated_population",
+      "previous": 1486,
+      "current": 1486,
+      "delta": 0
+    }
+  ],
+  "rules": [],
+  "drift_threshold_pp": 2.0,
+  "fingerprints": {
+    "compared": 46,
+    "identical": 46,
+    "changed": [],
+    "only_in_previous": [],
+    "only_in_current": []
+  }
 }

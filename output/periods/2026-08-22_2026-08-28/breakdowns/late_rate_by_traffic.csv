@@ -1,0 +1,5 @@
+traffic_bucket,orders,late_orders,late_rate_pct,median_delay_min,mean_delay_min
+high,109,70,64.2,3.5,4.4
+low,88,44,50.0,0.2,2.1
+medium,142,70,49.3,-0.5,0.7
+severe,36,23,63.9,1.9,5.1

@@ -1,0 +1,6 @@
+signal,orders,late_rate_pct
+client label: clear,297,52.9
+client label: heavy_rain,21,71.4
+client label: rain,57,61.4
+observed: dry,215,51.6
+observed: raining,160,60.0

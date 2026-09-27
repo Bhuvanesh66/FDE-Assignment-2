@@ -1,0 +1,7 @@
+ticket_category,tickets,orders_matched,late_share_pct,median_delay_min
+late_delivery,15,15,93.33,17.7
+ready_but_waiting,12,12,91.67,12.0
+restaurant_delay,9,9,100.0,12.1
+eta_changed,7,7,71.43,2.0
+driver_not_moving,5,5,60.0,5.1
+status_mismatch,5,5,100.0,11.9

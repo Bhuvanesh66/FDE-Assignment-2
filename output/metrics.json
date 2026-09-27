@@ -302,9 +302,19 @@
       "evidence": "SQL: {'valid_delivered': 1486.0, 'late_orders': 837.0, 'late_rate_pct': 56.33, 'late_over_10_orders': 344.0} | pipeline: population=1486, late=837 | difference pop=0 late=0, explainable by unparseable/tz/padded values=0"
     },
     {
-      "check": "record ledger: raw = clean + dropped duplicates + quarantined (every dataset)",
+      "check": "SQL metric layer (sql/40_metric_views.sql) == pandas metrics",
       "status": "PASS",
-      "evidence": "orders: 1603=1600+0+3+0; tickets: 202=201+1+0+0; restaurant_status: 502=500+2+0+0"
+      "evidence": "6 quantities agree"
+    },
+    {
+      "check": "retrieval complete vs client control totals (source_systems/manifest.json)",
+      "status": "PASS",
+      "evidence": "orders_rows: published 1603 / observed 1603; unique_orders: published 1600 / observed 1600; support_tickets_rows: published 202 / observed 202; dispatch_records: published 1600 / observed 1600; drivers: published 120 / observed 120; restaurants: published 60 / observed 60"
+    },
+    {
+      "check": "record ledger: raw = clean + dropped duplicates + quarantined + out of period (every dataset)",
+      "status": "PASS",
+      "evidence": "orders: 1603=1600+0+3+0+0; tickets: 202=201+1+0+0+0; restaurant_status: 502=500+2+0+0+0"
     },
     {
       "check": "order ledger: every unique order in exactly one outcome bucket; population = late + on time",

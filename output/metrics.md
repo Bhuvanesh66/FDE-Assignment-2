@@ -231,5 +231,7 @@
 | late + support contact | 257 |
 | late + intervention | 225 |
 | late + support contact + intervention (still late) | 66 |
+| support contact + intervention + still > 15 min late (Class 7: the intervention did not work) | 31 |
+| support contact + intervention (validated deliveries, the base for the line above) | 74 |
 | support contact + NO intervention (any outcome) | 218 |
 | cancel attempted in app | 10 |

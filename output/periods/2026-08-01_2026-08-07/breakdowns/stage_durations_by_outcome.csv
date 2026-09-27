@@ -1,0 +1,9 @@
+stage_metric,late,on_time,late_minus_on_time
+dispatch_wait_min,2.3,2.4,-0.1
+pickup_wait_min,28.4,16.4,12.0
+transit_min,48.8,45.4,3.4
+total_cycle_min,81.3,64.3,17.0
+promised_window_min,74.0,72.8,1.2
+pickup_overrun_min,13.8,1.2,12.6
+transit_overrun_min,-5.8,-8.2,2.4
+eta_revision_min,10.0,4.5,5.5

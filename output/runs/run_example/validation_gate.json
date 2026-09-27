@@ -9,15 +9,14 @@
     "Category semantics",
     "Cross-source mapping",
     "Freshness (restaurant status feed)",
-    "Independent cross-check (observed weather vs client label)",
-    "Run-over-run stability (vs last published run)"
+    "Independent cross-check (observed weather vs client label)"
   ],
   "checks": [
     {
       "check": "Retrieval completeness",
       "status": "PASS",
-      "evidence": "API: 1600 records / expected 1600 in 16 pages, retries=2, mode=live; missing files=none; missing optional reference files=none; empty files=none; zero-row SQL extracts=none",
-      "action": "raw pages + file copies + SQL extracts preserved under data/raw/<run_id>"
+      "evidence": "API: 1600 records / expected 1600 in 16 pages, retries=2, mode=live; client control totals PASS (observed/published: orders_rows 1603/1603; unique_orders 1600/1600; support_tickets_rows 202/202; dispatch_records 1600/1600; drivers 120/120; restaurants 60/60); orders extract vs server COUNT(*): 1603/1603; schema-contract failures=none; missing files=none; missing optional reference files=none; empty files=none; zero-row SQL extracts=none",
+      "action": "a count mismatch against the owner's control totals refuses publication; raw pages + file copies + SQL extracts preserved with SHA-256 under data/raw/<run_id>"
     },
     {
       "check": "Business grain (one row per order)",
@@ -58,7 +57,7 @@
     {
       "check": "Metric sanity & independent checks",
       "status": "PASS",
-      "evidence": "13 checks passed",
+      "evidence": "15 checks passed",
       "action": "see output/metric_checks.csv"
     },
     {
@@ -69,8 +68,8 @@
     },
     {
       "check": "Run-over-run stability (vs last published run)",
-      "status": "UNKNOWN",
-      "evidence": "no previous published run to compare with (first run)",
+      "status": "PASS",
+      "evidence": "KPI moved +0.00 pp vs run_example (its previous publication, 2026-09-27T22:26:19); no rule got worse; 46/46 deterministic outputs byte-identical",
       "action": "see output/run_comparison.md"
     }
   ],

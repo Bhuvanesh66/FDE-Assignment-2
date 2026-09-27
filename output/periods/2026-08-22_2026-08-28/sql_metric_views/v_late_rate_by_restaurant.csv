@@ -1,0 +1,62 @@
+restaurant_id,cuisine,orders,late_orders,late_rate_pct
+R001,South Indian,1,1,100.0
+R002,Burgers,11,7,63.6
+R003,Chinese,3,2,66.7
+R004,South Indian,8,5,62.5
+R005,North Indian,4,1,25.0
+R006,Pizza,9,2,22.2
+R007,North Indian,7,3,42.9
+R008,Cafe,6,3,50.0
+R009,Burgers,4,0,0.0
+R010,North Indian,5,2,40.0
+R011,Chinese,8,6,75.0
+R012,Biryani,3,1,33.3
+R013,Pizza,5,2,40.0
+R014,Biryani,8,5,62.5
+R015,Cafe,8,5,62.5
+R016,Biryani,8,4,50.0
+R017,North Indian,9,6,66.7
+R018,South Indian,6,3,50.0
+R019,Cafe,6,4,66.7
+R020,Burgers,14,8,57.1
+R021,Biryani,4,3,75.0
+R022,South Indian,3,2,66.7
+R023,Pizza,6,5,83.3
+R024,South Indian,5,4,80.0
+R025,South Indian,7,4,57.1
+R026,Desserts,5,3,60.0
+R027,Biryani,8,1,12.5
+R028,Biryani,6,3,50.0
+R029,Burgers,4,4,100.0
+R030,South Indian,8,4,50.0
+R031,Chinese,7,5,71.4
+R032,Pizza,3,1,33.3
+R033,Cafe,11,5,45.5
+R034,Pizza,9,2,22.2
+R035,North Indian,5,3,60.0
+R036,North Indian,6,3,50.0
+R037,Cafe,8,5,62.5
+R038,Pizza,4,1,25.0
+R039,Biryani,8,2,25.0
+R040,Desserts,3,2,66.7
+R041,Desserts,7,6,85.7
+R042,Chinese,8,6,75.0
+R043,Burgers,4,2,50.0
+R044,Cafe,3,3,100.0
+R045,Cafe,6,4,66.7
+R046,Chinese,8,3,37.5
+R047,South Indian,10,3,30.0
+R048,South Indian,4,3,75.0
+R049,Chinese,4,3,75.0
+R050,Cafe,8,4,50.0
+R051,Cafe,7,6,85.7
+R052,Desserts,8,6,75.0
+R053,North Indian,6,4,66.7
+R054,South Indian,3,0,0.0
+R055,Burgers,10,7,70.0
+R056,Biryani,4,2,50.0
+R057,Cafe,6,3,50.0
+R058,North Indian,5,2,40.0
+R059,Burgers,5,3,60.0
+R060,Chinese,5,4,80.0
+UNKNOWN,,1,1,100.0

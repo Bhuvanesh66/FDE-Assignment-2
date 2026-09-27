@@ -1,0 +1,4 @@
+weather_bucket,orders,late_orders,late_rate_pct,median_delay_min,mean_delay_min
+clear,276,146,52.9,0.7,1.7
+heavy_rain,16,14,87.5,9.1,10.0
+rain,53,28,52.8,0.5,3.2

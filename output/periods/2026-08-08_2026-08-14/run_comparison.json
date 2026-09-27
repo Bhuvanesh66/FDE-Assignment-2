@@ -1,0 +1,111 @@
+{
+  "status": "PASS",
+  "baseline_run": "run_weekly_2026-08-08_2026-08-14",
+  "summary": "KPI moved +0.00 pp vs run_weekly_2026-08-08_2026-08-14 (its previous publication, 2026-09-27T22:03:42); no rule got worse; 0/46 deterministic outputs byte-identical",
+  "headline": [
+    {
+      "metric": "historical_definition_pct",
+      "previous": 60.16,
+      "current": 60.16,
+      "delta": 0.0
+    },
+    {
+      "metric": "intervention_coverage_pct",
+      "previous": 27.03,
+      "current": 27.03,
+      "delta": 0.0
+    },
+    {
+      "metric": "late_delivery_rate_pct",
+      "previous": 59.84,
+      "current": 59.84,
+      "delta": 0.0
+    },
+    {
+      "metric": "late_orders",
+      "previous": 228,
+      "current": 228,
+      "delta": 0
+    },
+    {
+      "metric": "median_lateness_min",
+      "previous": 8.0,
+      "current": 8.0,
+      "delta": 0.0
+    },
+    {
+      "metric": "share_lateness_before_pickup_pct",
+      "previous": 99.09,
+      "current": 99.09,
+      "delta": 0.0
+    },
+    {
+      "metric": "support_contact_rate_late_pct",
+      "previous": 30.26,
+      "current": 30.26,
+      "delta": 0.0
+    },
+    {
+      "metric": "validated_population",
+      "previous": 381,
+      "current": 381,
+      "delta": 0
+    }
+  ],
+  "rules": [],
+  "drift_threshold_pp": 2.0,
+  "fingerprints": {
+    "compared": 46,
+    "identical": 0,
+    "changed": [
+      "breakdowns/customer_view_vs_system_view.csv",
+      "breakdowns/definition_comparison.csv",
+      "breakdowns/journey_patterns.csv",
+      "breakdowns/late_orders_by_overrun_stage.csv",
+      "breakdowns/late_rate_by_day_of_week.csv",
+      "breakdowns/late_rate_by_distance_band.csv",
+      "breakdowns/late_rate_by_eta_model_version.csv",
+      "breakdowns/late_rate_by_hour.csv",
+      "breakdowns/late_rate_by_intervention_type.csv",
+      "breakdowns/late_rate_by_reassignment.csv",
+      "breakdowns/late_rate_by_traffic.csv",
+      "breakdowns/late_rate_by_weather.csv",
+      "breakdowns/outcome_distribution.csv",
+      "breakdowns/stage_durations_by_outcome.csv",
+      "breakdowns/top_drivers_by_late_rate.csv",
+      "breakdowns/top_restaurants_by_late_orders.csv",
+      "breakdowns/worst_delays.csv",
+      "data_quality_rules.csv",
+      "insights/early_warning_backtest.csv",
+      "insights/early_warning_vs_interventions.csv",
+      "insights/eta_calibration.csv",
+      "insights/fair_ranking_drivers.csv",
+      "insights/fair_ranking_restaurants.csv",
+      "insights/gps_arrival_feasibility.csv",
+      "insights/impact_whatif.csv",
+      "insights/late_rate_heatmap_weekday_hour.csv",
+      "insights/late_rate_label_vs_observed_weather.csv",
+      "insights/weather_label_vs_observed.csv",
+      "metric_checks.csv",
+      "metrics.csv",
+      "processed/dim_customer.csv",
+      "processed/dim_driver.csv",
+      "processed/dim_restaurant.csv",
+      "processed/fact_event.csv",
+      "processed/fact_interaction.csv",
+      "processed/fact_intervention.csv",
+      "processed/fact_order.csv",
+      "processed/order_journey.csv",
+      "quarantine/orders_duplicate_conflicts.csv",
+      "reconciliation_ledger.csv",
+      "sql_metric_layer_check.csv",
+      "sql_metric_views/v_late_rate_by_restaurant.csv",
+      "sql_metric_views/v_m1_late_rate.csv",
+      "sql_metric_views/v_m3_pre_pickup_share.csv",
+      "sql_metric_views/v_m4_support_contact.csv",
+      "sql_metric_views/v_m5_intervention.csv"
+    ],
+    "only_in_previous": [],
+    "only_in_current": []
+  }
+}

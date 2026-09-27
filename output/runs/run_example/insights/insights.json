@@ -3,6 +3,7 @@
     "early_warning": {
       "chosen_grace_min": 10,
       "holdout": true,
+      "train_until_day": 21,
       "train_orders": 1111,
       "test_orders": 375,
       "test_precision_pct": 96.1,
@@ -60,9 +61,16 @@
     "gps": {
       "orders_with_pre_pickup_pings": 1166,
       "approaching_pct": 0.8,
+      "moving_away_before_pickup_pct": 99.2,
+      "pings_before_pickup_pct": 30.8,
       "within_1km_pct": 5.9,
       "median_last_ping_km": 4.35,
-      "verdict": "GPS cannot stand in for an arrival event - pings do not converge on the restaurant"
+      "verdict": "GPS pings look interpolated, not measured: each track is a straight constant-speed line from the restaurant to the customer that ignores the pickup time, so GPS cannot show when the rider reached the restaurant",
+      "orders_with_3plus_pings": 1111,
+      "straight_line_tracks_pct": 91.3,
+      "evenly_spaced_tracks_pct": 90.7,
+      "orders_with_post_pickup_pings_pct": 99.1,
+      "post_pickup_converging_pct": 99.4
     }
   },
   "findings": [
@@ -96,9 +104,9 @@
     },
     {
       "id": "D5",
-      "title": "GPS cannot replace the missing arrival event",
-      "finding": "Before pickup, the last GPS ping is closer to the restaurant than the first in only 0.8% of orders; the median last ping is 4.35 km away.",
-      "so_what": "A geofence built on this feed would invent arrivals. Instrument an explicit 'arrived at restaurant' tap instead.",
+      "title": "GPS pings look drawn, not measured - they cannot show arrival at the restaurant",
+      "finding": "Before pickup, the last ping is FARTHER from the restaurant than the first in 99.2% of orders (closer in only 0.8%) - a rider cannot leave with the food before picking it up. 91.3% of tracks with 3+ pings are perfectly straight, constant-speed lines and 90.7% have perfectly even time gaps - real device tracks are never that clean. Class 6 found pings only before pickup; here 30.8% of pings fall before pickup and the rest after it (99.4% of post-pickup tracks close in on the customer).",
+      "so_what": "Do not build a geofence or a live GPS ETA on this feed: it would invent arrivals. Ask Fleet Ops whether pings are device readings or app interpolation, and instrument an explicit 'arrived at restaurant' tap - the one event that splits kitchen delay from rider delay, which is where the lateness builds.",
       "owner": "Fleet Ops / Product"
     }
   ]

@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-09-27T20:30:33",
+  "fetched_at": "2026-09-27T22:26:27",
   "request": {
     "url": "https://archive-api.open-meteo.com/v1/archive",
     "params": {
@@ -14,7 +14,7 @@
   "payload": {
     "latitude": 12.970123,
     "longitude": 77.56364,
-    "generationtime_ms": 0.30934810638427734,
+    "generationtime_ms": 0.19228458404541016,
     "utc_offset_seconds": 19800,
     "timezone": "Asia/Kolkata",
     "timezone_abbreviation": "GMT+5:30",

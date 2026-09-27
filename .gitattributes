@@ -5,3 +5,11 @@ data/raw/** -text
 data/external/** -text
 data/processed/** -text
 output/** -text
+
+# Pipeline outputs are generated evidence, not source code: keep them out of
+# GitHub's language statistics (output/dashboard.html embeds its charts, so it
+# would otherwise make the repository look like an HTML project).
+output/** linguist-generated=true
+data/** linguist-generated=true
+# The instructor's untouched classroom notebooks are kept only for comparison.
+notebooks/classroom_originals/** linguist-vendored=true

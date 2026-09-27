@@ -1,0 +1,9 @@
+pattern,orders
+late orders,228
+late + support contact,69
+late + intervention,62
+late + support contact + intervention (still late),16
+support contact + intervention + still > 15 min late (Class 7: the intervention did not work),8
+"support contact + intervention (validated deliveries, the base for the line above)",18
+support contact + NO intervention (any outcome),57
+cancel attempted in app,1

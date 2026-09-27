@@ -1,0 +1,21 @@
+# Validation gate
+
+**Overall: WARN**  
+
+**Decision:** PUBLISH WITH CAVEATS: late delivery rate = 55.58% of 385 validated deliveries (historical definition: 55.44%). State the definition, the excluded orders and the unresolved owner questions next to the number.
+
+| Check | Status | Evidence | Action |
+|---|---|---|---|
+| Retrieval completeness | **PASS** | API: 1600 records / expected 1600 in 16 pages, retries=0, mode=live; client control totals PASS (observed/published: orders_rows 1603/1603; unique_orders 1600/1600; support_tickets_rows 202/202; dispatch_records 1600/1600; drivers 120/120; restaurants 60/60); orders extract vs server COUNT(*): 412/412; schema-contract failures=none; missing files=none; missing optional reference files=none; empty files=none; zero-row SQL extracts=none | a count mismatch against the owner's control totals refuses publication; raw pages + file copies + SQL extracts preserved with SHA-256 under data/raw/<run_id> |
+| Business grain (one row per order) | **PASS** | raw duplicate rows removed by cleaning: 0 | exact duplicates dropped; conflicting duplicates keep first row, conflict recorded in quarantine |
+| Timestamp chronology & completeness | **WARN** | TS-00=0; TS-01=0; TS-02=1; TS-03=0; TS-04=7; TS-05=0 | violating orders excluded from the KPI population (reject) and listed in the data-quality report; nothing deleted |
+| KPI definition ownership | **UNKNOWN** | no canonical KPI owner documented; 4 stakeholder definitions found: VP Operations: Any delivered order after the promised ETA is late.; Support Lead: Only more than 10 minutes beyond ETA should count as meaningfully late.; Finance: Cancelled/refunded orders should not count in operational performance.; Data Team: Historical dashboard uses delivered orders with non-null actual delivery time. / pipeline publishes late = delay > 0 min and reports > 10 min alongside | VP Operations to sign off the definition; until then every output states the definition next to the number |
+| Category semantics | **WARN** | ST-04: fixes=2, unexpected={}; ST-05: fixes=2, unexpected={} | representation normalised; semantic look-alikes NOT merged, owner decision required: {'ST-04': {'handoff': 'handed_off'}, 'ST-05': {'eta_issue': 'eta_changed'}} |
+| Cross-source mapping | **WARN** | coverage %: ID-02=100.0, ID-03=99.51, ID-04=99.76, ID-05=100.0, ID-06=100.0, ID-07=100.0, ID-08=100.0, ID-09=100.0, ID-10=100.0; CX-01: orders.driver_id equals dispatch ORIGINAL driver for 411 orders -> the orders table is not updated after reassignment; Dispatch is authoritative for the final driver; CX-02: compared 393 orders; CX-03: dispatch reassigned=23, intervention DRIVER_REASSIGNMENT=36, in both=3, only in interventions=33, only in dispatch=20 | unmapped records retained and flagged; Dispatch treated as authoritative for the final driver |
+| Freshness (restaurant status feed) | **WARN** | status rows joined=122 covering 122 of 412 orders (29.6%); ready/handed_off written >15 min after pickup=1; updated before order creation=3; median lag vs pickup=-7.8 min; timestamps have minute precision only | restaurant status usable for weekly analytics only; not for live ETA or accountability |
+| Metric sanity & independent checks | **PASS** | 15 checks passed | see output/metric_checks.csv |
+| Independent cross-check (observed weather vs client label) | **WARN** | hours covered=100.0%; agreement=61.2%; Cohen's kappa=0.002; mean observed mm by label={'clear': 0.16, 'heavy_rain': 0.14, 'rain': 0.23}; source mode=live | weather_bucket is not used to explain lateness until Operations confirms how it is produced |
+| Run-over-run stability (vs last published run) | **PASS** | KPI moved +0.00 pp vs run_weekly_2026-08-15_2026-08-21 (its previous publication, 2026-09-27T22:03:55); no rule got worse; 0/45 deterministic outputs byte-identical | see output/run_comparison.md |
+
+Blocking: none  
+Unresolved (caveats): ['Timestamp chronology & completeness', 'KPI definition ownership', 'Category semantics', 'Cross-source mapping', 'Freshness (restaurant status feed)', 'Independent cross-check (observed weather vs client label)']

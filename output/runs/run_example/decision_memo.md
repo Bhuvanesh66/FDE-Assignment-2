@@ -10,7 +10,7 @@ FlashEats promises an ETA at checkout. In August, **56.33%** of 1486 validated d
 
 - The delay is created **before pickup**, not on the road: 98.91% of overrun minutes on late orders accrue before the driver collects the food. Dispatch's own pickup estimate is short by a median 8.0 min.
 - Late orders turn into support contacts 30.7% of the time (vs 5.24% on time); today's interventions reach 26.85% of orders with no visible effect on the late rate.
-- The data cannot say whether the kitchen or the rider owns the pre-pickup delay: no *arrived at restaurant* event exists, and GPS cannot substitute (0.8% of orders show pings converging on the restaurant).
+- The data cannot say whether the kitchen or the rider owns the pre-pickup delay: no *arrived at restaurant* event exists. GPS cannot fill the gap: before pickup, pings move AWAY from the restaurant in 99.2% of orders, and 91.3% of tracks are perfectly straight constant-speed lines, so the pings look interpolated rather than measured.
 - The weather explanation does not hold up: the client's weather label agrees with observed rainfall only 52.6% of the time (kappa 0.009).
 
 ## Resolution — recommended actions

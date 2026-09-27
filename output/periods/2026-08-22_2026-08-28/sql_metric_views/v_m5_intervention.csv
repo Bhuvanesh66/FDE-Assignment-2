@@ -1,0 +1,3 @@
+grp,orders,late_orders,late_rate_pct
+with_intervention,101,50,49.5
+without_intervention,274,157,57.3

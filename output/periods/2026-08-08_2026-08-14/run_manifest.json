@@ -1,0 +1,910 @@
+{
+  "run_id": "run_weekly_2026-08-08_2026-08-14",
+  "pipeline_version": "1.0.0",
+  "started_at": "2026-09-27T22:27:28",
+  "config": {
+    "project_root": "B:\\Trimester-9\\FDE\\assignment-2",
+    "source_root": "B:\\Trimester-9\\FDE\\assignment-2\\source_systems",
+    "data_dir": "B:\\Trimester-9\\FDE\\assignment-2\\data",
+    "output_dir": "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14",
+    "run_id": "run_weekly_2026-08-08_2026-08-14",
+    "config_file": "B:\\Trimester-9\\FDE\\assignment-2\\config\\pipeline.yaml",
+    "api_base_url": "http://127.0.0.1:8000",
+    "api_page_size": 100,
+    "api_timeout_s": 10,
+    "api_max_retries": 5,
+    "api_backoff_base_s": 0.5,
+    "api_backoff_cap_s": 4,
+    "api_max_pages": 10000,
+    "start_mock_api": false,
+    "api_fallback_to_last_snapshot": false,
+    "weather_enabled": true,
+    "weather_base_url": "https://archive-api.open-meteo.com/v1/archive",
+    "weather_latitude": 12.9716,
+    "weather_longitude": 77.5946,
+    "weather_rain_threshold_mm": 0.1,
+    "weather_timeout_s": 20,
+    "weather_max_retries": 3,
+    "late_threshold_min": 0,
+    "meaningful_late_threshold_min": 10,
+    "target_on_time_rate_pct": 80,
+    "max_plausible_distance_km": 50,
+    "lat_range": [
+      12.5,
+      13.5
+    ],
+    "lon_range": [
+      77.2,
+      78.0
+    ],
+    "source_timezone": "Asia/Kolkata",
+    "status_freshness_sla_min": 15,
+    "max_unexpected_status_pct": 10,
+    "max_unparseable_kpi_timestamp_pct": 10,
+    "max_missing_delivery_time_pct": 15,
+    "ew_grace_minutes_grid": [
+      0,
+      5,
+      10,
+      15,
+      20,
+      25,
+      30
+    ],
+    "ew_min_precision": 0.9,
+    "ew_train_until_day": 21,
+    "eta_padding_grid_min": [
+      0,
+      5,
+      10,
+      15,
+      20,
+      25,
+      30
+    ],
+    "fair_min_orders_restaurant": 15,
+    "fair_min_orders_driver": 10,
+    "fair_confidence": 0.95,
+    "impact_prevented_share_scenarios": [
+      0.25,
+      0.5
+    ],
+    "kpi_drift_alert_pp": 2.0,
+    "period_start": "2026-08-08",
+    "period_end": "2026-08-14",
+    "period_label": "2026-08-08_2026-08-14",
+    "replay_run_id": null,
+    "schema_contract_file": "B:\\Trimester-9\\FDE\\assignment-2\\config\\schema_contract.yaml",
+    "fail_on_gate": "FAIL",
+    "write_charts": true
+  },
+  "stages": {
+    "ingest": {
+      "seconds": 2.09,
+      "rows": {
+        "orders": 410,
+        "restaurants": 60,
+        "drivers": 120,
+        "customers": 900,
+        "tickets": 202,
+        "restaurant_status": 502,
+        "app_actions": 2365,
+        "interventions": 430,
+        "order_outcomes_ref": 1600,
+        "driver_events": 10035,
+        "weather_obs": 192,
+        "dispatch": 1600
+      }
+    },
+    "profile": {
+      "seconds": 0.86
+    },
+    "clean": {
+      "seconds": 0.71,
+      "actions": 13,
+      "rows": {
+        "orders": 409,
+        "restaurants": 60,
+        "drivers": 120,
+        "customers": 900,
+        "tickets": 53,
+        "restaurant_status": 120,
+        "app_actions": 562,
+        "interventions": 111,
+        "driver_events": 2538,
+        "weather_obs": 192,
+        "dispatch": 409
+      }
+    },
+    "validate": {
+      "seconds": 0.17,
+      "rules": {
+        "GR-01": "WARN",
+        "ID-01": "PASS",
+        "ID-02": "PASS",
+        "ID-03": "PASS",
+        "ID-04": "PASS",
+        "ID-05": "PASS",
+        "ID-06": "PASS",
+        "ID-07": "PASS",
+        "ID-08": "PASS",
+        "ID-09": "PASS",
+        "ID-10": "PASS",
+        "ST-01": "WARN",
+        "ST-02": "WARN",
+        "ST-03": "PASS",
+        "ST-04": "WARN",
+        "ST-05": "WARN",
+        "ST-06": "PASS",
+        "ST-07": "PASS",
+        "ST-08": "PASS",
+        "ST-09": "PASS",
+        "TS-00": "PASS",
+        "TS-01": "WARN",
+        "TS-02": "WARN",
+        "TS-03": "PASS",
+        "TS-04": "WARN",
+        "TS-05": "PASS",
+        "TS-06": "PASS",
+        "TS-07": "WARN",
+        "RG-01": "PASS",
+        "RG-02": "WARN",
+        "RG-03": "WARN",
+        "RG-04": "PASS",
+        "CX-01": "WARN",
+        "CX-02": "WARN",
+        "CX-03": "WARN",
+        "FR-01": "WARN",
+        "WX-01": "WARN",
+        "KPI-01": "UNKNOWN"
+      },
+      "violations": {
+        "GR-01": 0,
+        "ID-01": 0,
+        "ID-02": 0,
+        "ID-03": 0,
+        "ID-04": 0,
+        "ID-05": 0,
+        "ID-06": 0,
+        "ID-07": 0,
+        "ID-08": 0,
+        "ID-09": 0,
+        "ID-10": 0,
+        "ST-01": 0,
+        "ST-02": 0,
+        "ST-03": 0,
+        "ST-04": 0,
+        "ST-05": 0,
+        "ST-06": 0,
+        "ST-07": 0,
+        "ST-08": 0,
+        "ST-09": 0,
+        "TS-00": 0,
+        "TS-01": 2,
+        "TS-02": 1,
+        "TS-03": 0,
+        "TS-04": 4,
+        "TS-05": 0,
+        "TS-06": 0,
+        "TS-07": 2,
+        "RG-01": 0,
+        "RG-02": 2,
+        "RG-03": 42,
+        "RG-04": 0,
+        "CX-01": 26,
+        "CX-02": 1,
+        "CX-03": 66,
+        "FR-01": 4,
+        "WX-01": 198,
+        "KPI-01": 0
+      }
+    },
+    "model": {
+      "seconds": 0.85,
+      "tables": {
+        "dim_customer": 900,
+        "dim_restaurant": 60,
+        "dim_driver": 120,
+        "fact_order": 409,
+        "fact_event": 5430,
+        "fact_interaction": 615,
+        "fact_intervention": 111,
+        "order_journey": 409
+      }
+    },
+    "metrics": {
+      "seconds": 0.46,
+      "headline": {
+        "late_delivery_rate_pct": 59.84,
+        "late_orders": 228,
+        "validated_population": 381,
+        "historical_definition_pct": 60.16,
+        "median_lateness_min": 8.0,
+        "share_lateness_before_pickup_pct": 99.09,
+        "support_contact_rate_late_pct": 30.26,
+        "intervention_coverage_pct": 27.03
+      }
+    },
+    "insights": {
+      "seconds": 2.87,
+      "headline": {
+        "early_warning": {
+          "chosen_grace_min": 10,
+          "holdout": false,
+          "train_until_day": null,
+          "train_orders": 381,
+          "test_orders": 381,
+          "test_precision_pct": 98.2,
+          "test_recall_pct": 71.9,
+          "test_alert_rate_pct": 43.8,
+          "test_median_lead_min": 44.8,
+          "all_caught_late": 164,
+          "all_alerts": 167,
+          "caught_late_without_intervention": 122,
+          "interventions_on_unflagged_on_time": 41
+        },
+        "eta": {
+          "target_on_time_rate_pct": 80,
+          "padding_needed_min": 13,
+          "late_rate_at_needed_padding_pct": 19.4,
+          "pickup_estimate_bias_median_min": 8.3,
+          "pickup_estimate_bias_p75_min": 16.6,
+          "planned_pickup_median_min": 18.0,
+          "actual_pickup_median_min": 26.3,
+          "promised_window_median_min": 72.8
+        },
+        "restaurants": {
+          "entity": "restaurant_id",
+          "fleet_late_rate_pct": 59.8,
+          "entities": 60,
+          "judgeable": 0,
+          "significantly_worse": 0,
+          "significantly_better": 0,
+          "naive_top10_significant": 0,
+          "worse_list": []
+        },
+        "drivers": {
+          "entity": "driver_id",
+          "fleet_late_rate_pct": 59.8,
+          "entities": 112,
+          "judgeable": 0,
+          "significantly_worse": 0,
+          "significantly_better": 0,
+          "naive_top10_significant": 0,
+          "worse_list": []
+        },
+        "weather": {
+          "orders_covered": 409,
+          "kappa": 0.016,
+          "agreement_pct": 51.6,
+          "late_rate_observed_rain_pct": 59.1,
+          "late_rate_observed_dry_pct": 60.5,
+          "mean_mm_label_clear": 0.26,
+          "mean_mm_label_heavy_rain": 0.28
+        },
+        "gps": {
+          "orders_with_pre_pickup_pings": 292,
+          "approaching_pct": 1.0,
+          "moving_away_before_pickup_pct": 99.0,
+          "pings_before_pickup_pct": 31.1,
+          "within_1km_pct": 7.2,
+          "median_last_ping_km": 4.43,
+          "verdict": "GPS pings look interpolated, not measured: each track is a straight constant-speed line from the restaurant to the customer that ignores the pickup time, so GPS cannot show when the rider reached the restaurant",
+          "orders_with_3plus_pings": 277,
+          "straight_line_tracks_pct": 93.5,
+          "evenly_spaced_tracks_pct": 93.9,
+          "orders_with_post_pickup_pings_pct": 99.5,
+          "post_pickup_converging_pct": 99.1
+        }
+      },
+      "findings": [
+        "D1 A proactive trigger that works today, without AI",
+        "D2 The promise is optimistic before the food even leaves",
+        "D3 Do not publish a restaurant or driver blame list",
+        "D4 The weather label does not match the weather",
+        "D5 GPS pings look drawn, not measured - they cannot show arrival at the restaurant"
+      ]
+    },
+    "gate": {
+      "seconds": 0.66,
+      "overall": "WARN",
+      "run_comparison": "PASS"
+    },
+    "memo": {
+      "seconds": 0.0
+    },
+    "outputs": {
+      "seconds": 1.95,
+      "published": true,
+      "charts": [
+        "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\charts\\late_rate_by_traffic.png",
+        "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\charts\\late_rate_by_weather.png",
+        "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\charts\\late_rate_by_distance.png",
+        "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\charts\\late_rate_by_hour.png",
+        "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\charts\\late_rate_by_intervention.png",
+        "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\charts\\stage_durations.png",
+        "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\charts\\outcome_distribution.png",
+        "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\charts\\early_warning_tradeoff.png",
+        "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\charts\\eta_padding_curve.png",
+        "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\charts\\restaurant_funnel_plot.png",
+        "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\charts\\late_rate_heatmap.png",
+        "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\charts\\weather_label_vs_observed.png"
+      ],
+      "visuals": []
+    }
+  },
+  "inputs": {
+    "mode": "live",
+    "sql": {
+      "database": "B:\\Trimester-9\\FDE\\assignment-2\\source_systems\\database\\flasheats.db",
+      "database_sha256": "34bc065c453beef3d9656690c642d384767e5ea950b379376d655b298b06e02c",
+      "tables": {
+        "customers": {
+          "rows": 900,
+          "columns": [
+            "customer_id",
+            "name",
+            "email",
+            "lat",
+            "lon"
+          ]
+        },
+        "drivers": {
+          "rows": 120,
+          "columns": [
+            "driver_id",
+            "rating",
+            "vehicle_type",
+            "experience_months"
+          ]
+        },
+        "orders": {
+          "rows": 1603,
+          "columns": [
+            "order_id",
+            "customer_id",
+            "restaurant_id",
+            "driver_id",
+            "city",
+            "created_at",
+            "promised_eta",
+            "pickup_at",
+            "actual_delivery_at",
+            "final_status",
+            "distance_km_estimate",
+            "traffic_bucket",
+            "weather_bucket"
+          ]
+        },
+        "restaurants": {
+          "rows": 60,
+          "columns": [
+            "restaurant_id",
+            "restaurant_name",
+            "cuisine",
+            "lat",
+            "lon",
+            "manual_status_updates"
+          ]
+        }
+      },
+      "extracts": [
+        {
+          "name": "orders_extract",
+          "rows": 410,
+          "columns": [
+            "order_id",
+            "customer_id",
+            "restaurant_id",
+            "driver_id",
+            "city",
+            "created_at",
+            "promised_eta",
+            "pickup_at",
+            "actual_delivery_at",
+            "final_status",
+            "distance_km_estimate",
+            "traffic_bucket",
+            "weather_bucket"
+          ],
+          "sql_file": "orders_extract.sql",
+          "raw_path": "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_weekly_2026-08-08_2026-08-14\\sql\\orders_extract.csv",
+          "params": {
+            "start_at": "2026-08-08T00:00:00",
+            "end_at": "2026-08-15T00:00:00"
+          },
+          "sha256": "35c7194c8fbbfbb1d34c92d3356a54a0cc191982931afff490f3fc018c8d6265"
+        },
+        {
+          "name": "restaurants_extract",
+          "rows": 60,
+          "columns": [
+            "restaurant_id",
+            "restaurant_name",
+            "cuisine",
+            "lat",
+            "lon",
+            "manual_status_updates"
+          ],
+          "sql_file": "restaurants_extract.sql",
+          "raw_path": "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_weekly_2026-08-08_2026-08-14\\sql\\restaurants_extract.csv",
+          "params": {},
+          "sha256": "0d2799652c1bfc1fc317c3b8bc9b47c7aba38ed3ddb457506b11e73bc766b341"
+        },
+        {
+          "name": "drivers_extract",
+          "rows": 120,
+          "columns": [
+            "driver_id",
+            "rating",
+            "vehicle_type",
+            "experience_months"
+          ],
+          "sql_file": "drivers_extract.sql",
+          "raw_path": "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_weekly_2026-08-08_2026-08-14\\sql\\drivers_extract.csv",
+          "params": {},
+          "sha256": "f6c1d3a927228918cfc6dd5a55bf07a9365d3197b07c1a10e0f430b805e74d35"
+        },
+        {
+          "name": "customers_extract",
+          "rows": 900,
+          "columns": [
+            "customer_id",
+            "lat",
+            "lon"
+          ],
+          "sql_file": "customers_extract.sql",
+          "raw_path": "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_weekly_2026-08-08_2026-08-14\\sql\\customers_extract.csv",
+          "params": {},
+          "sha256": "b44bbfd6388773b6faa724368905433de82e2758fc4fe059a64daaac81e4a83c"
+        }
+      ]
+    },
+    "files": {
+      "tickets": {
+        "status": "ok",
+        "name": "tickets",
+        "path": "B:\\Trimester-9\\FDE\\assignment-2\\source_systems\\data\\support_tickets.csv",
+        "kind": "csv",
+        "rows": 202,
+        "columns": [
+          "ticket_id",
+          "order_id",
+          "created_at",
+          "category",
+          "customer_message"
+        ],
+        "sha256": "ee2f43a9d69e6643838c2ef8f22ed23f0d252326e283454307ba0df06123b632",
+        "size_bytes": 20761,
+        "raw_copy": "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_weekly_2026-08-08_2026-08-14\\files\\support_tickets.csv",
+        "missing_required": [],
+        "extra_columns": [
+          "customer_message"
+        ],
+        "malformed_rows": 0,
+        "empty": false,
+        "notes": []
+      },
+      "restaurant_status": {
+        "status": "ok",
+        "name": "restaurant_status",
+        "path": "B:\\Trimester-9\\FDE\\assignment-2\\source_systems\\data\\restaurant_status.csv",
+        "kind": "csv",
+        "rows": 502,
+        "columns": [
+          "order_id",
+          "restaurant_id",
+          "status",
+          "last_updated_at"
+        ],
+        "sha256": "6551c775e4ece7a1e5f84ff33144b6bc64ad36e978c0421094d5793dd8f853ca",
+        "size_bytes": 21155,
+        "raw_copy": "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_weekly_2026-08-08_2026-08-14\\files\\restaurant_status.csv",
+        "missing_required": [],
+        "extra_columns": [],
+        "malformed_rows": 0,
+        "empty": false,
+        "notes": []
+      },
+      "app_actions": {
+        "status": "ok",
+        "name": "app_actions",
+        "path": "B:\\Trimester-9\\FDE\\assignment-2\\source_systems\\data\\customer_app_actions.csv",
+        "kind": "csv",
+        "rows": 2365,
+        "columns": [
+          "action_id",
+          "order_id",
+          "customer_id",
+          "action_type",
+          "action_at",
+          "channel"
+        ],
+        "sha256": "154a6640ab936779af81704009b4e229ca5052759e4b210e2c084442ead6f8d3",
+        "size_bytes": 157275,
+        "raw_copy": "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_weekly_2026-08-08_2026-08-14\\files\\customer_app_actions.csv",
+        "missing_required": [],
+        "extra_columns": [
+          "channel"
+        ],
+        "malformed_rows": 0,
+        "empty": false,
+        "notes": []
+      },
+      "interventions": {
+        "status": "ok",
+        "name": "interventions",
+        "path": "B:\\Trimester-9\\FDE\\assignment-2\\source_systems\\data\\order_interventions.csv",
+        "kind": "csv",
+        "rows": 430,
+        "columns": [
+          "intervention_id",
+          "order_id",
+          "intervention_type",
+          "intervention_at",
+          "initiated_by",
+          "reason"
+        ],
+        "sha256": "d66af21244f9e1617abe2c51dce39dcad08fc6a308c8cbfbf189c7ba110c86e8",
+        "size_bytes": 35196,
+        "raw_copy": "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_weekly_2026-08-08_2026-08-14\\files\\order_interventions.csv",
+        "missing_required": [],
+        "extra_columns": [
+          "reason"
+        ],
+        "malformed_rows": 0,
+        "empty": false,
+        "notes": []
+      },
+      "order_outcomes_ref": {
+        "status": "ok",
+        "name": "order_outcomes_ref",
+        "path": "B:\\Trimester-9\\FDE\\assignment-2\\source_systems\\data\\order_outcomes.csv",
+        "kind": "csv",
+        "rows": 1600,
+        "columns": [
+          "order_id",
+          "final_status_norm",
+          "delivered_flag",
+          "late_flag",
+          "delay_min",
+          "outcome_bucket"
+        ],
+        "sha256": "dbe10b2f532bbcff5ea6aa05e32487254ba5dc9da18cba6bc39a29e9a77d3dc9",
+        "size_bytes": 72091,
+        "raw_copy": "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_weekly_2026-08-08_2026-08-14\\files\\order_outcomes.csv",
+        "missing_required": [],
+        "extra_columns": [
+          "final_status_norm",
+          "delivered_flag",
+          "outcome_bucket"
+        ],
+        "malformed_rows": 0,
+        "empty": false,
+        "notes": []
+      },
+      "driver_events": {
+        "status": "ok",
+        "name": "driver_events",
+        "path": "B:\\Trimester-9\\FDE\\assignment-2\\source_systems\\data\\driver_events.json",
+        "kind": "json",
+        "rows": 10035,
+        "columns": [
+          "driver_id",
+          "order_id",
+          "type",
+          "timestamp",
+          "lat",
+          "lon"
+        ],
+        "sha256": "8102eaec0ec206bc35abadf196f99f2267816b020bfe37ab352fa3f26274ab49",
+        "size_bytes": 1603743,
+        "raw_copy": "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_weekly_2026-08-08_2026-08-14\\files\\driver_events.json",
+        "missing_required": [],
+        "extra_columns": [],
+        "malformed_rows": 0,
+        "empty": false,
+        "notes": []
+      },
+      "client_metric_definitions": {
+        "status": "ok",
+        "name": "client_metric_definitions",
+        "path": "B:\\Trimester-9\\FDE\\assignment-2\\source_systems\\data\\client_metric_definitions.json",
+        "kind": "json",
+        "rows": 4,
+        "columns": [],
+        "sha256": "2c5e4e37f7dc636499d34d2e2397f6db3fc0b2bf99164c224fd681bd01e517b6",
+        "size_bytes": 553,
+        "raw_copy": "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_weekly_2026-08-08_2026-08-14\\files\\client_metric_definitions.json",
+        "missing_required": [],
+        "extra_columns": [],
+        "malformed_rows": 0,
+        "empty": false,
+        "notes": []
+      }
+    },
+    "dispatch_api": {
+      "source": "dispatch_api",
+      "base_url": "http://127.0.0.1:8000",
+      "pages_fetched": 16,
+      "records_fetched": 1600,
+      "unique_order_ids": 1600,
+      "expected_total": 1600,
+      "retries": 0,
+      "http_errors": [],
+      "issues": [],
+      "records_missing_required_fields": 0,
+      "records_missing_expected_fields": 0,
+      "complete": true,
+      "duration_s": 0.672,
+      "raw_pages": [
+        "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_weekly_2026-08-08_2026-08-14\\api\\dispatch_page_001.json",
+        "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_weekly_2026-08-08_2026-08-14\\api\\dispatch_page_002.json",
+        "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_weekly_2026-08-08_2026-08-14\\api\\dispatch_page_003.json",
+        "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_weekly_2026-08-08_2026-08-14\\api\\dispatch_page_004.json",
+        "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_weekly_2026-08-08_2026-08-14\\api\\dispatch_page_005.json",
+        "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_weekly_2026-08-08_2026-08-14\\api\\dispatch_page_006.json",
+        "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_weekly_2026-08-08_2026-08-14\\api\\dispatch_page_007.json",
+        "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_weekly_2026-08-08_2026-08-14\\api\\dispatch_page_008.json",
+        "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_weekly_2026-08-08_2026-08-14\\api\\dispatch_page_009.json",
+        "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_weekly_2026-08-08_2026-08-14\\api\\dispatch_page_010.json",
+        "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_weekly_2026-08-08_2026-08-14\\api\\dispatch_page_011.json",
+        "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_weekly_2026-08-08_2026-08-14\\api\\dispatch_page_012.json",
+        "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_weekly_2026-08-08_2026-08-14\\api\\dispatch_page_013.json",
+        "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_weekly_2026-08-08_2026-08-14\\api\\dispatch_page_014.json",
+        "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_weekly_2026-08-08_2026-08-14\\api\\dispatch_page_015.json",
+        "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_weekly_2026-08-08_2026-08-14\\api\\dispatch_page_016.json"
+      ],
+      "raw_page_sha256": {
+        "dispatch_page_001.json": "cf43f5c4b54cdcaf15dc021d5132b36142b91216b32d6cf62b41246de520f936",
+        "dispatch_page_002.json": "e09f693d6e551bc64b6c2bc5ff5f282a9dfae8c33b191af5eea2c7140263f5bb",
+        "dispatch_page_003.json": "b39a0dbe6e4bb793a4865bc24d20c04629a3d26c5ff6a647720d0a648fd34690",
+        "dispatch_page_004.json": "4ace034b95b111dd62a722e72caecb6e65d71d8d0b047c22acc7d74bd92797ef",
+        "dispatch_page_005.json": "c04fb2aa025f7eff154d45c5094d8fbecdb0dfd9977127af1dc315d25091ee01",
+        "dispatch_page_006.json": "7dfa3eaffc4487355bb5907b7715774814b6f5592c6009b906dbc8062915f3d5",
+        "dispatch_page_007.json": "2828a5f6191574b96a375f072efd3edc478afe3396cbad2b078c16609a8011e9",
+        "dispatch_page_008.json": "f1f4f5556d9995a69a7ada4b6ba75f0918eab97eba49ddf977ed9aa006254df0",
+        "dispatch_page_009.json": "90acdef4c4df7113f47b08d2a69ee780260cf1af3186094208623840f6973c6b",
+        "dispatch_page_010.json": "2905b2bfbeb289d04734c18ed43f3efcb6135cc52b13ecbb94b4c315dd00cae4",
+        "dispatch_page_011.json": "919b01f8f759f3f95ae234cb19797be9a8b437143c8d42d06d6fc52b483e3b77",
+        "dispatch_page_012.json": "d2c970f667221f42260f866153c75a4c8af481a3803cb788de6c265553a2dda1",
+        "dispatch_page_013.json": "a5b4d5760d8a2491c9b6a516ada64c28569f32476bbb1dc61e96dc70beef8489",
+        "dispatch_page_014.json": "9682157e17879384b4fcf9f32e992faac28996310263bd4bddb15560d81beb5a",
+        "dispatch_page_015.json": "9300fee35f8352e0c409e5a618d740a7f1aeb550cce47cdac481110ad4d82c2d",
+        "dispatch_page_016.json": "b500745defd3b8d5a45c9df9887eeb2e7c58ea9dccb44b67946d63696cf676d4"
+      },
+      "mode": "live"
+    },
+    "period": {
+      "start": "2026-08-08",
+      "end": "2026-08-14",
+      "label": "2026-08-08_2026-08-14"
+    },
+    "external_weather": {
+      "source": "open_meteo_archive",
+      "mode": "live",
+      "url": "https://archive-api.open-meteo.com/v1/archive",
+      "params": {
+        "latitude": 12.9716,
+        "longitude": 77.5946,
+        "start_date": "2026-08-08",
+        "end_date": "2026-08-15",
+        "hourly": "precipitation,rain",
+        "timezone": "Asia/Kolkata"
+      },
+      "hours": 192,
+      "first_hour": "2026-08-08T00:00:00",
+      "last_hour": "2026-08-15T23:00:00",
+      "retries": 0,
+      "errors": [],
+      "raw_path": "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_weekly_2026-08-08_2026-08-14\\external\\open_meteo_archive.json",
+      "raw_sha256": "1a57e80b26ebc546ce98aee6fa0d4f361aa05c0aa666269af81cee0554cb3cad"
+    },
+    "schema_contract": [
+      {
+        "source": "orders",
+        "kind": "sql",
+        "status": "PASS",
+        "missing_required": [],
+        "missing_optional": [],
+        "uncontracted": []
+      },
+      {
+        "source": "restaurants",
+        "kind": "sql",
+        "status": "PASS",
+        "missing_required": [],
+        "missing_optional": [],
+        "uncontracted": []
+      },
+      {
+        "source": "drivers",
+        "kind": "sql",
+        "status": "PASS",
+        "missing_required": [],
+        "missing_optional": [],
+        "uncontracted": []
+      },
+      {
+        "source": "customers",
+        "kind": "sql",
+        "status": "PASS",
+        "missing_required": [],
+        "missing_optional": [],
+        "uncontracted": []
+      },
+      {
+        "source": "support_tickets.csv",
+        "kind": "files",
+        "status": "PASS",
+        "missing_required": [],
+        "missing_optional": [],
+        "uncontracted": []
+      },
+      {
+        "source": "restaurant_status.csv",
+        "kind": "files",
+        "status": "PASS",
+        "missing_required": [],
+        "missing_optional": [],
+        "uncontracted": []
+      },
+      {
+        "source": "customer_app_actions.csv",
+        "kind": "files",
+        "status": "PASS",
+        "missing_required": [],
+        "missing_optional": [],
+        "uncontracted": []
+      },
+      {
+        "source": "order_interventions.csv",
+        "kind": "files",
+        "status": "PASS",
+        "missing_required": [],
+        "missing_optional": [],
+        "uncontracted": []
+      },
+      {
+        "source": "order_outcomes.csv",
+        "kind": "files",
+        "status": "PASS",
+        "missing_required": [],
+        "missing_optional": [],
+        "uncontracted": []
+      },
+      {
+        "source": "dispatch",
+        "kind": "api",
+        "status": "PASS",
+        "missing_required": [],
+        "missing_optional": [],
+        "uncontracted": []
+      }
+    ],
+    "orders_extract_vs_server_count": {
+      "extracted": 410,
+      "server_count": 410,
+      "match": true
+    },
+    "control_totals": {
+      "status": "PASS",
+      "rows": [
+        {
+          "control": "orders_rows",
+          "published": 1603,
+          "observed": 1603,
+          "status": "MATCH"
+        },
+        {
+          "control": "unique_orders",
+          "published": 1600,
+          "observed": 1600,
+          "status": "MATCH"
+        },
+        {
+          "control": "support_tickets_rows",
+          "published": 202,
+          "observed": 202,
+          "status": "MATCH"
+        },
+        {
+          "control": "dispatch_records",
+          "published": 1600,
+          "observed": 1600,
+          "status": "MATCH"
+        },
+        {
+          "control": "drivers",
+          "published": 120,
+          "observed": 120,
+          "status": "MATCH"
+        },
+        {
+          "control": "restaurants",
+          "published": 60,
+          "observed": 60,
+          "status": "MATCH"
+        }
+      ]
+    }
+  },
+  "outputs": {
+    "breakdowns": "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\breakdowns",
+    "charts": "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\charts",
+    "dashboard.html": "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\dashboard.html",
+    "data_quality_report.json": "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\data_quality_report.json",
+    "data_quality_report.md": "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\data_quality_report.md",
+    "data_quality_rules.csv": "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\data_quality_rules.csv",
+    "decision_memo.md": "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\decision_memo.md",
+    "evidence_table.md": "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\evidence_table.md",
+    "insights": "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\insights",
+    "known_unknown_assumption_limitation.md": "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\known_unknown_assumption_limitation.md",
+    "metrics.csv": "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\metrics.csv",
+    "metrics.json": "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\metrics.json",
+    "metrics.md": "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\metrics.md",
+    "metric_checks.csv": "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\metric_checks.csv",
+    "pipeline.log": "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\pipeline.log",
+    "profile": "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\profile",
+    "quarantine": "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\quarantine",
+    "reconciliation_ledger.csv": "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\reconciliation_ledger.csv",
+    "run_comparison.json": "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\run_comparison.json",
+    "run_comparison.md": "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\run_comparison.md",
+    "run_manifest.json": "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\run_manifest.json",
+    "sql_metric_layer_check.csv": "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\sql_metric_layer_check.csv",
+    "sql_metric_views": "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\sql_metric_views",
+    "validation_gate.json": "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\validation_gate.json",
+    "validation_gate.md": "B:\\Trimester-9\\FDE\\assignment-2\\output\\periods\\2026-08-08_2026-08-14\\runs\\run_weekly_2026-08-08_2026-08-14\\validation_gate.md"
+  },
+  "fingerprints": {
+    "metrics.csv": "69380ec069de017b9563da0fb223bf6e2cb4797c1c774eca195cdd0f4eefadbe",
+    "metric_checks.csv": "05eb36aaccfd2f7f7a1706bdb72c837cc41b5d3f3ce3a3dd74864f40f92d6063",
+    "data_quality_rules.csv": "dd534ef49fa9c4b3a463e9aa7ecc8844cc4b47075fed6fb53d9c8d7ea8fa2ea7",
+    "reconciliation_ledger.csv": "d10fd0279fa7f8f89ef0bde059e8d09fc3b25a28ac1961a9e992c4041b13159c",
+    "sql_metric_layer_check.csv": "f3076b3c6c30acb4f24e60f1fdec7a82297b436464465d30592280011eef6c31",
+    "breakdowns/customer_view_vs_system_view.csv": "81968033c2340788ee7c1900c0eb7d96a79def7618affe897e675c4bc3b5cab6",
+    "breakdowns/definition_comparison.csv": "7a185ff71388ffeb82de0ba8112850f7d8295aea6b940116e6a3c9217068af3e",
+    "breakdowns/journey_patterns.csv": "49907f522408250959aa53d6848a264fe49526853670bb7d0b3cd3dade87f845",
+    "breakdowns/late_orders_by_overrun_stage.csv": "99fd1b0515ef3de482458456222c89829300f9f1cf027810cf1f9cc449521a48",
+    "breakdowns/late_rate_by_day_of_week.csv": "34daa94308065c6ac04c190666f7ff8ff0eb5f57ecff8b61fc22b0858d7c27ba",
+    "breakdowns/late_rate_by_distance_band.csv": "b9266e4112d72f0bceb25a54fef49cd77c24778d8b259fee77ffaca4d604f11f",
+    "breakdowns/late_rate_by_eta_model_version.csv": "ae5d4de31d50e06569845df831930ece8c3c8486918e06a3d3371f1fc3a4c470",
+    "breakdowns/late_rate_by_hour.csv": "f890572a7f508b8fa4acfe743b176b07d525329b21c01b15162d44c7f2466480",
+    "breakdowns/late_rate_by_intervention_type.csv": "be0a80e874d00f14306fafc567366038fa8326f4642eefe748c1551c01a0661a",
+    "breakdowns/late_rate_by_reassignment.csv": "2d48c27832dc1bdf9b18d8e3397f5b4fe22356994e22155758fa3490f1c50db4",
+    "breakdowns/late_rate_by_traffic.csv": "a88b77f8789d9ed8c1b2cf9deebda4eb07888dde102f60df6b163afd7fad88b3",
+    "breakdowns/late_rate_by_weather.csv": "c42ec7170151087ebc43165994c02352e5891f88417f434ca493421e2ec0c6ee",
+    "breakdowns/outcome_distribution.csv": "0eda58fd52a4bf1acc61d5bd95e9379888b009e29f9bc2fc4a760387d2f7e033",
+    "breakdowns/stage_durations_by_outcome.csv": "f90258ddbaa11fcafc69d2e848dc75577b5aba1333d736a5e8a385ada6d33409",
+    "breakdowns/top_drivers_by_late_rate.csv": "5449ca4626b37efc0105d7a3cd9736828334fc950c2b220a3720bee452ab17be",
+    "breakdowns/top_restaurants_by_late_orders.csv": "2204c97d8ac880b894a73e68a8fef92c99139d45a6f3b72f5f77cd49a1b2d23b",
+    "breakdowns/worst_delays.csv": "19e2f1e1e90ad972f6706304fcc14b5e5f4fcc103e16f0f177f9f9643bbb8334",
+    "insights/early_warning_backtest.csv": "257da95dfe80fb569fb8b19199606085ec4b5211c9c0e85e49c428a6e1549f2c",
+    "insights/early_warning_vs_interventions.csv": "b5311700b380f09fbfc759af266c946d9e899bea172020da3a5f4dc9185cff5d",
+    "insights/eta_calibration.csv": "8b099e0ca880944030d5fb17266bf45201f123a760d3e43fc5bb1324a4b7079d",
+    "insights/fair_ranking_drivers.csv": "b8c2eb14bcbea44b9ea08b845d7782cc53b9fac88286df1bfd248f392034eaa9",
+    "insights/fair_ranking_restaurants.csv": "e53d263251fbff2f435caf5c11bb58c6a2283eddf1fd5fe62dfab5773d428e14",
+    "insights/gps_arrival_feasibility.csv": "f7463681b32eff73e31abd27f1b88c4870737d57e8cbaf8de4ede56607a5e1fd",
+    "insights/impact_whatif.csv": "14dcd49708f277e8d010295c868fab61b97443696c61c2bbd0937bf6a53f4849",
+    "insights/late_rate_heatmap_weekday_hour.csv": "edebce13be77272b7ddf743e295aa3382a8ddb38ff079b86d077a27faf125e24",
+    "insights/late_rate_label_vs_observed_weather.csv": "f5a839b9e69f4a1d7fe63f4bb3f3dd7670ebebe7dbdef0a1cf30f3d3b0f69bdb",
+    "insights/weather_label_vs_observed.csv": "76180c6cd55d6fd597992537a96be5a7e505ca8594a6d41acc3d276062b0d4c6",
+    "sql_metric_views/v_late_rate_by_restaurant.csv": "00795a39abb2975722b2ad2f1fa612a465c6f2b2125da7f3e25a557f46523479",
+    "sql_metric_views/v_m1_late_rate.csv": "baf30f86ad76feb63416da05f371816463345c72d035fb6bea5e74d1d2c31322",
+    "sql_metric_views/v_m3_pre_pickup_share.csv": "81acb96742acba0c68dbbb0fa78900317bc30d2f34f9da01bbfe492d0103c6b8",
+    "sql_metric_views/v_m4_support_contact.csv": "b1e17db3eb61bc1e31563e71740bf1537f4a9a7aeac3aa81bba55dc7ccf94cff",
+    "sql_metric_views/v_m5_intervention.csv": "f2f9c2d99f88803ae7150c0eb5da3a931b02d56601589f8259a70cd40bfdd22f",
+    "quarantine/orders_duplicate_conflicts.csv": "7e933fb03a0f1b2c6ba0b227e809c67266659ea61ee9c8dcc0c7b38f7280c095",
+    "processed/dim_customer.csv": "b44bbfd6388773b6faa724368905433de82e2758fc4fe059a64daaac81e4a83c",
+    "processed/dim_driver.csv": "f6c1d3a927228918cfc6dd5a55bf07a9365d3197b07c1a10e0f430b805e74d35",
+    "processed/dim_restaurant.csv": "c9b6b211388179ff68d1f9ae09733823b34b22e79bdab7c533f8f16cb85e34f4",
+    "processed/fact_event.csv": "ef9be2806ed821d61363a445a63eb0e7e52af81af476d45139a5feb4a4b483ab",
+    "processed/fact_interaction.csv": "d205d7b48d6c3a5c150238a8cea1ca4b252cd39adcc8ce78983ee15a07295168",
+    "processed/fact_intervention.csv": "989020832749d2496aba1779da2391e67558243863755432ff545a134ce58288",
+    "processed/fact_order.csv": "dcb91c1d6af05e4bc4933747dca5586d6de06dfc487b2c10dffcde093f638a15",
+    "processed/order_journey.csv": "01b3ae56cf6a1eb96cb4bd3d77033665d283888e68e662024291b14b8b25ac57"
+  },
+  "status": "COMPLETED",
+  "finished_at": "2026-09-27T22:27:38",
+  "duration_s": 10.62
+}

@@ -1,7 +1,7 @@
 {
   "run_id": "run_example",
   "pipeline_version": "1.0.0",
-  "started_at": "2026-09-27T20:30:29",
+  "started_at": "2026-09-27T22:26:22",
   "config": {
     "project_root": "B:\\Trimester-9\\FDE\\assignment-2",
     "source_root": "B:\\Trimester-9\\FDE\\assignment-2\\source_systems",
@@ -39,6 +39,9 @@
     ],
     "source_timezone": "Asia/Kolkata",
     "status_freshness_sla_min": 15,
+    "max_unexpected_status_pct": 10,
+    "max_unparseable_kpi_timestamp_pct": 10,
+    "max_missing_delivery_time_pct": 15,
     "ew_grace_minutes_grid": [
       0,
       5,
@@ -67,12 +70,17 @@
       0.5
     ],
     "kpi_drift_alert_pp": 2.0,
+    "period_start": null,
+    "period_end": null,
+    "period_label": null,
+    "replay_run_id": null,
+    "schema_contract_file": "B:\\Trimester-9\\FDE\\assignment-2\\config\\schema_contract.yaml",
     "fail_on_gate": "FAIL",
     "write_charts": true
   },
   "stages": {
     "ingest": {
-      "seconds": 2.75,
+      "seconds": 4.02,
       "rows": {
         "orders": 1603,
         "restaurants": 60,
@@ -89,10 +97,10 @@
       }
     },
     "profile": {
-      "seconds": 0.9
+      "seconds": 1.01
     },
     "clean": {
-      "seconds": 0.66,
+      "seconds": 0.7,
       "actions": 7,
       "rows": {
         "orders": 1600,
@@ -192,7 +200,7 @@
       }
     },
     "model": {
-      "seconds": 1.77,
+      "seconds": 2.07,
       "tables": {
         "dim_customer": 900,
         "dim_restaurant": 60,
@@ -205,7 +213,7 @@
       }
     },
     "metrics": {
-      "seconds": 0.37,
+      "seconds": 0.47,
       "headline": {
         "late_delivery_rate_pct": 56.33,
         "late_orders": 837,
@@ -218,11 +226,12 @@
       }
     },
     "insights": {
-      "seconds": 2.73,
+      "seconds": 5.97,
       "headline": {
         "early_warning": {
           "chosen_grace_min": 10,
           "holdout": true,
+          "train_until_day": 21,
           "train_orders": 1111,
           "test_orders": 375,
           "test_precision_pct": 96.1,
@@ -280,9 +289,16 @@
         "gps": {
           "orders_with_pre_pickup_pings": 1166,
           "approaching_pct": 0.8,
+          "moving_away_before_pickup_pct": 99.2,
+          "pings_before_pickup_pct": 30.8,
           "within_1km_pct": 5.9,
           "median_last_ping_km": 4.35,
-          "verdict": "GPS cannot stand in for an arrival event - pings do not converge on the restaurant"
+          "verdict": "GPS pings look interpolated, not measured: each track is a straight constant-speed line from the restaurant to the customer that ignores the pickup time, so GPS cannot show when the rider reached the restaurant",
+          "orders_with_3plus_pings": 1111,
+          "straight_line_tracks_pct": 91.3,
+          "evenly_spaced_tracks_pct": 90.7,
+          "orders_with_post_pickup_pings_pct": 99.1,
+          "post_pickup_converging_pct": 99.4
         }
       },
       "findings": [
@@ -290,19 +306,19 @@
         "D2 The promise is optimistic before the food even leaves",
         "D3 Do not publish a restaurant or driver blame list",
         "D4 The weather label does not match the weather",
-        "D5 GPS cannot replace the missing arrival event"
+        "D5 GPS pings look drawn, not measured - they cannot show arrival at the restaurant"
       ]
     },
     "gate": {
-      "seconds": 0.01,
+      "seconds": 0.25,
       "overall": "WARN",
-      "run_comparison": "UNKNOWN"
+      "run_comparison": "PASS"
     },
     "memo": {
       "seconds": 0.0
     },
     "outputs": {
-      "seconds": 1.73,
+      "seconds": 13.98,
       "published": true,
       "charts": [
         "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\charts\\late_rate_by_traffic.png",
@@ -317,10 +333,28 @@
         "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\charts\\restaurant_funnel_plot.png",
         "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\charts\\late_rate_heatmap.png",
         "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\charts\\weather_label_vs_observed.png"
+      ],
+      "visuals": [
+        "01_trustworthy_path.png",
+        "02_source_map.png",
+        "03_retrieval_proof.png",
+        "04_kpi_funnel.png",
+        "05_validation_gate.png",
+        "06_one_order_journey.png",
+        "07_order_lifecycle.png",
+        "08_data_model.png",
+        "09_metrics_board.png",
+        "10_where_delay_builds.png",
+        "11_known_unknown.png",
+        "12_pipeline_flow.png",
+        "13_reproducibility.png",
+        "14_judgement_call.png",
+        "15_what_is_different.png"
       ]
     }
   },
   "inputs": {
+    "mode": "live",
     "sql": {
       "database": "B:\\Trimester-9\\FDE\\assignment-2\\source_systems\\database\\flasheats.db",
       "database_sha256": "34bc065c453beef3d9656690c642d384767e5ea950b379376d655b298b06e02c",
@@ -398,7 +432,8 @@
           "params": {
             "start_at": null,
             "end_at": null
-          }
+          },
+          "sha256": "4c2e702ed8aead855f61d4f5c80499eed67757164926f60e4106e9ee1376ef18"
         },
         {
           "name": "restaurants_extract",
@@ -413,7 +448,8 @@
           ],
           "sql_file": "restaurants_extract.sql",
           "raw_path": "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\sql\\restaurants_extract.csv",
-          "params": {}
+          "params": {},
+          "sha256": "0d2799652c1bfc1fc317c3b8bc9b47c7aba38ed3ddb457506b11e73bc766b341"
         },
         {
           "name": "drivers_extract",
@@ -426,7 +462,8 @@
           ],
           "sql_file": "drivers_extract.sql",
           "raw_path": "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\sql\\drivers_extract.csv",
-          "params": {}
+          "params": {},
+          "sha256": "f6c1d3a927228918cfc6dd5a55bf07a9365d3197b07c1a10e0f430b805e74d35"
         },
         {
           "name": "customers_extract",
@@ -438,7 +475,8 @@
           ],
           "sql_file": "customers_extract.sql",
           "raw_path": "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\sql\\customers_extract.csv",
-          "params": {}
+          "params": {},
+          "sha256": "b44bbfd6388773b6faa724368905433de82e2758fc4fe059a64daaac81e4a83c"
         }
       ]
     },
@@ -590,7 +628,19 @@
       },
       "client_metric_definitions": {
         "status": "ok",
-        "path": "B:\\Trimester-9\\FDE\\assignment-2\\source_systems\\data\\client_metric_definitions.json"
+        "name": "client_metric_definitions",
+        "path": "B:\\Trimester-9\\FDE\\assignment-2\\source_systems\\data\\client_metric_definitions.json",
+        "kind": "json",
+        "rows": 4,
+        "columns": [],
+        "sha256": "2c5e4e37f7dc636499d34d2e2397f6db3fc0b2bf99164c224fd681bd01e517b6",
+        "size_bytes": 553,
+        "raw_copy": "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\files\\client_metric_definitions.json",
+        "missing_required": [],
+        "extra_columns": [],
+        "malformed_rows": 0,
+        "empty": false,
+        "notes": []
       }
     },
     "dispatch_api": {
@@ -617,7 +667,7 @@
       "records_missing_required_fields": 0,
       "records_missing_expected_fields": 0,
       "complete": true,
-      "duration_s": 1.818,
+      "duration_s": 2.225,
       "raw_pages": [
         "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\api\\dispatch_page_001.json",
         "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\api\\dispatch_page_002.json",
@@ -636,8 +686,27 @@
         "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\api\\dispatch_page_015.json",
         "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\api\\dispatch_page_016.json"
       ],
+      "raw_page_sha256": {
+        "dispatch_page_001.json": "029c0a51bce03c7ce362b5e5d9bc481cefc17065685c60aaa43eab362466983d",
+        "dispatch_page_002.json": "4e04f3e6aa10c9cec178e8ba7dd00eb7b8bbf93ab2b0b16030fc112535577b59",
+        "dispatch_page_003.json": "f03b6f6121de841c63f76dab4e0bbdd951a5a4535919bdc84f8ca4d307a73162",
+        "dispatch_page_004.json": "2eb32aeedca1b2f8a60eb985a9d3696268a3de4e0feb2f27e8f5ff21ae7fb43f",
+        "dispatch_page_005.json": "f33d7908216cea8c66faa93620096482d55d1d8bb58e9d5d64a729119813e94f",
+        "dispatch_page_006.json": "83511d18238e62ac0d37b81244e4d6d0cfaac00996367fd1286f89a56ef01b5c",
+        "dispatch_page_007.json": "0a9ec78715079c641fa8a38a255e2719678c6bb4c1907b50e9a494e899b85719",
+        "dispatch_page_008.json": "db9b4c78df4f64d7c9c10c718845b8f8084e6c823e906d35c85799f89818b686",
+        "dispatch_page_009.json": "d73f51dd02654c494fc0d593fbc805a89d565b23983438916c7eac810e565e26",
+        "dispatch_page_010.json": "bf97904f16a958290388be64fcc5841ccf0c856190140366851fef38e543ec2f",
+        "dispatch_page_011.json": "0294196062a28ec1f9d8fd4cf2d710da18a80f10c25efcc88eb03afbb969eedb",
+        "dispatch_page_012.json": "117b240b6e8192c8af17be4a5496b9cf86fc7a22eb60a41c9ab46292125f2c3a",
+        "dispatch_page_013.json": "dbc3795b99752354754ad83fcc0d8d19c12fbc9e2a4f742b2755b92b05c1fc9e",
+        "dispatch_page_014.json": "dff73b02b382bb90b994ee726c0fb2a6f90db0b8d3047f0f9459137b30cacaef",
+        "dispatch_page_015.json": "af52fa3b79a88acd302befcaa9200ff2dcf40295348a5335c4a901585d08685b",
+        "dispatch_page_016.json": "f9075203e478a96abe5e81bbf3cfe7a1f06772bdf39766e275348f87e4c2b7dd"
+      },
       "mode": "live"
     },
+    "period": null,
     "external_weather": {
       "source": "open_meteo_archive",
       "mode": "live",
@@ -655,7 +724,136 @@
       "last_hour": "2026-08-29T23:00:00",
       "retries": 0,
       "errors": [],
-      "raw_path": "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\external\\open_meteo_archive.json"
+      "raw_path": "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\external\\open_meteo_archive.json",
+      "raw_sha256": "5fc4be7323364516f873bac1f97367075a85fd9b610496819c9da6598aed49a3"
+    },
+    "schema_contract": [
+      {
+        "source": "orders",
+        "kind": "sql",
+        "status": "PASS",
+        "missing_required": [],
+        "missing_optional": [],
+        "uncontracted": []
+      },
+      {
+        "source": "restaurants",
+        "kind": "sql",
+        "status": "PASS",
+        "missing_required": [],
+        "missing_optional": [],
+        "uncontracted": []
+      },
+      {
+        "source": "drivers",
+        "kind": "sql",
+        "status": "PASS",
+        "missing_required": [],
+        "missing_optional": [],
+        "uncontracted": []
+      },
+      {
+        "source": "customers",
+        "kind": "sql",
+        "status": "PASS",
+        "missing_required": [],
+        "missing_optional": [],
+        "uncontracted": []
+      },
+      {
+        "source": "support_tickets.csv",
+        "kind": "files",
+        "status": "PASS",
+        "missing_required": [],
+        "missing_optional": [],
+        "uncontracted": []
+      },
+      {
+        "source": "restaurant_status.csv",
+        "kind": "files",
+        "status": "PASS",
+        "missing_required": [],
+        "missing_optional": [],
+        "uncontracted": []
+      },
+      {
+        "source": "customer_app_actions.csv",
+        "kind": "files",
+        "status": "PASS",
+        "missing_required": [],
+        "missing_optional": [],
+        "uncontracted": []
+      },
+      {
+        "source": "order_interventions.csv",
+        "kind": "files",
+        "status": "PASS",
+        "missing_required": [],
+        "missing_optional": [],
+        "uncontracted": []
+      },
+      {
+        "source": "order_outcomes.csv",
+        "kind": "files",
+        "status": "PASS",
+        "missing_required": [],
+        "missing_optional": [],
+        "uncontracted": []
+      },
+      {
+        "source": "dispatch",
+        "kind": "api",
+        "status": "PASS",
+        "missing_required": [],
+        "missing_optional": [],
+        "uncontracted": []
+      }
+    ],
+    "orders_extract_vs_server_count": {
+      "extracted": 1603,
+      "server_count": 1603,
+      "match": true
+    },
+    "control_totals": {
+      "status": "PASS",
+      "rows": [
+        {
+          "control": "orders_rows",
+          "published": 1603,
+          "observed": 1603,
+          "status": "MATCH"
+        },
+        {
+          "control": "unique_orders",
+          "published": 1600,
+          "observed": 1600,
+          "status": "MATCH"
+        },
+        {
+          "control": "support_tickets_rows",
+          "published": 202,
+          "observed": 202,
+          "status": "MATCH"
+        },
+        {
+          "control": "dispatch_records",
+          "published": 1600,
+          "observed": 1600,
+          "status": "MATCH"
+        },
+        {
+          "control": "drivers",
+          "published": 120,
+          "observed": 120,
+          "status": "MATCH"
+        },
+        {
+          "control": "restaurants",
+          "published": 60,
+          "observed": 60,
+          "status": "MATCH"
+        }
+      ]
     }
   },
   "outputs": {
@@ -680,10 +878,61 @@
     "run_comparison.json": "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\run_comparison.json",
     "run_comparison.md": "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\run_comparison.md",
     "run_manifest.json": "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\run_manifest.json",
+    "sql_metric_layer_check.csv": "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\sql_metric_layer_check.csv",
+    "sql_metric_views": "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\sql_metric_views",
     "validation_gate.json": "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\validation_gate.json",
-    "validation_gate.md": "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\validation_gate.md"
+    "validation_gate.md": "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\validation_gate.md",
+    "visuals": "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\visuals"
+  },
+  "fingerprints": {
+    "metrics.csv": "41e6a1041c66a12be5112adbc586b8d994e8d2a5560b8d6de0fe8fb7983c02ae",
+    "metric_checks.csv": "5c15b732f8bb5ad2a93703a0a2e741bd01f42626fcb24b87862df499071d964e",
+    "data_quality_rules.csv": "49c72c3dbb7632a756129cfa935328739f25eff2f70e9965ae012d601be93e3d",
+    "reconciliation_ledger.csv": "dd9ed1399a4b9cb4bd38bb5772abc1a4297d04980f10c77ad7ce9d4ffcf07d69",
+    "sql_metric_layer_check.csv": "4337a841c92d1ca867bb476edf536132c0c3144d50f62fa77875679e6443b191",
+    "breakdowns/customer_view_vs_system_view.csv": "d0c93bd17ed2445c02a836ca9f6a110281b044ae468af69a93b68634e621fc90",
+    "breakdowns/definition_comparison.csv": "bec2b9f0a9f5b3a632c760f966eab177791433da9208b017b845fa54e0201260",
+    "breakdowns/journey_patterns.csv": "3f61646b74b550d89254a2e157d6745e61d2419b2c641df8afddb1a9109b4968",
+    "breakdowns/late_orders_by_overrun_stage.csv": "03f193d129605e18e52b941fac4a134c83f0cae7578389a0f5bc0dcfc081cc4f",
+    "breakdowns/late_rate_by_day_of_week.csv": "62efe0dba12bb694c8da3f04a83073765cfe569d0f44b458eba272045bad4258",
+    "breakdowns/late_rate_by_distance_band.csv": "dbe6b1c81695c7b8a713c9c9e27ea61e4864de1b1867b294e30411fc061825d8",
+    "breakdowns/late_rate_by_eta_model_version.csv": "26fbd925cb9af9a1a24600e700ff95647f0f9a7632092dd92e35d86958ca14d4",
+    "breakdowns/late_rate_by_hour.csv": "68e466a02006199009dce3b720367c7632129b0fe43d0b849b5c2556297b74eb",
+    "breakdowns/late_rate_by_intervention_type.csv": "b2b39d0b1ea2896c965aeea9e9ebacb188a646cbd55cc217e12aa2a42f112ca8",
+    "breakdowns/late_rate_by_reassignment.csv": "9a94e1363c959b4a482c0cc8c4aa3c961aaae62fd4e12e9f658744692537d025",
+    "breakdowns/late_rate_by_traffic.csv": "adc37a426a182d0a48f09460a1e8bed92fbc49d3785a4e54f190909abf8c2248",
+    "breakdowns/late_rate_by_weather.csv": "318c4dd29229f2dcc0911cda98e8865145c94cf0d3cd5e3b68ea012f1bfe8035",
+    "breakdowns/outcome_distribution.csv": "66be6e987db2bf1257a76a1a80bde57032add6bf03c0374a790de2700d4a3088",
+    "breakdowns/stage_durations_by_outcome.csv": "f10021006679516326126981f30f268b7100bed02bbf85128358b06e62514cd9",
+    "breakdowns/top_drivers_by_late_rate.csv": "71ace607df6f753eeca8835f9c34925711fbf26f02979f7d870f15e448d8a0f2",
+    "breakdowns/top_restaurants_by_late_orders.csv": "b7a60aacdab3dea49b4e858df04fdfa2634219bc88b707b5710b1a134bb7dc77",
+    "breakdowns/worst_delays.csv": "bd12bea83791ef963d7cd3ab5b8c8d184cb778e9afc20a8867895f17e96d95e8",
+    "insights/early_warning_backtest.csv": "785d7742ea3f5b7cac218fb39bed4cc19b3550ddc24e7cfb0c8bd42b7c20f331",
+    "insights/early_warning_vs_interventions.csv": "09b8120d76764e52277eeea8e4f25529e4a1850be7fe95a3bfae84d71341a475",
+    "insights/eta_calibration.csv": "eb367725718c408d273c329c94c515990b37823cb4cadcfbb436c9cae89f4f54",
+    "insights/fair_ranking_drivers.csv": "23c2b55db961609e448c6910d66481a029a8a46c5278c85b2e91485d62c42e85",
+    "insights/fair_ranking_restaurants.csv": "908fc8460f34ac217b9c2f395a0ab3c863e0e66e1bfe34ce8ee787be04d425fc",
+    "insights/gps_arrival_feasibility.csv": "531696d0f84802a985253a7203550dbfa8243696b4709371fb1662ea5d4f3cee",
+    "insights/impact_whatif.csv": "0e0206056e31d002d99b6392a3e860a9016e4cf4b2262a81217ba5bc110dc1c1",
+    "insights/late_rate_heatmap_weekday_hour.csv": "704bd4b889663f724303cbc3829fde87e32bdfc47dcafd799f299596e3294d86",
+    "insights/late_rate_label_vs_observed_weather.csv": "1efdc574b7fe09e78cc7a1bd17b43e7bc2a68ff6962dac0d6b9f265382461bad",
+    "insights/weather_label_vs_observed.csv": "d6e3aadf801e02498e6748ba645e90fdaf2bd17bfa38479ff679492fa3dd016e",
+    "sql_metric_views/v_late_rate_by_restaurant.csv": "6d9a9b8ca3ba2a7b0d9787143cfe9e09828a5537c9c4785c3cb1272fb2272ac1",
+    "sql_metric_views/v_m1_late_rate.csv": "b6a6af129445458fde669f5f4542d1a783409b3b5edf92777794c135bd7bdcf9",
+    "sql_metric_views/v_m3_pre_pickup_share.csv": "f75833d5d762a526a48c8256e1055f00edc48ac57970fd04c92f508ee438a1c5",
+    "sql_metric_views/v_m4_support_contact.csv": "1d7981a45fae6a776f7e6e8d586447a760cda2bfc532f63d7942c688a8e7d666",
+    "sql_metric_views/v_m5_intervention.csv": "970ccc7c3036d30da4c510b4c7107bb2c53ac73e3a64c2e726b7b303e5881f88",
+    "quarantine/orders_duplicate_conflicts.csv": "ef5fa6b23c3ab7e1c73c1ff474c81fef80a549d040ccccb30fb5774200dba895",
+    "processed/dim_customer.csv": "b44bbfd6388773b6faa724368905433de82e2758fc4fe059a64daaac81e4a83c",
+    "processed/dim_driver.csv": "f6c1d3a927228918cfc6dd5a55bf07a9365d3197b07c1a10e0f430b805e74d35",
+    "processed/dim_restaurant.csv": "c9b6b211388179ff68d1f9ae09733823b34b22e79bdab7c533f8f16cb85e34f4",
+    "processed/fact_event.csv": "0a0f9228c52bbb7d4eb6bcb34a5d0ef256ef1f5e0d6885de8098561a4408492c",
+    "processed/fact_interaction.csv": "16d3a7b0b935eb54b37040916ed609825dc200c6677256dc83d629841665954e",
+    "processed/fact_intervention.csv": "271df1aa147e7747c0a6bcb47fb06df4a027d6c126dc616008f43f4c3edac0e0",
+    "processed/fact_order.csv": "49319091081341cbd27c5af712390baa188a5a0662ba68d82c9215482f44cd82",
+    "processed/order_journey.csv": "f2f1c4e4448ae06e397d603ac4a289c48275cad22dc75cf07037ac5b62cd5ad5"
   },
   "status": "COMPLETED",
-  "finished_at": "2026-09-27T20:30:43",
-  "duration_s": 13.89
+  "finished_at": "2026-09-27T22:26:53",
+  "duration_s": 31.51
 }

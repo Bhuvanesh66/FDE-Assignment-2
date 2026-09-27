@@ -1,0 +1,16 @@
+check,status,evidence
+KPI denominator > 0,PASS,validated population = 385
+late + on-time == validated population,PASS,214 + 171 == 385
+outcome buckets sum to unique orders,PASS,412 == 412
+stage decomposition is exact (pre-pickup + transit overrun == delay),PASS,max abs residual = 0.010 min over 385 orders
+independent reconciliation vs client order_outcomes.csv (historical definition),PASS,pipeline late=214 vs reference late=214; max |delay diff| = 0.000 min over 386 orders
+join cardinality: fact_order <- dispatch,PASS,left=412 right=412 result=412 (right duplicates dropped=0)
+join cardinality: fact_order <- driver_events (aggregated),PASS,left=412 right=412 result=412 (right duplicates dropped=0)
+join cardinality: order_journey <- app_actions (aggregated),PASS,left=412 right=286 result=412 (right duplicates dropped=0)
+join cardinality: order_journey <- tickets (aggregated),PASS,left=412 right=48 result=412 (right duplicates dropped=0)
+join cardinality: order_journey <- interventions (aggregated),PASS,left=412 right=117 result=412 (right duplicates dropped=0)
+independent SQL re-computation of M1 on the raw database,PASS,"SQL: {'valid_delivered': 385.0, 'late_orders': 214.0, 'late_rate_pct': 55.58, 'late_over_10_orders': 87.0} | pipeline: population=385, late=214 | difference pop=0 late=0, explainable by unparseable/tz/padded values=0"
+SQL metric layer (sql/40_metric_views.sql) == pandas metrics,PASS,6 quantities agree
+retrieval complete vs client control totals (source_systems/manifest.json),PASS,orders_rows: published 1603 / observed 1603; unique_orders: published 1600 / observed 1600; support_tickets_rows: published 202 / observed 202; dispatch_records: published 1600 / observed 1600; drivers: published 120 / observed 120; restaurants: published 60 / observed 60
+record ledger: raw = clean + dropped duplicates + quarantined + out of period (every dataset),PASS,tickets: 202=48+1+0+0+153; restaurant_status: 502=122+2+0+0+378; app_actions: 2365=588+0+0+0+1777; interventions: 430=117+0+0+0+313; driver_events: 10035=2572+0+0+0+7463; dispatch: 1600=412+0+0+0+1188
+order ledger: every unique order in exactly one outcome bucket; population = late + on time,PASS,412 orders = 214 delivered_late + 171 delivered_on_time + 19 cancelled + 7 unknown_missing_timestamp + 1 excluded_dq_rule; KPI population 385
