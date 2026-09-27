@@ -2,10 +2,12 @@
 # Tested with Python 3.11 – 3.14 on Windows and Linux.
 pandas>=2.2
 requests>=2.31
-flask>=3.0          # only needed to run the mock Dispatch API (source_systems/api/mock_dispatch_api.py)
+pyyaml>=6.0         # config/pipeline.yaml (stakeholder-owned policy)
+flask>=3.0          # mock Dispatch API (source_systems/api/mock_dispatch_api.py) and test fakes
 matplotlib>=3.8     # charts in output/charts
+streamlit>=1.36     # app/dashboard.py (decision dashboard)
 pytest>=8.0         # tests/
-# Optional — only for re-executing the challenge notebooks in notebooks/
+# Optional — only for re-executing the challenge notebooks and the walkthrough
 nbformat>=5.9
 nbclient>=0.9
 ipykernel>=6.29

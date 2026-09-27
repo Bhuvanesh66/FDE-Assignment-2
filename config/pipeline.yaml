@@ -1,0 +1,55 @@
+# FlashEats late-delivery pipeline - stakeholder-owned policy
+#
+# Every number below is a BUSINESS decision, not an engineering constant.
+# The engineer implements the rule; the named owner decides the value.
+# Change a value here and rerun `python run_pipeline.py --start-api`:
+# every output, the gate and the decision memo are recomputed with it,
+# and the values used are recorded in output/run_manifest.json.
+
+kpi:
+  late_threshold_min: 0                  # owner: VP Operations  - "any delivered order after the promised ETA is late"
+  meaningful_late_threshold_min: 10      # owner: Support Lead   - reported alongside as "meaningfully late"
+  target_on_time_rate_pct: 80            # owner: VP Operations (proposed) - used by the ETA calibration what-if
+
+data_quality:
+  source_timezone: Asia/Kolkata          # owner: Data Team      - naive timestamps are local time
+  max_plausible_distance_km: 50          # owner: Operations     - single-city delivery radius
+  lat_range: [12.5, 13.5]                # owner: Operations/GIS - Bengaluru service area
+  lon_range: [77.2, 78.0]
+  status_freshness_sla_min: 15           # owner: Restaurant Ops - a 'ready' written later than this after pickup is stale
+
+dispatch_api:                            # owner: Dispatch       - client system
+  base_url: http://127.0.0.1:8000
+  page_size: 100
+  timeout_s: 10
+  max_retries: 5
+  backoff_base_s: 0.5
+  backoff_cap_s: 4
+
+external_weather:                        # owner: Data Team      - independent, public source (not a client system)
+  enabled: true
+  base_url: https://archive-api.open-meteo.com/v1/archive
+  latitude: 12.9716                      # Bengaluru city centre (single-point proxy, see limitations)
+  longitude: 77.5946
+  rain_threshold_mm: 0.1                 # an hour with more than this much precipitation counts as "raining"
+  timeout_s: 20
+  max_retries: 3
+
+early_warning:                           # owner: Operations     - the proactive-intervention trigger
+  grace_minutes_grid: [0, 5, 10, 15, 20, 25, 30]
+  min_precision: 0.90                    # ops only wants alerts that are right at least 90 % of the time
+  train_until_day: 21                    # choose the rule on 1-21 Aug, prove it on 22-28 Aug (no peeking)
+
+eta_calibration:                         # owner: Product / ETA service
+  padding_grid_min: [0, 5, 10, 15, 20, 25, 30]
+
+fairness:                                # owner: Restaurant Ops / Fleet Ops - before anyone is penalised
+  min_orders_restaurant: 15
+  min_orders_driver: 10
+  confidence: 0.95
+
+impact:                                  # ASSUMPTIONS for the what-if only - not measured
+  prevented_share_scenarios: [0.25, 0.50]   # share of alerted late orders an intervention turns into on-time
+
+monitoring:
+  kpi_drift_alert_pp: 2.0                # flag the run if the KPI moves more than this versus the last published run
