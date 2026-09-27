@@ -148,6 +148,12 @@ R = {
     "FR-01": Rule("FR-01", "Restaurant status updates are fresh enough for the intended use", "restaurant_status",
                   "'ready' recorded after the driver already picked up is useless for live ETA and unfair for restaurant accountability.",
                   "status in {ready, handed_off} with last_updated_at later than the order's pickup_at (+ SLA)", "flag", "Restaurant Ops"),
+    "WX-01": Rule("WX-01", "Order weather label agrees with independently observed rainfall", "orders+weather",
+                  "Operations attributes lateness to weather using weather_bucket; if the label does not match what actually fell from the sky, "
+                  "weather-based explanations and any model trained on the label are built on sand.",
+                  "join each order's creation hour to Open-Meteo hourly precipitation for Bengaluru; compare labelled rain (rain/heavy_rain) "
+                  "with observed rain (> threshold mm); Cohen's kappa < 0.2 = no better than chance",
+                  "retain", "Operations / Data Team"),
     "KPI-01": Rule("KPI-01", "'Late' has one agreed definition and owner", "orders",
                    "Four stakeholders define late differently; publishing one number without an owner invites disputes.",
                    "client_metric_definitions.json lists conflicting definitions and no canonical owner", "retain", "VP Operations (proposed)"),
@@ -402,6 +408,28 @@ def run_rules(clean: dict[str, pd.DataFrame], rep: CleaningReport, cfg: Pipeline
     else:
         res.append(_empty_result(R["FR-01"], "restaurant_status not available"))
 
+    # WX-01 weather label vs independently observed weather (external source)
+    wx = clean.get("weather_obs")
+    if wx is not None and len(wx) and {"hour", "precipitation_mm"} <= set(wx.columns) and {"created_at", "weather_bucket"} <= set(o.columns) and len(o):
+        m = o[["order_id", "created_at", "weather_bucket"]].assign(hour=o["created_at"].dt.floor("h"))
+        m = m.merge(wx[["hour", "precipitation_mm"]], on="hour", how="left")
+        covered = m["precipitation_mm"].notna() & m["weather_bucket"].notna()
+        labelled = m["weather_bucket"].isin(["rain", "heavy_rain"])
+        observed = m["precipitation_mm"] > cfg.weather_rain_threshold_mm
+        mismatch = covered & (labelled != observed)
+        kappa = cohen_kappa(labelled[covered], observed[covered])
+        agreement = float((labelled == observed)[covered].mean()) if covered.any() else float("nan")
+        coverage = float(covered.mean())
+        status = "UNKNOWN" if not covered.any() else ("WARN" if (kappa is None or kappa < 0.2 or coverage < 0.9) else "PASS")
+        mm = m[covered].groupby("weather_bucket")["precipitation_mm"].mean().round(2).to_dict()
+        res.append(RuleResult(R["WX-01"], int(mismatch.sum()), int(covered.sum()), status,
+                              detail=f"hours covered={coverage:.1%}; agreement={agreement:.1%}; Cohen's kappa={kappa if kappa is None else round(kappa, 3)}; "
+                                     f"mean observed mm by label={mm}",
+                              sample_keys=sorted(m.loc[mismatch, "order_id"].astype(str))[:10], violating_keys=m.loc[mismatch, "order_id"].astype(str).tolist(),
+                              extra={"kappa": kappa, "agreement": agreement, "coverage": coverage, "mean_mm_by_label": mm}))
+    else:
+        res.append(_empty_result(R["WX-01"], "observed weather not available (external API unreachable and no reference copy, or disabled)"))
+
     # KPI-01 definition ownership (organisational)
     md = metric_definitions or {}
     defs = md.get("stakeholders", {}) if isinstance(md, dict) else {}
@@ -411,6 +439,21 @@ def run_rules(clean: dict[str, pd.DataFrame], rep: CleaningReport, cfg: Pipeline
     for r in res:
         log.info("rule %-6s %-7s viol=%5d / %5d  %s", r.rule.id, r.status, r.violations, r.population, r.rule.name)
     return res
+
+
+def cohen_kappa(a: pd.Series, b: pd.Series) -> float | None:
+    """Agreement between two boolean labelings beyond chance (1 = perfect, 0 = chance)."""
+    a = pd.Series(a).astype(bool).reset_index(drop=True)
+    b = pd.Series(b).astype(bool).reset_index(drop=True)
+    n = len(a)
+    if n == 0:
+        return None
+    po = float((a == b).mean())
+    pa, pb = float(a.mean()), float(b.mean())
+    pe = pa * pb + (1 - pa) * (1 - pb)
+    if pe >= 1.0:
+        return None
+    return (po - pe) / (1 - pe)
 
 
 def results_frame(results: list[RuleResult]) -> pd.DataFrame:

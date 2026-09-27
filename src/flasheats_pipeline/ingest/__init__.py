@@ -9,3 +9,4 @@ from .file_source import (  # noqa: F401
     read_json_source,
 )
 from .sql_source import SqlSource, SqlSourceError  # noqa: F401
+from .weather_source import ObservedWeatherClient, WeatherReport, WeatherSourceError, parse_open_meteo  # noqa: F401

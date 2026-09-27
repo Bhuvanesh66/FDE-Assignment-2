@@ -302,7 +302,76 @@ def make_config(tmp_path: Path):
     def _make(source_root: Path, api_url: str, **kw) -> PipelineConfig:
         base = dict(project_root=ROOT, source_root=source_root, data_dir=tmp_path / "data", output_dir=tmp_path / "output",
                     api_base_url=api_url, api_page_size=5, api_timeout_s=1.0, api_max_retries=3, api_backoff_base_s=0.01, api_backoff_cap_s=0.02,
-                    write_charts=False)
+                    write_charts=False, weather_enabled=False)
         base.update(kw)
         return PipelineConfig(**base)
     return _make
+
+
+# --------------------------------------------------------------------------- fake Open-Meteo archive
+def weather_payload(rain_hours: set[str] | None = None, tz: str = "Asia/Kolkata") -> dict:
+    """Hourly payload for 2026-08-01 .. 2026-08-05; ``rain_hours`` are 'YYYY-MM-DDTHH:00' strings with 2.0 mm."""
+    import datetime as _dt
+    rain_hours = rain_hours or set()
+    start = _dt.datetime(2026, 8, 1)
+    times = [(start + _dt.timedelta(hours=i)).strftime("%Y-%m-%dT%H:00") for i in range(5 * 24)]
+    precip = [2.0 if t in rain_hours else 0.0 for t in times]
+    return {"latitude": 12.97, "longitude": 77.59, "timezone": tz, "hourly_units": {"time": "iso8601", "precipitation": "mm"},
+            "hourly": {"time": times, "precipitation": precip, "rain": precip}}
+
+
+class FakeWeatherServer:
+    def __init__(self, payload: dict):
+        from flask import Flask, jsonify
+        self.payload, self.mode, self.calls = payload, "normal", 0
+        app = Flask("fake-weather")
+
+        @app.get("/v1/archive")
+        def archive():
+            self.calls += 1
+            m = self.mode
+            if m == "always_500":
+                return jsonify({"error": True}), 500
+            if m == "flaky" and self.calls == 1:
+                return jsonify({"error": True}), 503
+            if m == "bad_request":
+                return jsonify({"error": True, "reason": "bad"}), 400
+            if m == "not_json":
+                return "<html>maintenance</html>", 200
+            if m == "no_hourly":
+                return jsonify({"latitude": 1})
+            if m == "empty":
+                return jsonify({**self.payload, "hourly": {"time": [], "precipitation": []}})
+            if m == "length_mismatch":
+                h = dict(self.payload["hourly"]); h["precipitation"] = h["precipitation"][:-1]
+                return jsonify({**self.payload, "hourly": h})
+            if m == "wrong_tz":
+                return jsonify({**self.payload, "timezone": "UTC"})
+            return jsonify(self.payload)
+
+        from werkzeug.serving import make_server
+        self.port = FakeDispatchServer._free_port()
+        self.server = make_server("127.0.0.1", self.port, app, threaded=True)
+        self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
+
+    @property
+    def url(self) -> str:
+        return f"http://127.0.0.1:{self.port}/v1/archive"
+
+    def start(self):
+        self.thread.start()
+        return self
+
+    def stop(self):
+        self.server.shutdown()
+
+
+# the synthetic orders were created at these hours; rain is observed at the first two only
+RAIN_HOURS = {"2026-08-01T10:00", "2026-08-01T11:00"}
+
+
+@pytest.fixture
+def weather_server():
+    srv = FakeWeatherServer(weather_payload(RAIN_HOURS)).start()
+    yield srv
+    srv.stop()
