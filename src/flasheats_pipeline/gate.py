@@ -23,7 +23,7 @@ def _rule(results: list[RuleResult], rid: str) -> RuleResult | None:
     return next((r for r in results if r.rule.id == rid), None)
 
 
-def build_gate(ingestion: dict, results: list[RuleResult], metrics: MetricsResult, cfg: PipelineConfig) -> dict:
+def build_gate(ingestion: dict, results: list[RuleResult], metrics: MetricsResult, cfg: PipelineConfig, comparison: dict | None = None) -> dict:
     checks: list[dict] = []
 
     # 1. retrieval completeness -----------------------------------------------------------
@@ -91,6 +91,18 @@ def build_gate(ingestion: dict, results: list[RuleResult], metrics: MetricsResul
     checks.append({"check": "Metric sanity & independent checks", "status": _worst([c["status"] for c in ms]),
                    "evidence": "; ".join(f"{c['status']}: {c['check']}" for c in ms if c["status"] != "PASS") or f"{len(ms)} checks passed",
                    "action": "see output/metric_checks.csv"})
+
+    # 9. independent external cross-check (observed weather) -------------------------------
+    wx = _rule(results, "WX-01")
+    wmode = (ingestion.get("external_weather") or {}).get("mode")
+    checks.append({"check": "Independent cross-check (observed weather vs client label)", "status": wx.status if wx else "UNKNOWN",
+                   "evidence": (wx.detail if wx else "rule not run") + (f"; source mode={wmode}" if wmode else ""),
+                   "action": "weather_bucket is not used to explain lateness until Operations confirms how it is produced"})
+
+    # 10. run-over-run stability ------------------------------------------------------------
+    if comparison is not None:
+        checks.append({"check": "Run-over-run stability (vs last published run)", "status": comparison.get("status", "UNKNOWN"),
+                       "evidence": comparison.get("summary", ""), "action": "see output/run_comparison.md"})
 
     overall = _worst([c["status"] for c in checks])
     h = metrics.headline

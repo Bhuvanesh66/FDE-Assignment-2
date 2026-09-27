@@ -27,7 +27,9 @@ def test_messy_pack_end_to_end_outputs_and_raw_preservation(messy_pack, api_serv
     out = cfg.output_dir
     for f in ["metrics.csv", "metrics.json", "evidence_table.md", "data_quality_report.md", "data_quality_report.json", "validation_gate.json",
               "validation_gate.md", "known_unknown_assumption_limitation.md", "run_manifest.json", "pipeline.log", "dashboard.html", "profile/profile.md",
-              "quarantine/orders_duplicate_conflicts.csv", "charts/late_rate_by_traffic.png", "breakdowns/definition_comparison.csv"]:
+              "quarantine/orders_duplicate_conflicts.csv", "charts/late_rate_by_traffic.png", "breakdowns/definition_comparison.csv",
+              "decision_memo.md", "insights/insights.md", "insights/early_warning_backtest.csv", "reconciliation_ledger.csv",
+              "run_comparison.md", "charts/early_warning_tradeoff.png", "charts/eta_padding_curve.png"]:
         assert (out / f).exists(), f
     raw = cfg.raw_dir
     assert (raw / "api" / "dispatch_page_001.json").exists() and (raw / "files" / "support_tickets.csv").exists() and (raw / "sql" / "orders_extract.csv").exists()
@@ -35,9 +37,9 @@ def test_messy_pack_end_to_end_outputs_and_raw_preservation(messy_pack, api_serv
     assert (cfg.processed_dir / "fact_order.csv").exists() and (cfg.processed_dir / "flasheats_model.sqlite").exists()
     manifest = json.loads((out / "run_manifest.json").read_text())
     assert manifest["status"] == "COMPLETED" and manifest["inputs"]["dispatch_api"]["complete"] is True
-    assert set(manifest["stages"]) == {"ingest", "profile", "clean", "validate", "model", "metrics", "gate", "outputs"}
+    assert set(manifest["stages"]) == {"ingest", "profile", "clean", "validate", "model", "metrics", "insights", "gate", "memo", "outputs"}
     log = (out / "pipeline.log").read_text(encoding="utf-8")
-    assert "STAGE 1/8" in log and "GATE OVERALL = WARN" in log and "unexpected categories" in log
+    assert "STAGE 1/10" in log and "STAGE 7/10 DECISION LAYER" in log and "GATE OVERALL = WARN" in log and "unexpected categories" in log
 
 
 def test_rerun_is_idempotent_and_keeps_every_raw_snapshot(messy_pack, api_server, make_config):

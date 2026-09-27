@@ -71,6 +71,12 @@ def df_to_markdown(df: pd.DataFrame, floatfmt: str = "{:,.2f}", max_rows: int | 
     def fmt(v):
         if v is None or (isinstance(v, float) and math.isnan(v)):
             return ""
+        if isinstance(v, bool):
+            return str(v)
+        if hasattr(v, "item") and not isinstance(v, (str, bytes)):   # numpy scalar -> python
+            v = v.item()
+        if isinstance(v, float) and (math.isnan(v)):
+            return ""
         if isinstance(v, float):
             return floatfmt.format(v)
         if isinstance(v, pd.Timestamp):
@@ -78,8 +84,8 @@ def df_to_markdown(df: pd.DataFrame, floatfmt: str = "{:,.2f}", max_rows: int | 
         return str(v).replace("|", "\\|").replace("\n", " ")
 
     lines = ["| " + " | ".join(cols) + " |", "|" + "|".join(["---"] * len(cols)) + "|"]
-    for _, row in d.iterrows():
-        lines.append("| " + " | ".join(fmt(v) for v in row.tolist()) + " |")
+    for row in d.itertuples(index=False, name=None):      # itertuples keeps each column's dtype (iterrows upcasts ints to float)
+        lines.append("| " + " | ".join(fmt(v) for v in row) + " |")
     if max_rows is not None and len(df) > max_rows:
         lines.append(f"| … {len(df) - max_rows} more rows … |" + " |" * (len(cols) - 1))
     return "\n".join(lines)
