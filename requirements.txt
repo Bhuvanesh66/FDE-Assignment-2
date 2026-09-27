@@ -1,0 +1,11 @@
+# FlashEats late-delivery KPI pipeline — runtime + test dependencies
+# Tested with Python 3.11 – 3.14 on Windows and Linux.
+pandas>=2.2
+requests>=2.31
+flask>=3.0          # only needed to run the mock Dispatch API (source_systems/api/mock_dispatch_api.py)
+matplotlib>=3.8     # charts in output/charts
+pytest>=8.0         # tests/
+# Optional — only for re-executing the challenge notebooks in notebooks/
+nbformat>=5.9
+nbclient>=0.9
+ipykernel>=6.29
