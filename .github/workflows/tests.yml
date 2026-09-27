@@ -1,0 +1,35 @@
+name: tests
+
+# Every push re-proves the pipeline on a clean Linux machine:
+#   1. the full pytest suite (messy data, API and weather failures, replay, weekly partitions, dashboard)
+#   2. a replay of the committed run from its preserved raw inputs (SHA-256 verified, no client system contacted)
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.14"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Run the test suite
+        run: python -m pytest
+
+      - name: Replay the committed run from its preserved raw inputs
+        run: |
+          python run_pipeline.py --replay run_example --run-id run_ci_replay
+          cat output/replay_proof.md

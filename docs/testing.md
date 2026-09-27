@@ -1,8 +1,10 @@
 # Testing and validation
 
 ```
-python -m pytest            # 111 tests, ~2 minutes (starts fault-injecting Dispatch and weather APIs on free ports)
+python -m pytest            # 132 tests (123 functions, some parametrised), a few minutes; starts fault-injecting Dispatch and weather APIs on free ports
 ```
+
+The same suite runs on every push in GitHub Actions ([`.github/workflows/tests.yml`](../.github/workflows/tests.yml)).
 
 The fixtures (`tests/conftest.py`) build a **14-order synthetic pack** whose every metric is hand-checkable (`EXPECTED`), plus `FakeDispatchServer`, an HTTP server that can be switched into failure modes (`flaky`, `always_500`, `not_found`, `timeout`, `malformed_json`, `missing_data_key`, `no_has_more`, `wrong_total`, `overlap`, `empty`, `never_ends`, `missing_fields`).
 
@@ -34,14 +36,24 @@ Business-correctness tests (not just "it runs"): `test_model_metrics.py` checks 
 | Stage identity | max residual 0.010 min |
 | Rerun | identical headline on rerun; every run keeps its own raw snapshot |
 
-## Tests for the additions beyond the class (38 tests)
+## Tests for the additions beyond the class (40 tests)
 
 | File | What it proves |
 |---|---|
 | `test_config.py` (9) | the repository policy file loads; values and overrides flow into the run; **typos in business thresholds fail loudly** (unknown key, section or shape); the CLI applies a policy file (late = more than 10 min gives 2 late orders on the pack) |
 | `test_weather_source.py` (14) | payload validation (missing arrays, empty, unequal lengths, wrong timezone, API error body); retry on 503; **7 unusable-response modes fall back to the reference copy, or to UNKNOWN without one**; an unreachable API is never fatal; the pipeline's WX-01 counts exactly 5 disagreements on the pack, PASSes when the label agrees and is UNKNOWN when disabled |
-| `test_insights.py` (9) | Wilson interval known values; Cohen's kappa; **early-warning backtest hand-checked** (alerts, precision, recall, lead time, chosen *k*, and an explicit "no hold-out" flag on data without a late-August week); ETA padding hand-checked (+20 min for 80 % on the pack) and monotone; fair ranking refuses to judge small samples and keeps the unknown restaurant; the GPS test tells converging from diverging pings; what-ifs are labelled as assumptions; empty data yields no findings instead of a crash |
-| `test_monitoring.py` (4) | the ledger balances and **detects a silently dropped row**; run comparison states (no baseline, stable, KPI drift, rule got worse); a rerun compares with the previous published run |
+| `test_insights.py` (10) | Wilson interval known values; Cohen's kappa; **early-warning backtest hand-checked** (alerts, precision, recall, lead time, chosen *k*, and an explicit "no hold-out" flag on data without a late-August week); ETA padding hand-checked (+20 min for 80 % on the pack) and monotone; fair ranking refuses to judge small samples and keeps the unknown restaurant; the GPS test tells converging from diverging pings, and **tells a drawn straight-line track from a measured wiggly one** (an out-of-area outlier is ignored); what-ifs are labelled as assumptions; empty data yields no findings instead of a crash |
+| `test_monitoring.py` (5) | the ledger balances and **detects a silently dropped row**; run comparison states (no baseline, stable, KPI drift, rule got worse); a rerun compares with the previous published run; **a re-run under the same run id is compared with its previous publication** |
 | `test_dashboard.py` (2) | the Streamlit app renders from real pipeline outputs, the trigger slider recomputes precision, the order explorer accepts lower-case ids, and with no runs it tells the user what to run |
+
+## Tests for completeness, reproducibility and scheduling (17 tests)
+
+| File | What it proves |
+|---|---|
+| `test_completeness.py` (7) | the client's **control totals** match → PASS; **one missing row → the gate refuses publication**; no published totals → reported, not failed; the **schema contract** stops on a missing required column and only warns on an extra one; the contract drives a file's required columns; the **SQL metric views agree with pandas** |
+| `test_replay.py` (5) | `--replay` **rebuilds every output byte for byte** from preserved raw; **one edited byte** in a preserved file, or **one deleted API page**, stops the replay and names the file; an unknown run id is a clear error; a plain rerun on the same inputs is byte-identical |
+| `test_periods.py` (5) | the weekly split follows the data span; periods **partition** the orders (each order in exactly one period) and add up to the full run; orders with unknown references survive scoping; the default policy refuses noisy partitions; **a failing period does not block the others** |
+
+Also in the core files: `test_model_metrics.py::test_checked_merge_never_multiplies_rows` shows that a naive 1:N join turns 3 orders into 4 rows and the model's checked merge does not. `test_pipeline_e2e.py::test_messy_pack_end_to_end_outputs_and_raw_preservation` checks that the **15-picture visual story** is drawn from the run's own evidence even on the 16-row pack, is listed in the manifest and is linked from `dashboard.html`.
 
 The four classroom notebooks and the walkthrough are also **executed end to end** by `python notebooks/build_notebooks.py` (`allow_errors=False`), so a broken answer cell fails the build.

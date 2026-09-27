@@ -1,5 +1,5 @@
 # FlashEats late-delivery KPI pipeline — runtime + test dependencies
-# Tested with Python 3.11 – 3.14 on Windows and Linux.
+# Developed and tested on Python 3.14 (Windows); CI runs the suite on Python 3.12 and 3.14 (Linux).
 pandas>=2.2
 requests>=2.31
 pyyaml>=6.0         # config/pipeline.yaml (stakeholder-owned policy)

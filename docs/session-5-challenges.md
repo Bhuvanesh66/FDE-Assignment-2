@@ -42,7 +42,7 @@ The Starter is a shorter version of the same five challenges, with an empty `-- 
 | 2 Traffic claim | one parameterised SQL query grouped by traffic, weather, distance band and hour | association only; distance shows a weak gradient |
 | 3 Support tickets | uniqueness, normalisation and a join to the validated population | 1 duplicated ticket, 3 without an order; 68–91 % of ticketed orders were late |
 | 4 Dispatch API | the skeleton's `fetch_all_dispatch_orders()` implemented **by hand**: retries 429/500 honouring `retry_after_seconds`, validates the body, saves raw pages, detects overlap and checks the total | 16 pages, 1600 records, pages 3 and 5 retried |
-| 5 Driver events | observed vs inferred, **plus an actual geofence attempt** | pings converge on the restaurant before pickup in < 1 % of orders, so arrival cannot be inferred |
+| 5 Driver events | observed vs inferred, **plus an actual geofence attempt and a track-shape test** | before pickup, pings head for the restaurant in < 1 % of orders, and 91 % of tracks are perfect straight lines (they look interpolated), so arrival cannot be inferred |
 | Final recommendation | a one-slide answer | no AI yet; ship the pickup-overrun trigger as the baseline |
 
 The skeleton cells wrote to `source_systems/student_output/`. They were redirected to `Challenges/output/`, so the client snapshot is never modified.

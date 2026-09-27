@@ -87,7 +87,7 @@ Every requirement → source → implementation → test → evidence. Paths are
 | ETA calibration | `insights.eta_calibration` | `test_eta_calibration_hand_checked` | `output/insights/eta_calibration.csv`, `charts/eta_padding_curve.png` |
 | Fair ranking (Wilson intervals) | `insights.fair_ranking` | `test_fair_ranking_does_not_blame_small_samples` | `fair_ranking_*.csv`, `charts/restaurant_funnel_plot.png` |
 | Independent source: observed weather + rule WX-01 | `ingest/weather_source.py`, `rules.py` | `test_weather_source.py` (14) | `data/raw/<run>/external/`, `data/external/`, gate row |
-| GPS arrival feasibility | `insights.gps_arrival_feasibility` | `test_gps_feasibility_detects_converging_and_diverging_pings` | `output/insights/gps_arrival_feasibility.csv` |
+| GPS arrival feasibility + track shape (the pings look interpolated) | `insights.gps_arrival_feasibility`, `insights.gps_track_shape` | `test_gps_feasibility_detects_converging_and_diverging_pings`, `test_gps_track_shape_tells_measured_from_drawn_tracks` | `output/insights/gps_arrival_feasibility.csv`, finding D5 |
 | What-if impact (assumption-labelled) | `insights.impact_whatif` | `test_impact_whatif_and_full_insights` | `output/insights/impact_whatif.csv` |
 | Decision memo (Situation → Complication → Resolution) | `reports.write_decision_memo` | e2e asserts the file | `output/decision_memo.md` |
 | Stakeholder policy file | `config/pipeline.yaml`, `config.load_config` | `test_config.py` (9) | `run_manifest.json › config` |
@@ -95,3 +95,12 @@ Every requirement → source → implementation → test → evidence. Paths are
 | Run-over-run drift | `monitoring.compare_runs` | `test_monitoring.py` | `output/run_comparison.md`, gate row |
 | Decision dashboard | `app/dashboard.py` | `test_dashboard.py` | `streamlit run app/dashboard.py` |
 | Guided walkthrough | `notebooks/pipeline_walkthrough.ipynb` | executed by the builder | outputs embedded |
+| Client control totals + server `COUNT(*)` | `scope.control_totals`, `ingest/sql_source.py › SqlSource.count` | `test_completeness.py::test_control_total_mismatch_refuses_publication` | `data/raw/run_example/control_totals.csv`, gate row "Retrieval completeness" |
+| Schema contract (schema drift stops the run) | `contracts.py`, `config/schema_contract.yaml` | `test_schema_contract_rules`, `test_contract_drives_required_columns_of_a_file` | `ingestion_manifest.json › schema_contract` |
+| SQL metric layer = pandas | `sql/40_metric_views.sql`, `sql_metrics.py` | `test_sql_metric_layer_agrees_with_pandas` | `output/sql_metric_layer_check.csv`, `output/sql_metric_views/` |
+| Replay with tamper detection | `ingest/replay.py`, `--replay` | `test_replay.py` (5) | `output/replay_proof.md`, `output/replay_integrity.csv` |
+| Output fingerprints, re-run comparison | `monitoring.fingerprint_outputs`, `compare_runs` | `test_rerun_on_same_inputs_is_byte_identical`, `test_rerun_with_same_id_is_compared_with_its_previous_publication` | `output/run_comparison.md` |
+| Weekly partitions, scorecard, partition check | `periods.py`, `--weekly` | `test_periods.py` (5) | `output/scorecard.md`, `output/periods/<week>/` |
+| Visual story drawn from the evidence | `visuals.py`, `make_visuals.py` | `test_messy_pack_end_to_end_outputs_and_raw_preservation` | `output/visuals/*.png`, README, dashboard's first tab |
+| Continuous integration | `.github/workflows/tests.yml` | the whole suite | GitHub Actions |
+| Rubric and submission-package map | `docs/rubric-map.md` | — | — |

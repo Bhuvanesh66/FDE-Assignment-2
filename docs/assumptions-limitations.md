@@ -51,7 +51,7 @@ The pipeline regenerates a version of this section from the actual run (`output/
 | L1 | Interventions are targeted at late-risk orders (selection effect); no randomisation | M5a/M5b is an association, never an effect |
 | L2 | No arrival-at-restaurant event | the biggest bucket of delay cannot be attributed to kitchen vs rider |
 | L3 | Restaurant feed covers 31 % of orders at minute precision with manual updates | restaurant-side timing usable for weekly trends only |
-| L4 | GPS pings are sparse (≈ 3 per order) with outliers | no route/arrival inference attempted |
+| L4 | GPS pings are sparse (≈ 3–5 per order), have outliers, and **look interpolated**: 91.3 % of tracks are perfect straight constant-speed lines, and before pickup they move away from the restaurant in 99.2 % of orders | no route, arrival or GPS-based ETA inference; Fleet Ops to confirm whether pings are device readings |
 | L5 | No cancellation timestamp | cancelled orders have no terminal event; cancellation lead time unknown |
 | L6 | The classroom pack is synthetic, one city, one month | magnitudes illustrate the method; do not generalise |
 | L7 | The independent SQL check cannot normalise malformed / tz-suffixed timestamps | on very messy data it reports WARN with the explainable difference instead of PASS |
@@ -63,7 +63,9 @@ The pipeline regenerates a version of this section from the actual run (`output/
 |---|---|
 | **Known** | The client's `weather_bucket` agrees with Open-Meteo's observed Bengaluru rainfall only at chance level (kappa 0.01). |
 | **Known** | Dispatch's pickup estimate is optimistic by a median 8 minutes; a "not picked up 10 min after the estimate" rule would have caught 72 % of late orders with 96 % precision in the held-out week. |
-| **Known** | GPS pings do not converge on the restaurant before pickup, so arrival cannot be inferred from them. |
+| **Known** | GPS pings do not converge on the restaurant before pickup (they move away from it in 99.2 % of orders), and 91.3 % of tracks are perfect straight lines. Arrival cannot be inferred from them. |
+| **Known** | The client's six published control totals all match what was retrieved; the preserved raw inputs reproduce every output byte for byte; the four weekly runs add up to the month. |
+| **Unknown** | Whether GPS pings are device readings or drawn by the app between two points. Owner: Fleet Ops. |
 | **Unknown** | Who writes `weather_bucket`, and when (a forecast at order time? a manual flag?). Owner: Operations / Data Team. |
 | **Unknown** | The real save rate of an intervention triggered by the rule. Measure it with a switchback pilot (alternate days on and off). Owner: Operations. |
 | **Assumption** | Observed weather comes from one point (Bengaluru centre) per hour; an hour with more than 0.1 mm counts as raining. |

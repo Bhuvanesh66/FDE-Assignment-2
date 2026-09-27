@@ -47,7 +47,7 @@ The five metrics say *how big* the problem is and *where* it sits. The decision 
 | ETA calibration | Is the promise wrong, and where? | Dispatch's pickup estimate is short by a median **8 min**; padding to reach 80 % on-time would need **+12 min** |
 | Fair ranking | Who is *really* worse than the fleet? | **1 of 59** restaurants (R024) and **1 of 91** drivers |
 | Weather truth | Is the weather label real? | **kappa 0.01** against observed rainfall |
-| GPS feasibility | Can GPS stand in for the arrival event? | **No.** Pings converge on the restaurant in 0.8 % of orders |
+| GPS feasibility + track shape | Can GPS stand in for the arrival event? | **No.** Before pickup, the pings move *away* from the restaurant in 99.2 % of orders, and 91.3 % of tracks are perfect straight constant-speed lines, so the pings look interpolated, not measured |
 | What-if | What could the trigger be worth? | at an *assumed* 25 % save rate: −10 pp late rate, ~38 fewer support contacts |
 
 Full tables: `output/insights/`; narrative: `output/insights/insights.md`; actions and owners: `output/decision_memo.md`.

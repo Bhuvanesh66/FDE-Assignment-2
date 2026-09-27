@@ -1,113 +1,178 @@
-# Loom demo script (about 9 minutes, with a 5-minute cut)
+# Demo video script: 5 minutes, picture first
 
-The assignment asks for a 3–5 minute demo. This script runs about 9 minutes. Sections marked **[5-min cut: skip]** can be dropped to land near 5 minutes. Every number below matches the committed outputs.
+The brief asks for **a 3–5 minute demo using the GitHub project, explaining one important FDE judgement call**. This script runs **5:00**:
 
-## Before you record
+- **5 equal blocks** for the five grading areas (20 % each);
+- **1 block** for the judgement call;
+- a short opening and close.
 
-1. Open the repository on GitHub in the browser. Open these tabs: the README, `docs/source-map.md`, `docs/data-model.md`, `output/decision_memo.md`, and the `Challenges/` folder.
-2. In VS Code, open `assignment-2`, zoom to about 150 %, and activate the environment: `.venv\Scripts\activate`.
-3. Start the dashboard in a second terminal **before** recording: `streamlit run app/dashboard.py`. Keep its browser tab open.
-4. Make sure port 8000 is free, then do one practice run: `python run_pipeline.py --start-api`.
-5. After recording, restore the committed evidence: `git restore output data`.
+Every block says **what to show** and **what to say**. The words are simple on purpose: let the picture do the explaining. Every number matches the committed outputs of run `run_example`.
 
----
+> An optional longer cut (about 8 minutes) is at the end. Submit the 5-minute version unless your instructor allows longer.
 
-## 0:00–0:35 · The problem (screen: GitHub README, top)
+## Before you record (5 minutes of setup)
 
-> "Hi, I'm Bhuvanesh. This is Assignment 2, Track A, FlashEats. The client says late deliveries are rising, the ETA is unreliable, and they want to buy an AI delay predictor. Leadership quotes a 56 % late rate.
->
-> As the FDE I had to answer three things: is 56 % real, where in the order workflow is the time lost, and what should FlashEats actually do, this week and not in six months. The project KPI is reducing the late delivery rate."
+1. **Browser tab 1:** the GitHub repository README. It shows all the pictures, top to bottom in the order of this script.
+2. **Browser tab 2:** `notebooks/pipeline_walkthrough.ipynb` on GitHub, which shows the code and its outputs.
+3. **Browser tab 3:** the `data/raw/run_example/api/` folder on GitHub.
+4. **VS Code terminal** in `assignment-2`, with the environment active (`.venv\Scripts\activate`), zoomed to about 150 %.
+   - Type the replay command without pressing Enter: `python run_pipeline.py --replay run_example --run-id run_replay_check`
+5. **Browser zoom:** about 110 %, so the text in the pictures is readable on the recording.
+6. **After recording:** if you ran anything, restore the committed evidence with `git restore output data`.
 
-## 0:35–1:00 · The class work is done, and it is the starting point (screen: the `Challenges/` folder on GitHub)
+## Where each required item appears in the video
 
-> "All four classroom notebooks are in `Challenges/`: the Class 5 Starter, the Class 5 Student, Class 6 and Class 7. I kept every one of sir's cells and inserted my answers after each challenge. The Starter is answered in SQL and the Student in pandas, so the same definitions are checked in both tools. But the class stops at 'don't build the AI yet', and I wanted to go one step further. That is what this demo is about."
-
-## 1:00–1:50 · Class 4: understand the sources (screen: `docs/source-map.md`) **[5-min cut: keep the first two sentences]**
-
-> "Class 4 was about mapping business questions to the information they need and to the system that owns it. I mapped seven client systems: the orders database, the Dispatch API, tickets, the restaurant feed, driver-app events, app actions and the interventions log, each with its owner, grain and trust level.
->
-> One thing the class never asked: where does the `weather_bucket` label come from? Operations blames weather. So I added an eighth, independent source, the Open-Meteo archive of real hourly rainfall in Bengaluru, to check that label. I'll come back to what it found.
->
-> The most important gap: no system records when the driver arrives at the restaurant."
-
-## 1:50–3:00 · Class 5: retrieve and preserve (screen: terminal, type `python run_pipeline.py --start-api`)
-
-> "One command runs everything in about 15 seconds. Class 5 was about retrieving from several modes and proving the retrieval is complete. This pipeline uses SQL on SQLite, two REST APIs, CSV and nested JSON."
-
-*Point at the API lines.*
-
-> "The Dispatch API failed on purpose: page 3 returned a 500 and page 5 a 429. Both were retried, and ingestion only counts as complete because 16 pages gave 1600 records, matching the server's `total_records`, with no duplicate IDs. An HTTP 200 on one page proves nothing."
-
-*Open `data/raw/run_example/` in the file explorer.*
-
-> "Every raw input is preserved per run: the SQL extracts with their query, byte copies of every file with a hash, every raw API page, and the weather response. If the public weather API is down, the pipeline uses a committed reference copy and says so. It never crashes."
-
-## 3:00–4:20 · Class 6: profile and validate (screen: `output/data_quality_report.md`, then `output/validation_gate.md`)
-
-> "Class 6 taught: profile before cleaning, fix spelling but never meaning, and turn assumptions into a gate. I wrote 38 business rules, each with a reason, an action and an owner.
->
-> The orders table has 1603 rows for 1600 orders, and the three duplicates disagree with each other on traffic, so I quarantine the conflict. 'Delivered' with a capital D is spelling, so it is normalised. 'handoff' versus 'handed_off' might mean something different, so it is flagged for Restaurant Ops, not merged.
->
-> Here is one trap. The four worst 'delays' in the data, 85 minutes and more, are orders whose promise was made ten minutes *before the order existed*. They are a system bug, not deliveries. So I publish 56.33 % on 1486 validated deliveries. The dashboard definition gives 56.39 %, which means leadership's 56 % is right for its definition."
-
-*Open `output/charts/weather_label_vs_observed.png`.* **[5-min cut: skip this paragraph]**
-
-> "And the weather label: against real rainfall it agrees at chance level, a kappa of 0.01. Orders labelled heavy rain got no more rain than orders labelled clear. So 'weather causes delays' can't be defended with this field, and that is now rule WX-01 in the gate."
-
-> "The gate says WARN, publish with caveats. KPI ownership is UNKNOWN, because four stakeholders define 'late' differently."
-
-## 4:20–5:20 · Class 7: model the workflow (screen: `docs/data-model.md` on GitHub, then the dashboard's Executive tab)
-
-> "Class 7: reorganise the data around the order lifecycle instead of the source systems. An order is created, assigned, picked up and delivered, while the customer interacts and ops intervenes. Every one-to-many table is aggregated to one row per order before joining, and every join is checked so the count can never inflate."
-
-*Dashboard, Executive tab: point at the five tiles and the stage chart.*
-
-> "Five metrics. M1, the KPI, is 56.3 %. M2, the median late order, is 8 minutes late. M3 is the key one: 99 % of lateness builds up *before pickup*. Late orders travel faster than planned, so the road is not the problem. M4: late orders trigger support contacts six times more often. M5: interventions touch 27 % of orders with no visible effect."
-
-## 5:20–6:50 · Beyond the class: from diagnosis to action (screen: dashboard, Early-warning tab)
-
-> "This is where I go past the classroom. If the delay is created before pickup, Dispatch already knows its *own* estimated pickup time. So here is a rule with no AI: if an order is still not picked up k minutes after Dispatch's estimate, alert ops."
-
-*Drag the slider from 0 to 10.*
-
-> "I chose k using only 1 to 21 August and tested it on the last week, which the rule never saw. At 10 minutes it is right 96 % of the time, catches 72 % of late orders, and fires about 45 minutes before the promise breaks, which is enough time to act. And today, 446 of the late orders this rule would have caught received no intervention at all."
-
-*ETA tab, drag the padding slider.* **[5-min cut: skip]**
-
-> "The ETA: Dispatch's pickup estimate is short by a median 8 minutes. Padding every promise by 12 minutes would reach 80 % on time, but that hides the problem, so the recommendation is to fix the estimate."
-
-*Fair ranking tab: funnel plot.* **[5-min cut: skip]**
-
-> "And before anyone blames a restaurant: a naive top-10 list names ten, but with confidence intervals only one, R024, is really worse than the fleet."
-
-## 6:50–7:40 · The FDE judgement call (screen: `output/decision_memo.md`, the recommendations table)
-
-> "The judgement call I want to highlight: the obvious next step was to find more signals and build the AI predictor. I recommended the opposite. Ship this simple rule now, because it is explainable, starts this week, and becomes the **baseline any future model must beat**.
->
-> I also closed two doors with evidence. The weather label isn't real weather, and I tested whether GPS could stand in for the missing arrival event: pings move towards the restaurant in under 1 % of orders, so it can't. The instrumentation request is now backed by data, not opinion."
-
-## 7:40–8:30 · Class 8: a dependable pipeline (screen: `config/pipeline.yaml`, then terminal) **[5-min cut: first sentence only]**
-
-> "Class 8 is about repeatability. Every business threshold lives in this policy file with its owner. If VP Operations decides 'late' means more than 10 minutes, they change one line and rerun, and every output, the gate and the memo follow."
-
-*Terminal: `python -m pytest tests/test_hidden_messy_data.py -q`*
-
-> "There are 111 tests, including messy data an evaluator might hide: mixed timezones, new status values, IDs with spaces, duplicate events, the API or the weather service going down. Every run proves no rows vanished with a reconciliation ledger, and compares itself with the last published run to catch drift. If retrieval is incomplete, the gate fails and nothing is published."
-
-## 8:30–9:00 · Close (screen: the decision memo, "Decision on the AI delay predictor")
-
-> "So: the late-delivery problem is real, about 56 %, and it is created before pickup. The recommendation is to switch on the pickup-overrun trigger with ops, fix Dispatch's pickup estimate, instrument the arrival tap, and have VP Operations sign off the definition of late. The AI predictor can wait until it can beat this baseline. Thanks."
+| Required by the brief | Shown at | What is on screen |
+|---|---|---|
+| Source map | 0:20 | picture 02 · `docs/source-map.md` |
+| Workflow / data model diagram | 2:35 | pictures 06, 07 and 08 |
+| Code / notebook: retrieval, validation, modelling, joins, metrics | 1:05, 2:35 | `notebooks/pipeline_walkthrough.ipynb` on GitHub |
+| Runnable pipeline that reproduces the output from raw inputs | 3:25 | terminal: the replay runs live and prints REPRODUCED |
+| Evidence table / dashboard with 3–5 metrics | 2:35 | picture 09 (M1–M5) |
+| Known / Unknown / Assumption / Limitation | 3:15 | picture 11 |
+| One important FDE judgement call | 4:10 | picture 14 |
 
 ---
 
-## 5-minute version
+## 0:00–0:20 · Opening (20 s)
 
-Keep: problem (0:35) → Challenges folder (0:25) → first two sentences of Class 4 → the retrieval run (1:10) → the Class 6 trap and 56.33 % (0:50) → the five metrics (0:50) → the early-warning slider (1:00) → the judgement call (0:40) → close (0:20). That is about 5:00.
+**SHOW:** README top, then scroll to **picture 01: "A trustworthy path from client systems to a business decision"**. Move the mouse slowly along the six boxes from left to right, then along the red STOP boxes under them.
 
-## Likely questions
+**SAY:**
+> "Hi, I'm Bhuvanesh. This is FDE Assignment 2, Track A: FlashEats. The client says deliveries are late and wants to buy an AI predictor. My goal was not to analyse a dataset. It was to build a trustworthy path from their systems to a business decision. This picture is that path, and under every step is the check that stops it when trust breaks."
 
-- "Why 1486 and not 1495?" → `output/breakdowns/definition_comparison.csv`
-- "Is the trigger overfitted?" → chosen on 1–21 Aug, judged on 22–28 Aug; see `output/insights/early_warning_backtest.csv` (the train and test rows are nearly identical)
-- "Prove retrieval is complete" → `data/raw/run_example/api/ingestion_report.json`
-- "What if the data is messier?" → `python -m pytest` (111 tests)
-- "Where are the class answers?" → `Challenges/` and `docs/session-5/6/7-challenges.md`
+---
+
+## 0:20–1:05 · ① Source reasoning (45 s, 20 %)
+
+**SHOW:** **picture 02, the source map.** Point at the left column, then the right column, then the red GAP box. For 2 seconds, click `docs/source-map.md` to show the full table with owners and grain.
+
+**SAY:**
+> "First: where does the truth live? On the left are five business questions. On the right are the eight sources that answer them: the orders database, the Dispatch API, driver-app events, the restaurant feed, app actions, support tickets, the interventions log, and one outside source, real weather. Each box says who owns it and what one row means. Green I trust. Orange I use with care.
+>
+> The red box is the most important finding here: no system records when the driver reaches the restaurant. That gap shapes every conclusion later."
+
+---
+
+## 1:05–1:50 · ② Retrieval (45 s, 20 %)
+
+**SHOW:**
+1. **Picture 03, the retrieval proof.** Point at the two orange bars, then the green ✓ column.
+2. The GitHub folder `data/raw/run_example/api/`, with its 16 saved pages (2 s).
+3. The walkthrough notebook, section **"1 · Ingest"** (2 s).
+
+**SAY:**
+> "Second: did we get all of it? I used four retrieval modes: SQL, a REST API, CSV and JSON. The Dispatch API failed on purpose. Page 3 returned an error 500, page 5 an error 429, and both were retried. I don't trust a success message. I count. We got 1,600 records, exactly the server's total. The client also publishes its own totals, and all six match.
+>
+> Every raw file and API page is saved here with a fingerprint, so I can rebuild everything later without touching their systems again."
+
+---
+
+## 1:50–2:35 · ③ Validation (45 s, 20 %)
+
+**SHOW:** **picture 04, the funnel from 1,603 rows.** Go down the bars. Then **picture 05, the validation gate.** Point at one green, one orange, the grey, and the OVERALL box.
+
+**SAY:**
+> "Third: can we trust it for this decision? This funnel shows every row I removed, and why.
+>
+> - 1,603 rows, of which 3 are duplicates.
+> - 68 cancelled.
+> - 37 have no delivery time. I mark them unknown. I never guess.
+> - 9 have impossible times, like a promise made before the order existed.
+>
+> That leaves 1,486 trusted deliveries, and 837 of them were late: 56.33 %. Nothing disappears silently, and a ledger proves it.
+>
+> Then the gate. Green passes, orange is a warning, grey means an owner must decide, and any red would stop publication. Today it says: publish, with the caveats written next to the number."
+
+---
+
+## 2:35–3:25 · ④ Workflow + metrics (50 s, 20 %)
+
+**SHOW:**
+1. **Picture 06, one order across seven systems** (8 s). Point at the priority dispatch, the support ticket, and the red "26 min late" line.
+2. **Picture 08, the data model.** Point at the green arrow, "aggregate, then 1:1".
+3. The walkthrough notebook, section **"5 · Workflow model and 6 · metrics"** (2 s).
+4. **Picture 09, the five metric tiles.**
+5. **Picture 11, the K/U/A/L quadrants** (3 s).
+
+**SAY:**
+> "Fourth: the workflow. I started with one real order, as seven systems saw it. It was created and assigned, ops gave it priority dispatch, the customer still raised a ticket, and it arrived 26 minutes late. So the intervention did not work.
+>
+> Then I modelled everything around the order. Every many-rows table is summed to one row per order before the join, so nothing is double counted.
+>
+> Five metrics, computed in pandas and again in SQL, and both agree. The key one is M3: 99 % of the lateness builds up before pickup, not on the road. And here is what I know, what I don't know, what I assumed, and what this data can't do."
+
+---
+
+## 3:25–4:10 · ⑤ Pipeline dependability (45 s, 20 %)
+
+**SHOW:**
+1. Press **Enter** in the terminal on the prepared replay command, and let it run (about 17 s).
+2. While it runs, show **picture 12, the pipeline flow.** Point at the STOP badges.
+3. Back to the terminal: point at `COMPLETED` and the replay-proof line. Then open **picture 13** and point at **REPRODUCED 46/46** and the four weekly bars.
+
+**SAY:**
+> "Fifth: can it run again, and does it stop itself? One command runs all ten stages, from the raw client systems to every file and picture you have seen. The red badges are stop points. If a count doesn't match, a rule breaks its tolerance, or two methods disagree, nothing is published.
+>
+> Right now I'm replaying the whole run from the saved raw files. No client system is touched. All 28 fingerprints match, and all 46 outputs come out byte-identical. It also runs week by week: four gated weeks that add up exactly to the month. And 132 automated tests break it on purpose: API down, missing files, strange values."
+
+---
+
+## 4:10–4:50 · The FDE judgement call (40 s)
+
+**SHOW:** **picture 14, the judgement call.**
+1. Top half: move along the one-order timeline from "ALERT" to "promised ETA", the orange warning window.
+2. Bottom half: point at the green line at k = 10.
+
+**SAY:**
+> "My most important judgement call. The class question was: should FlashEats build the AI predictor now? My answer: not yet, but act today.
+>
+> Because the delay builds before pickup, I used Dispatch's own estimate. If an order still isn't picked up 10 minutes after it, alert ops. I chose 10 minutes on the first three weeks and tested it on a week it had never seen:
+>
+> - 96 % of alerts were right;
+> - it caught 72 % of late orders;
+> - it fired 45 minutes before the promise broke.
+>
+> Today, 446 of those orders got no help at all. The rule is cheap and explainable, and it becomes the baseline any AI must beat."
+
+---
+
+## 4:50–5:00 · Close (10 s)
+
+**SHOW:** **picture 15, "where the class stopped".** Scroll it once.
+
+**SAY:**
+> "I also re-tested the class's GPS claim on this data, checked the weather label against real rain, and measured the ETA itself. It's all in the repository. Thank you."
+
+---
+
+## Say it simply: the five sentences to remember
+
+1. **Sources:** "Five questions, eight sources, one gap: nobody records arrival at the restaurant."
+2. **Retrieval:** "I don't trust a 200. I count: 1,600 of 1,600, and 6 of 6 client totals."
+3. **Validation:** "Nothing disappears silently. 1,603 rows become 1,486 trusted deliveries, and every removal has a reason."
+4. **Workflow + metrics:** "One row per order, five metrics, and 99 % of the lateness happens before pickup."
+5. **Dependability:** "Same inputs, same outputs, byte for byte, and it stops itself when trust breaks."
+
+## Optional longer cut (about 8 minutes)
+
+Add these after the 5-minute blocks, only if longer videos are allowed:
+
+| Add after | Show | Say (one or two lines) |
+|---|---|---|
+| Opening | the `Challenges/` folder on GitHub | "All four class notebooks are answered here, with sir's cells kept. This project starts where they stop." |
+| ① Sources | picture 02, the Q5 → Open-Meteo arrow | "I added an outside source to test the weather label, because Operations blames the weather." |
+| ③ Validation | `config/pipeline.yaml` | "Every threshold has an owner. If VP Operations changes the definition of late, it's one line and a rerun." |
+| ④ Metrics | picture 07, the order workflow | "Customer reactions and ops interventions sit next to the lifecycle. The orders table alone only says 'delivered'." |
+| ④ Metrics | picture 10, where the delay builds | "Late orders lose 12 extra minutes before pickup, and only about 4 extra in transit." |
+| Judgement call | dashboard (`streamlit run app/dashboard.py`), Early-warning tab slider | "Ops can try their own k here. It recomputes live from the modelled orders." |
+| Close | picture 15, the GPS row | "Session 6 said GPS has pings before pickup and none after. Here the pings look drawn, not measured: 91 % are perfect straight lines. So no geofence should be built on them." |
+
+## Likely questions, and where the answer is
+
+- **"Why 1,486 and not 1,495?"** The 1,495 is the dashboard's own definition. See `output/breakdowns/definition_comparison.csv` and picture 04.
+- **"Is the trigger overfitted?"** The threshold was chosen on 1–21 Aug and judged on 22–28 Aug. See `output/insights/early_warning_backtest.csv`.
+- **"Prove retrieval is complete."** See `data/raw/run_example/ingestion_manifest.json` (pages, retries, control totals) and picture 03.
+- **"Prove the pipeline reproduces the output."** See `output/replay_proof.md`: REPRODUCED, 28/28 hashes, 46/46 outputs.
+- **"What if the data is messier?"** Run `python -m pytest tests/test_hidden_messy_data.py -q`.
+- **"Where are the class answers?"** See `Challenges/` and `docs/session-5-challenges.md`, `docs/session-6-challenges.md`, `docs/session-7-challenges.md`.

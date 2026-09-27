@@ -1,5 +1,13 @@
 # Workflow and data model
 
+Start with one order, then generalise it into the workflow, then model it around the order. The three pictures below are redrawn by every run from its own evidence. The Mermaid diagrams further down are the editable versions.
+
+![One order across seven systems](../output/visuals/06_one_order_journey.png)
+
+![Order workflow](../output/visuals/07_order_lifecycle.png)
+
+![Data model](../output/visuals/08_data_model.png)
+
 ## 1. The business workflow (what actually happens to an order)
 
 ```mermaid

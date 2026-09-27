@@ -11,6 +11,16 @@ Every rule states: **business assumption → business reason → detection → a
 
 Status per rule: PASS · WARN (violations exist, decision-safe with caveat) · FAIL (metric untrustworthy) · UNKNOWN (cannot be tested).
 
+**The FAIL tolerances are owned by stakeholders, not by the code.** They are set in the `data_quality` section of [`config/pipeline.yaml`](../config/pipeline.yaml), each with an owner comment, and are recorded in every run manifest:
+
+- `max_unexpected_status_pct` (ST-01, 10 %);
+- `max_unparseable_kpi_timestamp_pct` (TS-00, 10 %);
+- `max_missing_delivery_time_pct` (TS-04, 15 %).
+
+A partition that breaks a tolerance is refused, not published (`tests/test_periods.py::test_default_policy_refuses_noisy_partitions`).
+
+![Validation gate](../output/visuals/05_validation_gate.png)
+
 ## Rule catalogue (with the findings on the classroom pack)
 
 | Rule | Assumption | Business reason | Detection | Action | Found | Impact on KPI | Limitation / owner |

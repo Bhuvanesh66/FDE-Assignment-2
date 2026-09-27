@@ -2,6 +2,10 @@
 
 **Client:** FlashEats (food delivery, Bengaluru). **Business problem:** late deliveries hurt customer experience; leadership wants a dependable late-delivery KPI before investing in an AI delay-prediction system. **Project KPI:** reduce the late delivery rate.
 
+![Source map](../output/visuals/02_source_map.png)
+
+*The picture is redrawn by every pipeline run from that run's evidence (`src/flasheats_pipeline/visuals.py`); the tables below are the full detail.*
+
 ## 1. Business questions → information needed
 
 | # | Business question | Information required | Answered by |
