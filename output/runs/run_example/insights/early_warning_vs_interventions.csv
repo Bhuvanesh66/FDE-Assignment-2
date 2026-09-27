@@ -1,0 +1,5 @@
+group,orders,with_any_intervention,intervention_before_pickup,intervention_coverage_pct
+late orders the trigger catches,602,156,125,25.9
+late orders the trigger misses,235,69,39,29.4
+on-time orders the trigger flags (false alerts),19,5,4,26.3
+on-time orders not flagged,630,169,61,26.8

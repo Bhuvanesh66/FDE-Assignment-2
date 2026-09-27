@@ -1,0 +1,105 @@
+{
+  "headline": {
+    "early_warning": {
+      "chosen_grace_min": 10,
+      "holdout": true,
+      "train_orders": 1111,
+      "test_orders": 375,
+      "test_precision_pct": 96.1,
+      "test_recall_pct": 71.5,
+      "test_alert_rate_pct": 41.1,
+      "test_median_lead_min": 44.8,
+      "all_caught_late": 602,
+      "all_alerts": 621,
+      "caught_late_without_intervention": 446,
+      "interventions_on_unflagged_on_time": 169
+    },
+    "eta": {
+      "target_on_time_rate_pct": 80,
+      "padding_needed_min": 12,
+      "late_rate_at_needed_padding_pct": 19.8,
+      "pickup_estimate_bias_median_min": 8.0,
+      "pickup_estimate_bias_p75_min": 15.1,
+      "planned_pickup_median_min": 18.0,
+      "actual_pickup_median_min": 26.0,
+      "promised_window_median_min": 72.8
+    },
+    "restaurants": {
+      "entity": "restaurant_id",
+      "fleet_late_rate_pct": 56.3,
+      "entities": 61,
+      "judgeable": 59,
+      "significantly_worse": 1,
+      "significantly_better": 0,
+      "naive_top10_significant": 1,
+      "worse_list": [
+        "R024"
+      ]
+    },
+    "drivers": {
+      "entity": "driver_id",
+      "fleet_late_rate_pct": 56.3,
+      "entities": 120,
+      "judgeable": 91,
+      "significantly_worse": 1,
+      "significantly_better": 3,
+      "naive_top10_significant": 0,
+      "worse_list": [
+        "D065"
+      ]
+    },
+    "weather": {
+      "orders_covered": 1600,
+      "kappa": 0.009,
+      "agreement_pct": 52.6,
+      "late_rate_observed_rain_pct": 58.5,
+      "late_rate_observed_dry_pct": 54.5,
+      "mean_mm_label_clear": 0.46,
+      "mean_mm_label_heavy_rain": 0.4
+    },
+    "gps": {
+      "orders_with_pre_pickup_pings": 1166,
+      "approaching_pct": 0.8,
+      "within_1km_pct": 5.9,
+      "median_last_ping_km": 4.35,
+      "verdict": "GPS cannot stand in for an arrival event - pings do not converge on the restaurant"
+    }
+  },
+  "findings": [
+    {
+      "id": "D1",
+      "title": "A proactive trigger that works today, without AI",
+      "finding": "Alerting when an order is still not picked up 10 min after Dispatch's own estimated pickup catches 71.5% of late orders with 96.1% precision on the held-out week, a median 44.8 min before the promise breaks.",
+      "so_what": "446 late orders the trigger would have caught received no intervention at all; 169 interventions went to orders that were never at risk.",
+      "owner": "Operations"
+    },
+    {
+      "id": "D2",
+      "title": "The promise is optimistic before the food even leaves",
+      "finding": "Dispatch's pickup estimate is short by a median 8.0 min (planned 18.0 min vs actual 26.0 min from order to pickup). Reaching 80% on-time by padding alone needs +12 min on every promise.",
+      "so_what": "Fix the pickup estimate (the input) rather than padding the promise (the output); padding trades lateness for longer quoted times, whose effect on conversion is unknown.",
+      "owner": "Product / ETA service"
+    },
+    {
+      "id": "D3",
+      "title": "Do not publish a restaurant or driver blame list",
+      "finding": "Only 1 of 59 judgeable restaurants (R024) and 1 of 91 drivers are statistically worse than the fleet; a naive top-10 list would name 10 restaurants, of which 1 survive the test.",
+      "so_what": "Lateness is systemic; accountability conversations should start with the significant few, with the confidence interval shown.",
+      "owner": "Restaurant Ops / Fleet Ops"
+    },
+    {
+      "id": "D4",
+      "title": "The weather label does not match the weather",
+      "finding": "Against Open-Meteo's observed hourly rainfall, the client's weather_bucket agrees 52.6% of the time (Cohen's kappa 0.009, i.e. no better than chance). Orders labelled heavy rain saw 0.4 mm on average, orders labelled clear 0.46 mm. Observed rain: 58.5% late vs 54.5% when dry.",
+      "so_what": "'Weather causes delays' cannot be defended with this field; ask who writes weather_bucket and when, before any weather-aware ETA or staffing plan.",
+      "owner": "Operations / Data Team"
+    },
+    {
+      "id": "D5",
+      "title": "GPS cannot replace the missing arrival event",
+      "finding": "Before pickup, the last GPS ping is closer to the restaurant than the first in only 0.8% of orders; the median last ping is 4.35 km away.",
+      "so_what": "A geofence built on this feed would invent arrivals. Instrument an explicit 'arrived at restaurant' tap instead.",
+      "owner": "Fleet Ops / Product"
+    }
+  ]
+}

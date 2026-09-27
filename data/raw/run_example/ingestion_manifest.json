@@ -295,7 +295,7 @@
     "records_missing_required_fields": 0,
     "records_missing_expected_fields": 0,
     "complete": true,
-    "duration_s": 1.827,
+    "duration_s": 1.818,
     "raw_pages": [
       "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\api\\dispatch_page_001.json",
       "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\api\\dispatch_page_002.json",
@@ -315,5 +315,24 @@
       "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\api\\dispatch_page_016.json"
     ],
     "mode": "live"
+  },
+  "external_weather": {
+    "source": "open_meteo_archive",
+    "mode": "live",
+    "url": "https://archive-api.open-meteo.com/v1/archive",
+    "params": {
+      "latitude": 12.9716,
+      "longitude": 77.5946,
+      "start_date": "2026-08-01",
+      "end_date": "2026-08-29",
+      "hourly": "precipitation,rain",
+      "timezone": "Asia/Kolkata"
+    },
+    "hours": 696,
+    "first_hour": "2026-08-01T00:00:00",
+    "last_hour": "2026-08-29T23:00:00",
+    "retries": 0,
+    "errors": [],
+    "raw_path": "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\external\\open_meteo_archive.json"
   }
 }

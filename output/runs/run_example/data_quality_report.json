@@ -243,6 +243,7 @@
       "app_actions": 2365,
       "interventions": 430,
       "driver_events": 10035,
+      "weather_obs": 696,
       "dispatch": 1600
     },
     "clean_row_counts": {
@@ -255,6 +256,7 @@
       "app_actions": 2365,
       "interventions": 430,
       "driver_events": 10035,
+      "weather_obs": 696,
       "dispatch": 1600
     }
   },
@@ -833,7 +835,7 @@
       "violation_pct": 0.0,
       "business_reason": "A 999 km 'estimate' would distort any distance analysis.",
       "detection": "distance <= 0 or > max_plausible_distance_km or null",
-      "detail": "null=0, <=0=0, >50.0km=0",
+      "detail": "null=0, <=0=0, >50km=0",
       "sample_keys": [],
       "extra": {}
     },
@@ -1011,6 +1013,42 @@
         "coverage_pct": 31.25,
         "median_lag_vs_pickup_min": -6.41,
         "p90_lag_vs_pickup_min": 10.63
+      }
+    },
+    {
+      "rule_id": "WX-01",
+      "rule": "Order weather label agrees with independently observed rainfall",
+      "dataset": "orders+weather",
+      "action": "retain",
+      "owner": "Operations / Data Team",
+      "status": "WARN",
+      "violations": 758,
+      "population": 1600,
+      "violation_pct": 47.38,
+      "business_reason": "Operations attributes lateness to weather using weather_bucket; if the label does not match what actually fell from the sky, weather-based explanations and any model trained on the label are built on sand.",
+      "detection": "join each order's creation hour to Open-Meteo hourly precipitation for Bengaluru; compare labelled rain (rain/heavy_rain) with observed rain (> threshold mm); Cohen's kappa < 0.2 = no better than chance",
+      "detail": "hours covered=100.0%; agreement=52.6%; Cohen's kappa=0.009; mean observed mm by label={'clear': 0.46, 'heavy_rain': 0.4, 'rain': 0.6}",
+      "sample_keys": [
+        "O00001",
+        "O00002",
+        "O00003",
+        "O00004",
+        "O00008",
+        "O00010",
+        "O00011",
+        "O00012",
+        "O00013",
+        "O00021"
+      ],
+      "extra": {
+        "kappa": 0.009300874213559024,
+        "agreement": 0.52625,
+        "coverage": 1.0,
+        "mean_mm_by_label": {
+          "clear": 0.46,
+          "heavy_rain": 0.4,
+          "rain": 0.6
+        }
       }
     },
     {

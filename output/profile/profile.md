@@ -12,6 +12,7 @@
 | interventions | 430 | 6 | intervention_id | 0 | 0 | - |
 | order_outcomes_ref | 1600 | 6 | order_id | 0 | 0 | - |
 | driver_events | 10035 | 6 |  | 0 | 0 | - |
+| weather_obs | 696 | 3 | hour | 0 | 0 | - |
 | dispatch | 1600 | 9 | order_id | 0 | 0 | - |
 
 ## orders  (1603 rows)
@@ -122,6 +123,14 @@
 | timestamp | timestamp | 10035 | 0.00 | 10035 | 0 | 2026-08-01T11:03:07.731329 → 2026-08-29T00:50:53.383274; unparseable=0; layouts={'9999-99-99a99:99:99.999999': 10035} |
 | lat | numeric | 5371 | 46.48 | 5288 | 0 | min=12.7441 p50=12.97 max=81.4469 |
 | lon | numeric | 5371 | 46.48 | 5293 | 0 | min=77.3665 p50=77.602 max=171.5392 |
+
+## weather_obs  (696 rows)
+
+| column | kind | non_null | null_% | distinct | padded | detail |
+|---|---|---|---|---|---|---|
+| hour | text | 696 | 0.00 | 696 | 0 | 2026-08-01 00:00:00=1, 2026-08-01 01:00:00=1, 2026-08-01 02:00:00=1, 2026-08-01 03:00:00=1, 2026-08-01 04:00:00=1, 2026-08-01 05:00:00=1, 2026-08-01 06:00:00=1, 2026-08-01 07:00:00=1 |
+| precipitation_mm | numeric | 696 | 0.00 | 36 | 0 | min=0.0 p50=0.0 max=8.6 |
+| rain_mm | numeric | 696 | 0.00 | 36 | 0 | min=0.0 p50=0.0 max=8.6 |
 
 ## dispatch  (1600 rows)
 

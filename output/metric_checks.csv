@@ -10,3 +10,5 @@ join cardinality: order_journey <- app_actions (aggregated),PASS,left=1600 right
 join cardinality: order_journey <- tickets (aggregated),PASS,left=1600 right=198 result=1600 (right duplicates dropped=0)
 join cardinality: order_journey <- interventions (aggregated),PASS,left=1600 right=430 result=1600 (right duplicates dropped=0)
 independent SQL re-computation of M1 on the raw database,PASS,"SQL: {'valid_delivered': 1486.0, 'late_orders': 837.0, 'late_rate_pct': 56.33, 'late_over_10_orders': 344.0} | pipeline: population=1486, late=837 | difference pop=0 late=0, explainable by unparseable/tz/padded values=0"
+record ledger: raw = clean + dropped duplicates + quarantined (every dataset),PASS,orders: 1603=1600+0+3+0; tickets: 202=201+1+0+0; restaurant_status: 502=500+2+0+0
+order ledger: every unique order in exactly one outcome bucket; population = late + on time,PASS,1600 orders = 837 delivered_late + 649 delivered_on_time + 68 cancelled + 37 unknown_missing_timestamp + 9 excluded_dq_rule; KPI population 1486

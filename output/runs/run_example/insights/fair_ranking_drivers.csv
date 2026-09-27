@@ -1,0 +1,121 @@
+driver_id,orders,late_orders,late_rate_pct,ci_low_pct,ci_high_pct,verdict,in_naive_top10
+D080,14,4,28.6,11.7,54.6,better than fleet (significant),False
+D038,15,4,26.7,10.9,52.0,better than fleet (significant),False
+D119,15,3,20.0,7.0,45.2,better than fleet (significant),False
+D011,12,10,83.3,55.2,95.3,not distinguishable from fleet,False
+D031,12,10,83.3,55.2,95.3,not distinguishable from fleet,False
+D054,18,14,77.8,54.8,91.0,not distinguishable from fleet,True
+D017,22,16,72.7,51.8,86.8,not distinguishable from fleet,True
+D046,18,13,72.2,49.1,87.5,not distinguishable from fleet,True
+D001,20,14,70.0,48.1,85.5,not distinguishable from fleet,True
+D087,15,11,73.3,48.0,89.1,not distinguishable from fleet,True
+D063,17,12,70.6,46.9,86.7,not distinguishable from fleet,True
+D094,17,12,70.6,46.9,86.7,not distinguishable from fleet,True
+D018,12,9,75.0,46.8,91.1,not distinguishable from fleet,False
+D040,12,9,75.0,46.8,91.1,not distinguishable from fleet,False
+D076,19,13,68.4,46.0,84.6,not distinguishable from fleet,True
+D008,14,10,71.4,45.4,88.3,not distinguishable from fleet,False
+D022,16,11,68.8,44.4,85.8,not distinguishable from fleet,True
+D025,11,8,72.7,43.4,90.3,not distinguishable from fleet,False
+D010,26,16,61.5,42.5,77.6,not distinguishable from fleet,True
+D088,13,9,69.2,42.4,87.3,not distinguishable from fleet,False
+D027,15,10,66.7,41.7,84.8,not distinguishable from fleet,False
+D056,15,10,66.7,41.7,84.8,not distinguishable from fleet,False
+D051,10,7,70.0,39.7,89.2,not distinguishable from fleet,False
+D081,10,7,70.0,39.7,89.2,not distinguishable from fleet,False
+D114,10,7,70.0,39.7,89.2,not distinguishable from fleet,False
+D090,12,8,66.7,39.1,86.2,not distinguishable from fleet,False
+D102,12,8,66.7,39.1,86.2,not distinguishable from fleet,False
+D035,14,9,64.3,38.8,83.7,not distinguishable from fleet,False
+D036,16,10,62.5,38.6,81.5,not distinguishable from fleet,False
+D068,16,10,62.5,38.6,81.5,not distinguishable from fleet,False
+D083,16,10,62.5,38.6,81.5,not distinguishable from fleet,False
+D120,16,10,62.5,38.6,81.5,not distinguishable from fleet,False
+D016,17,10,58.8,36.0,78.4,not distinguishable from fleet,False
+D007,15,9,60.0,35.7,80.2,not distinguishable from fleet,False
+D067,15,9,60.0,35.7,80.2,not distinguishable from fleet,False
+D070,15,9,60.0,35.7,80.2,not distinguishable from fleet,False
+D113,15,9,60.0,35.7,80.2,not distinguishable from fleet,False
+D117,15,9,60.0,35.7,80.2,not distinguishable from fleet,False
+D015,13,8,61.5,35.5,82.3,not distinguishable from fleet,False
+D043,13,8,61.5,35.5,82.3,not distinguishable from fleet,False
+D104,13,8,61.5,35.5,82.3,not distinguishable from fleet,False
+D021,11,7,63.6,35.4,84.8,not distinguishable from fleet,False
+D030,11,7,63.6,35.4,84.8,not distinguishable from fleet,False
+D053,11,7,63.6,35.4,84.8,not distinguishable from fleet,False
+D099,11,7,63.6,35.4,84.8,not distinguishable from fleet,False
+D103,11,7,63.6,35.4,84.8,not distinguishable from fleet,False
+D116,11,7,63.6,35.4,84.8,not distinguishable from fleet,False
+D064,18,10,55.6,33.7,75.4,not distinguishable from fleet,False
+D029,14,8,57.1,32.6,78.6,not distinguishable from fleet,False
+D041,14,8,57.1,32.6,78.6,not distinguishable from fleet,False
+D059,14,8,57.1,32.6,78.6,not distinguishable from fleet,False
+D037,12,7,58.3,32.0,80.7,not distinguishable from fleet,False
+D047,12,7,58.3,32.0,80.7,not distinguishable from fleet,False
+D071,12,7,58.3,32.0,80.7,not distinguishable from fleet,False
+D092,12,7,58.3,32.0,80.7,not distinguishable from fleet,False
+D009,10,6,60.0,31.3,83.2,not distinguishable from fleet,False
+D014,10,6,60.0,31.3,83.2,not distinguishable from fleet,False
+D077,10,6,60.0,31.3,83.2,not distinguishable from fleet,False
+D048,13,7,53.8,29.1,76.8,not distinguishable from fleet,False
+D089,18,9,50.0,29.0,71.0,not distinguishable from fleet,False
+D100,16,8,50.0,28.0,72.0,not distinguishable from fleet,False
+D005,12,6,50.0,25.4,74.6,not distinguishable from fleet,False
+D058,12,6,50.0,25.4,74.6,not distinguishable from fleet,False
+D097,12,6,50.0,25.4,74.6,not distinguishable from fleet,False
+D105,12,6,50.0,25.4,74.6,not distinguishable from fleet,False
+D093,15,7,46.7,24.8,69.9,not distinguishable from fleet,False
+D095,15,7,46.7,24.8,69.9,not distinguishable from fleet,False
+D108,15,7,46.7,24.8,69.9,not distinguishable from fleet,False
+D098,10,5,50.0,23.7,76.3,not distinguishable from fleet,False
+D109,10,5,50.0,23.7,76.3,not distinguishable from fleet,False
+D003,16,7,43.8,23.1,66.8,not distinguishable from fleet,False
+D024,19,8,42.1,23.1,63.7,not distinguishable from fleet,False
+D072,16,7,43.8,23.1,66.8,not distinguishable from fleet,False
+D034,17,7,41.2,21.6,64.0,not distinguishable from fleet,False
+D045,14,6,42.9,21.4,67.4,not distinguishable from fleet,False
+D050,14,6,42.9,21.4,67.4,not distinguishable from fleet,False
+D073,14,6,42.9,21.4,67.4,not distinguishable from fleet,False
+D049,11,5,45.5,21.3,72.0,not distinguishable from fleet,False
+D032,18,7,38.9,20.3,61.4,not distinguishable from fleet,False
+D006,12,5,41.7,19.3,68.0,not distinguishable from fleet,False
+D082,16,6,37.5,18.5,61.4,not distinguishable from fleet,False
+D044,13,5,38.5,17.7,64.5,not distinguishable from fleet,False
+D055,13,5,38.5,17.7,64.5,not distinguishable from fleet,False
+D101,13,5,38.5,17.7,64.5,not distinguishable from fleet,False
+D074,10,4,40.0,16.8,68.7,not distinguishable from fleet,False
+D028,12,4,33.3,13.8,60.9,not distinguishable from fleet,False
+D106,12,4,33.3,13.8,60.9,not distinguishable from fleet,False
+D004,10,3,30.0,10.8,60.3,not distinguishable from fleet,False
+D079,11,3,27.3,9.7,56.6,not distinguishable from fleet,False
+D112,11,3,27.3,9.7,56.6,not distinguishable from fleet,False
+D023,7,6,85.7,48.7,97.4,too few orders to judge,False
+D118,9,7,77.8,45.3,93.7,too few orders to judge,False
+D096,8,6,75.0,40.9,92.9,too few orders to judge,False
+D061,7,5,71.4,35.9,91.8,too few orders to judge,False
+D075,7,5,71.4,35.9,91.8,too few orders to judge,False
+D078,7,5,71.4,35.9,91.8,too few orders to judge,False
+D086,7,5,71.4,35.9,91.8,too few orders to judge,False
+D033,9,6,66.7,35.4,87.9,too few orders to judge,False
+D042,9,6,66.7,35.4,87.9,too few orders to judge,False
+D060,9,6,66.7,35.4,87.9,too few orders to judge,False
+D066,9,6,66.7,35.4,87.9,too few orders to judge,False
+D107,4,3,75.0,30.1,95.4,too few orders to judge,False
+D020,9,5,55.6,26.7,81.1,too few orders to judge,False
+D039,9,5,55.6,26.7,81.1,too few orders to judge,False
+D057,9,5,55.6,26.7,81.1,too few orders to judge,False
+D085,9,5,55.6,26.7,81.1,too few orders to judge,False
+D110,9,5,55.6,26.7,81.1,too few orders to judge,False
+D111,9,5,55.6,26.7,81.1,too few orders to judge,False
+D084,5,3,60.0,23.1,88.2,too few orders to judge,False
+D002,8,4,50.0,21.5,78.5,too few orders to judge,False
+D012,8,4,50.0,21.5,78.5,too few orders to judge,False
+D013,6,3,50.0,18.8,81.2,too few orders to judge,False
+D091,7,3,42.9,15.8,75.0,too few orders to judge,False
+D026,8,3,37.5,13.7,69.4,too few orders to judge,False
+D052,8,3,37.5,13.7,69.4,too few orders to judge,False
+D062,8,3,37.5,13.7,69.4,too few orders to judge,False
+D115,9,3,33.3,12.1,64.6,too few orders to judge,False
+D019,7,2,28.6,8.2,64.1,too few orders to judge,False
+D069,9,1,11.1,2.0,43.5,too few orders to judge,False
+D065,10,9,90.0,59.6,98.2,worse than fleet (significant),False

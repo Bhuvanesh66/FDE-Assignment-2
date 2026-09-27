@@ -8,7 +8,9 @@
     "KPI definition ownership",
     "Category semantics",
     "Cross-source mapping",
-    "Freshness (restaurant status feed)"
+    "Freshness (restaurant status feed)",
+    "Independent cross-check (observed weather vs client label)",
+    "Run-over-run stability (vs last published run)"
   ],
   "checks": [
     {
@@ -56,8 +58,20 @@
     {
       "check": "Metric sanity & independent checks",
       "status": "PASS",
-      "evidence": "11 checks passed",
+      "evidence": "13 checks passed",
       "action": "see output/metric_checks.csv"
+    },
+    {
+      "check": "Independent cross-check (observed weather vs client label)",
+      "status": "WARN",
+      "evidence": "hours covered=100.0%; agreement=52.6%; Cohen's kappa=0.009; mean observed mm by label={'clear': 0.46, 'heavy_rain': 0.4, 'rain': 0.6}; source mode=live",
+      "action": "weather_bucket is not used to explain lateness until Operations confirms how it is produced"
+    },
+    {
+      "check": "Run-over-run stability (vs last published run)",
+      "status": "UNKNOWN",
+      "evidence": "no previous published run to compare with (first run)",
+      "action": "see output/run_comparison.md"
     }
   ],
   "leadership_claim": "Late Delivery Rate is 56%",

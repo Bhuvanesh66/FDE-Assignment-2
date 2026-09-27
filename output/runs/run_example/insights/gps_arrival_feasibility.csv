@@ -1,0 +1,6 @@
+check,value
+orders with pre-pickup GPS pings,1166.0
+orders with >= 2 pre-pickup pings,374.0
+"of those, last ping closer to the restaurant than the first (%)",0.8
+orders with any pre-pickup ping within 1 km of the restaurant (%),5.9
+median distance of the last pre-pickup ping to the restaurant (km),4.35

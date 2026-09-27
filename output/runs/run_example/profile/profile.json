@@ -1541,6 +1541,93 @@
     "notes": []
   },
   {
+    "name": "weather_obs",
+    "rows": 696,
+    "columns": [
+      "hour",
+      "precipitation_mm",
+      "rain_mm"
+    ],
+    "key": "hour",
+    "duplicate_key_rows": 0,
+    "exact_duplicate_rows": 0,
+    "column_profiles": [
+      {
+        "column": "hour",
+        "kind": "text",
+        "non_null": 696,
+        "null_pct": 0.0,
+        "distinct": 696,
+        "top_values": {
+          "2026-08-01 00:00:00": 1,
+          "2026-08-01 01:00:00": 1,
+          "2026-08-01 02:00:00": 1,
+          "2026-08-01 03:00:00": 1,
+          "2026-08-01 04:00:00": 1,
+          "2026-08-01 05:00:00": 1,
+          "2026-08-01 06:00:00": 1,
+          "2026-08-01 07:00:00": 1,
+          "2026-08-01 08:00:00": 1,
+          "2026-08-01 09:00:00": 1,
+          "2026-08-01 10:00:00": 1,
+          "2026-08-01 11:00:00": 1
+        },
+        "layouts": {},
+        "numeric": {},
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "precipitation_mm",
+        "kind": "numeric",
+        "non_null": 696,
+        "null_pct": 0.0,
+        "distinct": 36,
+        "top_values": {},
+        "layouts": {},
+        "numeric": {
+          "count": 696.0,
+          "mean": 0.256,
+          "std": 0.7293,
+          "min": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 0.2,
+          "max": 8.6,
+          "unparseable": 0
+        },
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      },
+      {
+        "column": "rain_mm",
+        "kind": "numeric",
+        "non_null": 696,
+        "null_pct": 0.0,
+        "distinct": 36,
+        "top_values": {},
+        "layouts": {},
+        "numeric": {
+          "count": 696.0,
+          "mean": 0.256,
+          "std": 0.7293,
+          "min": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 0.2,
+          "max": 8.6,
+          "unparseable": 0
+        },
+        "timestamp": {},
+        "blank_strings": 0,
+        "whitespace_padded": 0
+      }
+    ],
+    "notes": []
+  },
+  {
     "name": "dispatch",
     "rows": 1600,
     "columns": [

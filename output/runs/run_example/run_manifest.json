@@ -1,25 +1,34 @@
 {
   "run_id": "run_example",
   "pipeline_version": "1.0.0",
-  "started_at": "2026-09-25T17:36:25",
+  "started_at": "2026-09-27T20:30:29",
   "config": {
     "project_root": "B:\\Trimester-9\\FDE\\assignment-2",
     "source_root": "B:\\Trimester-9\\FDE\\assignment-2\\source_systems",
     "data_dir": "B:\\Trimester-9\\FDE\\assignment-2\\data",
     "output_dir": "B:\\Trimester-9\\FDE\\assignment-2\\output",
     "run_id": "run_example",
+    "config_file": "B:\\Trimester-9\\FDE\\assignment-2\\config\\pipeline.yaml",
     "api_base_url": "http://127.0.0.1:8000",
     "api_page_size": 100,
-    "api_timeout_s": 10.0,
+    "api_timeout_s": 10,
     "api_max_retries": 5,
     "api_backoff_base_s": 0.5,
-    "api_backoff_cap_s": 4.0,
+    "api_backoff_cap_s": 4,
     "api_max_pages": 10000,
     "start_mock_api": true,
     "api_fallback_to_last_snapshot": false,
-    "late_threshold_min": 0.0,
-    "meaningful_late_threshold_min": 10.0,
-    "max_plausible_distance_km": 50.0,
+    "weather_enabled": true,
+    "weather_base_url": "https://archive-api.open-meteo.com/v1/archive",
+    "weather_latitude": 12.9716,
+    "weather_longitude": 77.5946,
+    "weather_rain_threshold_mm": 0.1,
+    "weather_timeout_s": 20,
+    "weather_max_retries": 3,
+    "late_threshold_min": 0,
+    "meaningful_late_threshold_min": 10,
+    "target_on_time_rate_pct": 80,
+    "max_plausible_distance_km": 50,
     "lat_range": [
       12.5,
       13.5
@@ -29,13 +38,41 @@
       78.0
     ],
     "source_timezone": "Asia/Kolkata",
-    "status_freshness_sla_min": 15.0,
+    "status_freshness_sla_min": 15,
+    "ew_grace_minutes_grid": [
+      0,
+      5,
+      10,
+      15,
+      20,
+      25,
+      30
+    ],
+    "ew_min_precision": 0.9,
+    "ew_train_until_day": 21,
+    "eta_padding_grid_min": [
+      0,
+      5,
+      10,
+      15,
+      20,
+      25,
+      30
+    ],
+    "fair_min_orders_restaurant": 15,
+    "fair_min_orders_driver": 10,
+    "fair_confidence": 0.95,
+    "impact_prevented_share_scenarios": [
+      0.25,
+      0.5
+    ],
+    "kpi_drift_alert_pp": 2.0,
     "fail_on_gate": "FAIL",
     "write_charts": true
   },
   "stages": {
     "ingest": {
-      "seconds": 2.09,
+      "seconds": 2.75,
       "rows": {
         "orders": 1603,
         "restaurants": 60,
@@ -47,14 +84,15 @@
         "interventions": 430,
         "order_outcomes_ref": 1600,
         "driver_events": 10035,
+        "weather_obs": 696,
         "dispatch": 1600
       }
     },
     "profile": {
-      "seconds": 0.99
+      "seconds": 0.9
     },
     "clean": {
-      "seconds": 0.69,
+      "seconds": 0.66,
       "actions": 7,
       "rows": {
         "orders": 1600,
@@ -66,6 +104,7 @@
         "app_actions": 2365,
         "interventions": 430,
         "driver_events": 10035,
+        "weather_obs": 696,
         "dispatch": 1600
       }
     },
@@ -108,11 +147,52 @@
         "CX-02": "WARN",
         "CX-03": "WARN",
         "FR-01": "WARN",
+        "WX-01": "WARN",
         "KPI-01": "UNKNOWN"
+      },
+      "violations": {
+        "GR-01": 0,
+        "ID-01": 0,
+        "ID-02": 0,
+        "ID-03": 3,
+        "ID-04": 3,
+        "ID-05": 3,
+        "ID-06": 0,
+        "ID-07": 0,
+        "ID-08": 0,
+        "ID-09": 0,
+        "ID-10": 0,
+        "ST-01": 0,
+        "ST-02": 0,
+        "ST-03": 0,
+        "ST-04": 1,
+        "ST-05": 1,
+        "ST-06": 0,
+        "ST-07": 0,
+        "ST-08": 0,
+        "ST-09": 0,
+        "TS-00": 0,
+        "TS-01": 4,
+        "TS-02": 5,
+        "TS-03": 0,
+        "TS-04": 37,
+        "TS-05": 0,
+        "TS-06": 0,
+        "TS-07": 14,
+        "RG-01": 0,
+        "RG-02": 2,
+        "RG-03": 189,
+        "RG-04": 0,
+        "CX-01": 95,
+        "CX-02": 5,
+        "CX-03": 234,
+        "FR-01": 13,
+        "WX-01": 758,
+        "KPI-01": 0
       }
     },
     "model": {
-      "seconds": 2.27,
+      "seconds": 1.77,
       "tables": {
         "dim_customer": 900,
         "dim_restaurant": 60,
@@ -125,7 +205,7 @@
       }
     },
     "metrics": {
-      "seconds": 0.39,
+      "seconds": 0.37,
       "headline": {
         "late_delivery_rate_pct": 56.33,
         "late_orders": 837,
@@ -137,12 +217,92 @@
         "intervention_coverage_pct": 26.85
       }
     },
+    "insights": {
+      "seconds": 2.73,
+      "headline": {
+        "early_warning": {
+          "chosen_grace_min": 10,
+          "holdout": true,
+          "train_orders": 1111,
+          "test_orders": 375,
+          "test_precision_pct": 96.1,
+          "test_recall_pct": 71.5,
+          "test_alert_rate_pct": 41.1,
+          "test_median_lead_min": 44.8,
+          "all_caught_late": 602,
+          "all_alerts": 621,
+          "caught_late_without_intervention": 446,
+          "interventions_on_unflagged_on_time": 169
+        },
+        "eta": {
+          "target_on_time_rate_pct": 80,
+          "padding_needed_min": 12,
+          "late_rate_at_needed_padding_pct": 19.8,
+          "pickup_estimate_bias_median_min": 8.0,
+          "pickup_estimate_bias_p75_min": 15.1,
+          "planned_pickup_median_min": 18.0,
+          "actual_pickup_median_min": 26.0,
+          "promised_window_median_min": 72.8
+        },
+        "restaurants": {
+          "entity": "restaurant_id",
+          "fleet_late_rate_pct": 56.3,
+          "entities": 61,
+          "judgeable": 59,
+          "significantly_worse": 1,
+          "significantly_better": 0,
+          "naive_top10_significant": 1,
+          "worse_list": [
+            "R024"
+          ]
+        },
+        "drivers": {
+          "entity": "driver_id",
+          "fleet_late_rate_pct": 56.3,
+          "entities": 120,
+          "judgeable": 91,
+          "significantly_worse": 1,
+          "significantly_better": 3,
+          "naive_top10_significant": 0,
+          "worse_list": [
+            "D065"
+          ]
+        },
+        "weather": {
+          "orders_covered": 1600,
+          "kappa": 0.009,
+          "agreement_pct": 52.6,
+          "late_rate_observed_rain_pct": 58.5,
+          "late_rate_observed_dry_pct": 54.5,
+          "mean_mm_label_clear": 0.46,
+          "mean_mm_label_heavy_rain": 0.4
+        },
+        "gps": {
+          "orders_with_pre_pickup_pings": 1166,
+          "approaching_pct": 0.8,
+          "within_1km_pct": 5.9,
+          "median_last_ping_km": 4.35,
+          "verdict": "GPS cannot stand in for an arrival event - pings do not converge on the restaurant"
+        }
+      },
+      "findings": [
+        "D1 A proactive trigger that works today, without AI",
+        "D2 The promise is optimistic before the food even leaves",
+        "D3 Do not publish a restaurant or driver blame list",
+        "D4 The weather label does not match the weather",
+        "D5 GPS cannot replace the missing arrival event"
+      ]
+    },
     "gate": {
       "seconds": 0.01,
-      "overall": "WARN"
+      "overall": "WARN",
+      "run_comparison": "UNKNOWN"
+    },
+    "memo": {
+      "seconds": 0.0
     },
     "outputs": {
-      "seconds": 3.44,
+      "seconds": 1.73,
       "published": true,
       "charts": [
         "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\charts\\late_rate_by_traffic.png",
@@ -151,7 +311,12 @@
         "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\charts\\late_rate_by_hour.png",
         "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\charts\\late_rate_by_intervention.png",
         "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\charts\\stage_durations.png",
-        "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\charts\\outcome_distribution.png"
+        "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\charts\\outcome_distribution.png",
+        "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\charts\\early_warning_tradeoff.png",
+        "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\charts\\eta_padding_curve.png",
+        "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\charts\\restaurant_funnel_plot.png",
+        "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\charts\\late_rate_heatmap.png",
+        "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\charts\\weather_label_vs_observed.png"
       ]
     }
   },
@@ -452,7 +617,7 @@
       "records_missing_required_fields": 0,
       "records_missing_expected_fields": 0,
       "complete": true,
-      "duration_s": 1.827,
+      "duration_s": 1.818,
       "raw_pages": [
         "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\api\\dispatch_page_001.json",
         "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\api\\dispatch_page_002.json",
@@ -472,6 +637,25 @@
         "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\api\\dispatch_page_016.json"
       ],
       "mode": "live"
+    },
+    "external_weather": {
+      "source": "open_meteo_archive",
+      "mode": "live",
+      "url": "https://archive-api.open-meteo.com/v1/archive",
+      "params": {
+        "latitude": 12.9716,
+        "longitude": 77.5946,
+        "start_date": "2026-08-01",
+        "end_date": "2026-08-29",
+        "hourly": "precipitation,rain",
+        "timezone": "Asia/Kolkata"
+      },
+      "hours": 696,
+      "first_hour": "2026-08-01T00:00:00",
+      "last_hour": "2026-08-29T23:00:00",
+      "retries": 0,
+      "errors": [],
+      "raw_path": "B:\\Trimester-9\\FDE\\assignment-2\\data\\raw\\run_example\\external\\open_meteo_archive.json"
     }
   },
   "outputs": {
@@ -481,7 +665,9 @@
     "data_quality_report.json": "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\data_quality_report.json",
     "data_quality_report.md": "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\data_quality_report.md",
     "data_quality_rules.csv": "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\data_quality_rules.csv",
+    "decision_memo.md": "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\decision_memo.md",
     "evidence_table.md": "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\evidence_table.md",
+    "insights": "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\insights",
     "known_unknown_assumption_limitation.md": "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\known_unknown_assumption_limitation.md",
     "metrics.csv": "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\metrics.csv",
     "metrics.json": "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\metrics.json",
@@ -490,10 +676,14 @@
     "pipeline.log": "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\pipeline.log",
     "profile": "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\profile",
     "quarantine": "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\quarantine",
+    "reconciliation_ledger.csv": "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\reconciliation_ledger.csv",
+    "run_comparison.json": "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\run_comparison.json",
+    "run_comparison.md": "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\run_comparison.md",
+    "run_manifest.json": "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\run_manifest.json",
     "validation_gate.json": "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\validation_gate.json",
     "validation_gate.md": "B:\\Trimester-9\\FDE\\assignment-2\\output\\runs\\run_example\\validation_gate.md"
   },
   "status": "COMPLETED",
-  "finished_at": "2026-09-25T17:36:38",
-  "duration_s": 12.88
+  "finished_at": "2026-09-27T20:30:43",
+  "duration_s": 13.89
 }
