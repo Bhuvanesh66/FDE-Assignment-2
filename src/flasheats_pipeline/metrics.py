@@ -212,6 +212,10 @@ def compute_metrics(model: ModelBundle, cfg: PipelineConfig, reference_outcomes:
         {"pattern": "late + support contact", "orders": int(oj_late["support_contact"].sum())},
         {"pattern": "late + intervention", "orders": int(oj_late["has_intervention"].sum())},
         {"pattern": "late + support contact + intervention (still late)", "orders": int(oj["frustrated_intervened_still_late"].sum())},
+        {"pattern": "support contact + intervention + still > 15 min late (Class 7: the intervention did not work)",
+         "orders": int((oj["support_contact"] & oj["has_intervention"] & oj["kpi_population"].astype(bool) & (oj["delay_min"] > 15)).sum())},
+        {"pattern": "support contact + intervention (validated deliveries, the base for the line above)",
+         "orders": int((oj["support_contact"] & oj["has_intervention"] & oj["kpi_population"].astype(bool)).sum())},
         {"pattern": "support contact + NO intervention (any outcome)", "orders": int(oj["frustrated_no_intervention"].sum())},
         {"pattern": "cancel attempted in app", "orders": int(oj["cancel_attempted"].sum())},
     ])

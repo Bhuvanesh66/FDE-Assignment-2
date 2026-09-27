@@ -10,6 +10,7 @@ Dependability features (Class 8 expectations):
 """
 from __future__ import annotations
 
+import json
 import shutil
 import subprocess
 import sys
@@ -27,8 +28,14 @@ from .config import PipelineConfig
 from .gate import build_gate
 from .ingest import (ApiIngestionError, DispatchApiClient, ObservedWeatherClient, SourceFileError, SqlSource, flatten_driver_events,
                      load_snapshot_pages, read_csv_source, read_json_source)
+from .contracts import check as contract_check, load_contract, required_columns
+from .ingest.replay import load_preserved_manifest, read_api_pages, read_sql_extract, verify as verify_preserved
+from .ingest.weather_source import WeatherReport, parse_open_meteo
 from .insights import compute_insights
-from .monitoring import build_ledger, compare_runs, comparison_to_markdown
+from .io_utils import sha256_file
+from .monitoring import build_ledger, compare_runs, comparison_to_markdown, fingerprint_outputs
+from .scope import control_totals, scope_reference, scope_to_period
+from .sql_metrics import compare as compare_sql_metrics, run_views
 from .timestamps import parse_timestamps
 from .io_utils import read_json, write_json, write_text
 from .logging_utils import configure_logging, get_logger
@@ -39,6 +46,7 @@ from .reports import (write_charts, write_dashboard, write_data_quality, write_d
                       write_insights, write_metrics, write_model, write_profile)
 from .io_utils import write_csv
 from .rules import run_rules
+from .visuals import build_visuals
 
 FILE_SOURCES = {
     # name: (file, required columns, optional?)
@@ -118,8 +126,9 @@ def run_pipeline(cfg: PipelineConfig) -> PipelineRun:
     log.info("FlashEats pipeline v%s run_id=%s source_root=%s config=%s", __version__, cfg.run_id, cfg.source_root, cfg.config_file or "defaults")
     previous_manifest = None
     try:
-        if (out / "run_manifest.json").exists():
-            previous_manifest = read_json(out / "run_manifest.json")
+        baseline = (out / "runs" / cfg.replay_run_id / "run_manifest.json") if cfg.replay_run_id else (out / "run_manifest.json")
+        if baseline.exists():
+            previous_manifest = read_json(baseline)
     except Exception as exc:  # a corrupt previous manifest must not stop this run
         log.warning("previous run manifest unreadable (%s) - no run comparison", exc)
     api_ctx = MockApiProcess(cfg.mock_api_script, cfg.api_base_url) if cfg.start_mock_api else None
@@ -127,68 +136,9 @@ def run_pipeline(cfg: PipelineConfig) -> PipelineRun:
         if api_ctx:
             api_ctx.__enter__()
         # ------------------------------------------------------------------ 1 ingest
-        t = _stage(log, "1/10 INGEST + RAW PRESERVATION")
-        raw: dict[str, pd.DataFrame] = {}
-        ingestion: dict = {"sql": {}, "files": {}, "dispatch_api": {}}
-        sql = SqlSource(cfg.db_path, cfg.sql_dir, cfg.raw_dir)
-        raw["orders"] = sql.extract("orders_extract", "orders", {"start_at": None, "end_at": None})
-        raw["restaurants"] = sql.extract("restaurants_extract", "restaurants")
-        raw["drivers"] = sql.extract("drivers_extract", "drivers")
-        raw["customers"] = sql.extract("customers_extract", "customers")
-        ingestion["sql"] = sql.manifest()
-        for name, (fname, required, optional) in FILE_SOURCES.items():
-            path = cfg.files_dir / fname
-            try:
-                df, res = read_csv_source(path, name, required, cfg.raw_dir)
-                raw[name] = df
-                ingestion["files"][name] = {"status": "ok", **res.as_dict()}
-            except SourceFileError as exc:
-                if optional:
-                    log.warning("optional file %s unavailable: %s", fname, exc)
-                    ingestion["files"][name] = {"status": "missing", "path": str(path), "error": str(exc), "optional": True}
-                else:
-                    raise
-        de_obj, de_res = read_json_source(cfg.files_dir / "driver_events.json", "driver_events", cfg.raw_dir)
-        raw["driver_events"] = flatten_driver_events(de_obj, de_res)
-        ingestion["files"]["driver_events"] = {"status": "ok", **de_res.as_dict()}
-        md_path = cfg.files_dir / "client_metric_definitions.json"
-        metric_definitions = read_json(md_path) if md_path.exists() else {}
-        ingestion["files"]["client_metric_definitions"] = {"status": "ok" if md_path.exists() else "missing", "path": str(md_path)}
-
-        # independent external source: observed hourly weather for the same period (optional, never fatal)
-        if cfg.weather_enabled:
-            ts = [parse_timestamps(raw["orders"][c], c, cfg.source_timezone)[0] for c in ("created_at", "promised_eta") if c in raw["orders"].columns]
-            span = pd.concat(ts).dropna() if ts else pd.Series(dtype="datetime64[ns]")
-            if len(span):
-                wclient = ObservedWeatherClient(cfg.weather_base_url, cfg.weather_latitude, cfg.weather_longitude, cfg.source_timezone, cfg.raw_dir,
-                                                cache_dir=cfg.external_cache_dir, timeout_s=cfg.weather_timeout_s, max_retries=cfg.weather_max_retries)
-                wdf, wrep = wclient.fetch(span.min().date().isoformat(), span.max().date().isoformat())
-                ingestion["external_weather"] = wrep.as_dict()
-                if wdf is not None:
-                    raw["weather_obs"] = wdf
-            else:
-                ingestion["external_weather"] = {"mode": "unavailable", "errors": ["no parseable order timestamps to define the period"]}
-        else:
-            ingestion["external_weather"] = {"mode": "disabled"}
-
-        client = DispatchApiClient(cfg.api_base_url, cfg.raw_dir, page_size=cfg.api_page_size, timeout_s=cfg.api_timeout_s,
-                                   max_retries=cfg.api_max_retries, backoff_base_s=cfg.api_backoff_base_s, backoff_cap_s=cfg.api_backoff_cap_s, max_pages=cfg.api_max_pages)
-        try:
-            records, api_report = client.fetch_all()
-        except ApiIngestionError as exc:
-            log.error("Dispatch API ingestion failed: %s", exc)
-            snap = load_snapshot_pages(cfg.raw_root, exclude_run=cfg.run_id) if cfg.api_fallback_to_last_snapshot else None
-            if snap is None:
-                raise
-            records, api_report = snap
-            log.warning("Falling back to preserved snapshot: %s", api_report.issues)
-        ingestion["dispatch_api"] = api_report.as_dict()
-        if not api_report.complete:
-            log.error("Dispatch ingestion is INCOMPLETE: %s", api_report.issues)
-        raw["dispatch"] = pd.DataFrame(records, dtype="object")
-        if len(raw["dispatch"]) == 0:
-            raw["dispatch"] = pd.DataFrame(columns=["order_id", "driver_id", "original_driver_id", "assigned_at", "reassigned_at", "estimated_pickup_at", "current_delivery_eta", "dispatch_status", "eta_model_version"])
-        write_json(ingestion, cfg.raw_dir / "ingestion_manifest.json")
+        t = _stage(log, "1/10 INGEST + RAW PRESERVATION" + (f"  [replay of {cfg.replay_run_id}]" if cfg.replay_run_id else "")
+                   + (f"  [period {cfg.period_start}..{cfg.period_end}]" if cfg.period_start else ""))
+        raw, ingestion, metric_definitions, sql, all_order_ids = _ingest(cfg, log)
         manifest["inputs"] = ingestion
         manifest["stages"]["ingest"] = {"seconds": round(time.time() - t, 2), "rows": {k: int(len(v)) for k, v in raw.items()}}
 
@@ -207,6 +157,8 @@ def run_pipeline(cfg: PipelineConfig) -> PipelineRun:
         t = _stage(log, "3/10 CLEAN / STANDARDISE")
         ref = raw.pop("order_outcomes_ref", None)
         clean, cleaning_report = standardise(raw, cfg)
+        clean = scope_to_period(clean, cleaning_report, cfg, all_order_ids)
+        ref = scope_reference(ref, clean, cfg)
         manifest["stages"]["clean"] = {"seconds": round(time.time() - t, 2), "actions": len(cleaning_report.actions), "rows": cleaning_report.clean_row_counts}
 
         # ------------------------------------------------------------------ 4 validate
@@ -227,7 +179,7 @@ def run_pipeline(cfg: PipelineConfig) -> PipelineRun:
         mr = compute_metrics(model, cfg, reference_outcomes=ref)
         # independent SQL re-computation straight from the client database
         try:
-            sql_check = sql.scalar_query("independent_late_rate_check")
+            sql_check = _independent_sql_check(sql, raw.get("orders"), cfg)
             pipe = mr.headline
             d_pop = abs(int(sql_check.get("valid_delivered") or 0) - int(pipe.get("validated_population") or 0))
             d_late = abs(int(sql_check.get("late_orders") or 0) - int(pipe.get("late_orders") or 0))
@@ -248,6 +200,20 @@ def run_pipeline(cfg: PipelineConfig) -> PipelineRun:
             (log.info if status == "PASS" else log.warning if status == "WARN" else log.error)("independent SQL check %s: %s", status, sql_check)
         except Exception as exc:  # the check itself must never crash the run
             mr.checks.append({"check": "independent SQL re-computation of M1", "status": "UNKNOWN", "evidence": f"could not run: {exc}"})
+        try:
+            views = run_views(cfg.processed_dir / "flasheats_model.sqlite", cfg.sql_dir / "40_metric_views.sql")
+            sql_checks, sql_table = compare_sql_metrics(views, mr.metrics)
+            mr.checks.extend(sql_checks)
+            write_csv(sql_table, run_out / "sql_metric_layer_check.csv")
+            for vname, vdf in views.items():
+                write_csv(vdf, run_out / "sql_metric_views" / f"{vname}.csv")
+        except Exception as exc:
+            mr.checks.append({"check": "SQL metric layer (sql/40_metric_views.sql) == pandas metrics", "status": "FAIL", "evidence": f"could not run: {exc}"})
+        ct = ingestion.get("control_totals") or {}
+        if ct.get("rows"):
+            mr.checks.append({"check": "retrieval complete vs client control totals (source_systems/manifest.json)",
+                              "status": {"PASS": "PASS", "FAIL": "FAIL", "WARN": "WARN"}.get(ct.get("status"), "UNKNOWN"),
+                              "evidence": "; ".join(f"{r['control']}: published {r['published']} / observed {r['observed']}" for r in ct.get("rows", []))})
         ledger, ledger_checks = build_ledger(cleaning_report, model["fact_order"])
         mr.checks.extend(ledger_checks)
         write_csv(ledger, run_out / "reconciliation_ledger.csv")
@@ -262,7 +228,8 @@ def run_pipeline(cfg: PipelineConfig) -> PipelineRun:
 
         # ------------------------------------------------------------------ 7 gate
         t = _stage(log, "8/10 VALIDATION GATE")
-        comparison = compare_runs(previous_manifest, {"run_id": cfg.run_id, "headline": mr.headline,
+        manifest["fingerprints"] = fingerprint_outputs(run_out, cfg.processed_dir)
+        comparison = compare_runs(previous_manifest, {"run_id": cfg.run_id, "headline": mr.headline, "fingerprints": manifest["fingerprints"],
                                                       "rules": manifest["stages"]["validate"]["rules"], "violations": manifest["stages"]["validate"]["violations"]},
                                   cfg.kpi_drift_alert_pp)
         write_json(comparison, run_out / "run_comparison.json")
@@ -286,9 +253,15 @@ def run_pipeline(cfg: PipelineConfig) -> PipelineRun:
         write_text(kual, run_out / "known_unknown_assumption_limitation.md")
         write_evidence_table(mr, gate, cfg, run_out, kual, ins)
         charts = (write_charts(mr, model, run_out) + insight_charts) if cfg.write_charts else []
-        write_dashboard(mr, gate, charts, cfg, run_out)
+        visuals = []
+        if cfg.write_charts and not cfg.replay_run_id and not cfg.period_start:   # the visual story is drawn from this run's own evidence
+            visuals = build_visuals(run_out, cfg.raw_dir, cfg.processed_dir, out)
+        write_dashboard(mr, gate, charts, cfg, run_out, visuals)
         publish = gate["overall_status"] != "FAIL" or cfg.fail_on_gate == "NEVER"
-        if publish:
+        if cfg.replay_run_id:
+            _write_replay_proof(cfg, ingestion, comparison, run_out, out)
+            log.info("replay of %s complete - evidence in %s (published outputs left untouched)", cfg.replay_run_id, run_out)
+        elif publish:
             _publish_latest(run_out, out)
             log.info("published run outputs to %s", out)
         else:
@@ -296,7 +269,8 @@ def run_pipeline(cfg: PipelineConfig) -> PipelineRun:
         run.status = "COMPLETED" if publish else "GATE_FAILED"
         run.gate, run.headline = gate, mr.headline
         run.outputs = {p.name: str(p) for p in run_out.iterdir()}
-        manifest["stages"]["outputs"] = {"seconds": round(time.time() - t, 2), "published": publish, "charts": [str(p) for p in charts]}
+        manifest["stages"]["outputs"] = {"seconds": round(time.time() - t, 2), "published": publish, "charts": [str(p) for p in charts],
+                                         "visuals": [p.name for p in visuals]}
     except Exception as exc:
         run.status = "FAILED"
         run.error = f"{type(exc).__name__}: {exc}"
@@ -312,11 +286,189 @@ def run_pipeline(cfg: PipelineConfig) -> PipelineRun:
         manifest["duration_s"] = round(time.time() - t_start, 2)
         manifest["outputs"] = run.outputs
         write_json(manifest, run_out / "run_manifest.json")
-        if run.status in ("COMPLETED",):
+        if run.status in ("COMPLETED",) and not cfg.replay_run_id:
             write_json(manifest, out / "run_manifest.json")
         run.manifest = manifest
         log.info("run %s finished with status %s in %.1fs", cfg.run_id, run.status, manifest["duration_s"])
     return run
+
+
+SQL_EXTRACTS = [("orders", "orders_extract"), ("restaurants", "restaurants_extract"), ("drivers", "drivers_extract"), ("customers", "customers_extract")]
+
+
+def _ingest(cfg: PipelineConfig, log):
+    """Retrieve every source (live systems, or a verified replay of preserved raw) and prove completeness."""
+    raw: dict[str, pd.DataFrame] = {}
+    ingestion: dict = {"mode": "replay" if cfg.replay_run_id else "live", "sql": {}, "files": {}, "dispatch_api": {},
+                       "period": None if not cfg.period_start else {"start": cfg.period_start, "end": cfg.period_end, "label": cfg.period_label}}
+    contract = load_contract(cfg.schema_contract_file)
+    contract_results = []
+    sql = None
+    src = pman = None
+    win = cfg.period_window
+    params = {"start_at": None, "end_at": None} if win is None else {"start_at": win[0].strftime("%Y-%m-%dT%H:%M:%S"), "end_at": win[1].strftime("%Y-%m-%dT%H:%M:%S")}
+
+    # --- SQL (application database) -------------------------------------------------------
+    if cfg.replay_run_id:
+        src, pman = load_preserved_manifest(cfg.raw_root, cfg.replay_run_id)
+        integrity = verify_preserved(src, pman)
+        write_csv(integrity, cfg.raw_dir / "replay_integrity.csv")
+        ingestion["replay"] = {"source_run": cfg.replay_run_id, "artifacts": int(len(integrity)), "verified": int((integrity["status"] == "OK").sum())}
+        log.info("replay: %d preserved artefacts of %s verified against their SHA-256", ingestion["replay"]["verified"], cfg.replay_run_id)
+        for table, name in SQL_EXTRACTS:
+            raw[table] = read_sql_extract(src, name)
+        ingestion["sql"] = {"mode": "replay", "tables": (pman.get("sql") or {}).get("tables", {}), "extracts": (pman.get("sql") or {}).get("extracts", [])}
+        files_dir = src / "files"
+    else:
+        sql = SqlSource(cfg.db_path, cfg.sql_dir, cfg.raw_dir)
+        for table, name in SQL_EXTRACTS:
+            raw[table] = sql.extract(name, table, params if table == "orders" else None)
+        ingestion["sql"] = sql.manifest()
+        files_dir = cfg.files_dir
+    for table, _ in SQL_EXTRACTS:
+        contract_results.append(contract_check(raw[table], contract, "sql", table))
+
+    # --- CSV + JSON exports --------------------------------------------------------------------
+    for name, (fname, required_default, optional) in FILE_SOURCES.items():
+        path = files_dir / fname
+        try:
+            df, res = read_csv_source(path, name, required_columns(contract, "files", fname, required_default), cfg.raw_dir)
+            raw[name] = df
+            ingestion["files"][name] = {"status": "ok", **res.as_dict()}
+            contract_results.append(contract_check(df, contract, "files", fname, stop_on_missing=False))
+        except SourceFileError as exc:
+            if optional:
+                log.warning("optional file %s unavailable: %s", fname, exc)
+                ingestion["files"][name] = {"status": "missing", "path": str(path), "error": str(exc), "optional": True}
+            else:
+                raise
+    de_obj, de_res = read_json_source(files_dir / "driver_events.json", "driver_events", cfg.raw_dir)
+    raw["driver_events"] = flatten_driver_events(de_obj, de_res)
+    ingestion["files"]["driver_events"] = {"status": "ok", **de_res.as_dict()}
+    md_path = files_dir / "client_metric_definitions.json"
+    metric_definitions = {}
+    if md_path.exists():
+        metric_definitions, md_res = read_json_source(md_path, "client_metric_definitions", cfg.raw_dir)
+        ingestion["files"]["client_metric_definitions"] = {"status": "ok", **md_res.as_dict()}
+    else:
+        ingestion["files"]["client_metric_definitions"] = {"status": "missing", "path": str(md_path), "optional": True}
+
+    # --- independent external source: observed weather (optional, never fatal) --------------
+    if cfg.replay_run_id:
+        wpath = src / "external" / "open_meteo_archive.json"
+        if wpath.exists():
+            with open(wpath, "r", encoding="utf-8") as f:
+                raw["weather_obs"] = parse_open_meteo(json.load(f).get("payload", {}), expected_tz=cfg.source_timezone)
+            w = WeatherReport(mode="replay", url=str(wpath), hours=int(len(raw["weather_obs"])), raw_path=str(wpath), raw_sha256=sha256_file(wpath))
+            ingestion["external_weather"] = w.as_dict()
+        else:
+            ingestion["external_weather"] = {"mode": "unavailable", "errors": ["no preserved weather response in the replayed run"]}
+    elif cfg.weather_enabled:
+        ts = [parse_timestamps(raw["orders"][c], c, cfg.source_timezone)[0] for c in ("created_at", "promised_eta") if c in raw["orders"].columns]
+        span = pd.concat(ts).dropna() if ts else pd.Series(dtype="datetime64[ns]")
+        if len(span):
+            wclient = ObservedWeatherClient(cfg.weather_base_url, cfg.weather_latitude, cfg.weather_longitude, cfg.source_timezone, cfg.raw_dir,
+                                            cache_dir=cfg.external_cache_dir, timeout_s=cfg.weather_timeout_s, max_retries=cfg.weather_max_retries)
+            wdf, wrep = wclient.fetch(span.min().date().isoformat(), span.max().date().isoformat())
+            ingestion["external_weather"] = wrep.as_dict()
+            if wdf is not None:
+                raw["weather_obs"] = wdf
+        else:
+            ingestion["external_weather"] = {"mode": "unavailable", "errors": ["no parseable order timestamps to define the period"]}
+    else:
+        ingestion["external_weather"] = {"mode": "disabled"}
+
+    # --- Dispatch REST API ----------------------------------------------------------------------
+    if cfg.replay_run_id:
+        records, api_report = read_api_pages(src, pman)
+    else:
+        client = DispatchApiClient(cfg.api_base_url, cfg.raw_dir, page_size=cfg.api_page_size, timeout_s=cfg.api_timeout_s,
+                                   max_retries=cfg.api_max_retries, backoff_base_s=cfg.api_backoff_base_s, backoff_cap_s=cfg.api_backoff_cap_s, max_pages=cfg.api_max_pages)
+        try:
+            records, api_report = client.fetch_all()
+        except ApiIngestionError as exc:
+            log.error("Dispatch API ingestion failed: %s", exc)
+            snap = load_snapshot_pages(cfg.raw_root, exclude_run=cfg.run_id) if cfg.api_fallback_to_last_snapshot else None
+            if snap is None:
+                raise
+            records, api_report = snap
+            log.warning("Falling back to preserved snapshot: %s", api_report.issues)
+    ingestion["dispatch_api"] = api_report.as_dict()
+    if not api_report.complete:
+        log.error("Dispatch ingestion is INCOMPLETE: %s", api_report.issues)
+    raw["dispatch"] = pd.DataFrame(records, dtype="object")
+    if len(raw["dispatch"]) == 0:
+        raw["dispatch"] = pd.DataFrame(columns=["order_id", "driver_id", "original_driver_id", "assigned_at", "reassigned_at", "estimated_pickup_at", "current_delivery_eta", "dispatch_status", "eta_model_version"])
+    contract_results.append(contract_check(raw["dispatch"], contract, "api", "dispatch", stop_on_missing=False))
+    ingestion["schema_contract"] = [c.as_dict() for c in contract_results]
+    for c in contract_results:
+        if c.status != "PASS":
+            log.warning("schema contract %s %s:%s missing_optional=%s uncontracted=%s", c.status, c.kind, c.source, c.missing_optional, c.uncontracted)
+
+    # --- completeness: client control totals + server-side count of the SQL window -------------
+    observed: dict[str, int | None] = {"support_tickets_rows": int(len(raw.get("tickets", []))) if "tickets" in raw else None,
+                                       "dispatch_records": int(api_report.records_fetched)}
+    if sql is not None:
+        observed.update({"orders_rows": sql.count("SELECT COUNT(*) FROM orders"), "unique_orders": sql.count("SELECT COUNT(DISTINCT order_id) FROM orders"),
+                         "drivers": sql.count("SELECT COUNT(*) FROM drivers"), "restaurants": sql.count("SELECT COUNT(*) FROM restaurants")})
+        server = sql.count("SELECT COUNT(*) FROM orders WHERE (:start_at IS NULL OR created_at >= :start_at) AND (:end_at IS NULL OR created_at < :end_at)", params)
+        ingestion["orders_extract_vs_server_count"] = {"extracted": int(len(raw["orders"])), "server_count": server, "match": server == len(raw["orders"])}
+        all_ids = sql.distinct_order_ids()
+    else:
+        tables = ingestion["sql"].get("tables", {})
+        observed.update({"orders_rows": (tables.get("orders") or {}).get("rows"), "drivers": (tables.get("drivers") or {}).get("rows"),
+                         "restaurants": (tables.get("restaurants") or {}).get("rows"),
+                         "unique_orders": int(raw["orders"]["order_id"].nunique()) if (pman.get("period") is None) else None})
+        all_ids = {str(v).strip().upper() for v in raw["orders"]["order_id"].dropna()}
+    ct_df, ct_status = control_totals(cfg, observed)
+    ingestion["control_totals"] = {"status": ct_status, "rows": ct_df.to_dict("records")}
+    write_csv(ct_df, cfg.raw_dir / "control_totals.csv")
+    log.info("control totals %s: %s", ct_status, "; ".join(f"{r['control']} {r['observed']}/{r['published']}" for r in ingestion["control_totals"]["rows"]) or "none published")
+    write_json(ingestion, cfg.raw_dir / "ingestion_manifest.json")
+    return raw, ingestion, metric_definitions, sql, all_ids
+
+
+def _independent_sql_check(sql, orders_raw: pd.DataFrame | None, cfg: PipelineConfig) -> dict:
+    """Recompute M1 in SQL, independently of pandas: on the live database for a full live run,
+    otherwise on an in-memory copy of the (window-scoped or replayed) raw orders extract."""
+    import sqlite3
+    if sql is not None and cfg.period_window is None:
+        return sql.scalar_query("independent_late_rate_check")
+    if orders_raw is None or len(orders_raw) == 0:
+        return {"valid_delivered": 0, "late_orders": 0}
+    con = sqlite3.connect(":memory:")
+    try:
+        orders_raw.astype("object").where(orders_raw.notna(), None).to_sql("orders", con, index=False)
+        df = pd.read_sql_query((cfg.sql_dir / "independent_late_rate_check.sql").read_text(encoding="utf-8"), con)
+    finally:
+        con.close()
+    return {} if df.empty else {k: (None if pd.isna(v) else v) for k, v in df.iloc[0].to_dict().items()}
+
+
+def _write_replay_proof(cfg: PipelineConfig, ingestion: dict, comparison: dict, run_out: Path, out: Path) -> None:
+    """Reproducibility proof: preserved inputs verified + outputs compared byte-for-byte with the original run."""
+    rp = ingestion.get("replay") or {}
+    fp = comparison.get("fingerprints") or {}
+    ok = bool(fp.get("compared")) and not fp.get("changed")
+    proof = {"replayed_run": cfg.replay_run_id, "replay_run": cfg.run_id, "artifacts_verified": rp.get("verified"), "artifacts": rp.get("artifacts"),
+             "outputs_compared": fp.get("compared"), "outputs_identical": fp.get("identical"), "changed": fp.get("changed", []),
+             "verdict": "REPRODUCED" if ok else ("NOT COMPARABLE" if not fp.get("compared") else "DIFFERENT")}
+    lines = ["# Replay proof — the published evidence can be rebuilt from preserved raw inputs", "",
+             f"**Verdict: {proof['verdict']}**", "",
+             f"- Replayed run: `{cfg.replay_run_id}` (its preserved raw inputs in `data/raw/{cfg.replay_run_id}/`).",
+             f"- Integrity: {rp.get('verified')} of {rp.get('artifacts')} preserved artefacts matched the SHA-256 recorded at retrieval (`replay_integrity.csv`, one row per artefact).",
+             f"- No client system was contacted: the SQL extracts, files, every raw Dispatch API page and the weather response were read from the preserved copies.",
+             f"- Outputs: {fp.get('identical')} of {fp.get('compared')} deterministic outputs are byte-identical to the original run"
+             + (f"; different: {', '.join(fp.get('changed', [])[:10])}" if fp.get("changed") else "."), "",
+             "Command: `python run_pipeline.py --replay " + str(cfg.replay_run_id) + "`"]
+    write_json(proof, run_out / "replay_proof.json")
+    write_text("\n".join(lines), run_out / "replay_proof.md")
+    write_json(proof, out / "replay_proof.json")
+    write_text("\n".join(lines), out / "replay_proof.md")
+    integrity = cfg.raw_dir / "replay_integrity.csv"
+    if integrity.exists():
+        shutil.copy2(integrity, run_out / "replay_integrity.csv")
+        shutil.copy2(integrity, out / "replay_integrity.csv")
 
 
 def _publish_latest(run_out: Path, out: Path) -> None:

@@ -40,6 +40,12 @@ def test_messy_pack_end_to_end_outputs_and_raw_preservation(messy_pack, api_serv
     assert set(manifest["stages"]) == {"ingest", "profile", "clean", "validate", "model", "metrics", "insights", "gate", "memo", "outputs"}
     log = (out / "pipeline.log").read_text(encoding="utf-8")
     assert "STAGE 1/10" in log and "STAGE 7/10 DECISION LAYER" in log and "GATE OVERALL = WARN" in log and "unexpected categories" in log
+    # the visual story is drawn from this run's own evidence, even on a 16-row pack, and never breaks the run
+    visuals = sorted(p.name for p in (out / "visuals").glob("*.png"))
+    assert {"01_trustworthy_path.png", "02_source_map.png", "03_retrieval_proof.png", "04_kpi_funnel.png", "05_validation_gate.png",
+            "07_order_lifecycle.png", "08_data_model.png", "09_metrics_board.png", "11_known_unknown.png", "12_pipeline_flow.png"} <= set(visuals), visuals
+    assert manifest["stages"]["outputs"]["visuals"] == visuals
+    assert "visuals/01_trustworthy_path.png" in (out / "dashboard.html").read_text(encoding="utf-8")
 
 
 def test_rerun_is_idempotent_and_keeps_every_raw_snapshot(messy_pack, api_server, make_config):

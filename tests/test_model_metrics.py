@@ -38,6 +38,18 @@ def test_fact_order_grain_and_population(modelled):
     assert all(c["row_count_preserved"] for c in model.join_checks)
 
 
+def test_checked_merge_never_multiplies_rows():
+    """Session 7's core technique: joining a 1:N table directly multiplies the rows; the model's merge cannot."""
+    from flasheats_pipeline.model import _checked_merge
+    left = pd.DataFrame({"order_id": ["A", "B", "C"]})
+    right = pd.DataFrame({"order_id": ["A", "A", "B"], "driver_id": ["D1", "D2", "D3"]})
+    assert len(left.merge(right, on="order_id", how="left")) == 4          # the naive join invents an order row
+    checks: list[dict] = []
+    out = _checked_merge(left, right, "order_id", "orders <- dispatch", checks)
+    assert len(out) == 3 and out["order_id"].is_unique
+    assert checks[0]["right_duplicates_dropped"] == 1 and checks[0]["row_count_preserved"] is True
+
+
 def test_dispatch_is_authoritative_for_final_driver(modelled):
     _, _, _, _, model, _ = modelled
     fo = model["fact_order"].set_index("order_id")

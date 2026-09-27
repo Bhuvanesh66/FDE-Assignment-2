@@ -118,7 +118,8 @@ def early_warning_backtest(fo: pd.DataFrame, fiv: pd.DataFrame, cfg: PipelineCon
          "with_any_intervention": int((~fired & ~late & has_iv).sum()), "intervention_before_pickup": int((~fired & ~late & (iv_time < pop["pickup_at"])).sum())},
     ])
     cmp["intervention_coverage_pct"] = (100 * cmp["with_any_intervention"] / cmp["orders"].where(cmp["orders"] > 0)).round(1)
-    head = {"chosen_grace_min": chosen, "holdout": holdout, "train_orders": int(len(train)), "test_orders": int(len(test)),
+    head = {"chosen_grace_min": chosen, "holdout": holdout, "train_until_day": cfg.ew_train_until_day if holdout else None,
+            "train_orders": int(len(train)), "test_orders": int(len(test)),
             "test_precision_pct": test_row["precision_pct"], "test_recall_pct": test_row["recall_pct"], "test_alert_rate_pct": test_row["alert_rate_pct"],
             "test_median_lead_min": test_row["median_lead_min"], "all_caught_late": int(all_row["caught_late"]), "all_alerts": int(all_row["alerts"]),
             "caught_late_without_intervention": int((fired & late & ~has_iv).sum()),
@@ -230,7 +231,38 @@ def _haversine_km(lat1, lon1, lat2, lon2):
     return 6371.0 * 2 * np.arcsin(np.sqrt(a))
 
 
-def gps_arrival_feasibility(driver_events: pd.DataFrame | None, fo: pd.DataFrame, restaurants: pd.DataFrame | None) -> tuple[pd.DataFrame, dict]:
+def _straight_line_r2(g: pd.DataFrame) -> float:
+    """min R^2 of lat and lon against time: 1.0 = a perfectly straight track driven at constant speed."""
+    if len(g) < 3:
+        return np.nan
+    t = (g["timestamp"] - g["timestamp"].iloc[0]).dt.total_seconds().to_numpy(dtype=float)
+    if np.ptp(t) == 0:
+        return np.nan
+    fits = []
+    for c in ("lat", "lon"):
+        y = g[c].to_numpy(dtype=float)
+        fits.append(1.0 if np.ptp(y) == 0 else float(np.corrcoef(t, y)[0, 1] ** 2))
+    return min(fits)
+
+
+def gps_track_shape(pings: pd.DataFrame, lat_range=None, lon_range=None) -> dict:
+    """Do the pings look MEASURED or DRAWN? Real device tracks wiggle and have uneven gaps; an app that
+    interpolates a straight line from A to B produces R^2 = 1 and perfectly even spacing."""
+    p = pings[pings["lat"].notna() & pings["lon"].notna()]
+    if lat_range is not None and lon_range is not None:     # known out-of-area outliers (RG-03) are not movement
+        p = p[p["lat"].between(*lat_range) & p["lon"].between(*lon_range)]
+    p = p.sort_values("timestamp")
+    if p.empty:
+        return {}
+    r2 = p.groupby("order_id")[["timestamp", "lat", "lon"]].apply(_straight_line_r2).dropna()
+    gaps = p.groupby("order_id")["timestamp"].apply(lambda s: s.diff().dt.total_seconds().dropna())
+    cv = gaps.groupby(level=0).agg(lambda x: (x.std(ddof=0) / x.mean()) if len(x) >= 2 and x.mean() > 0 else np.nan).dropna()
+    return {"orders_with_3plus_pings": int(len(r2)), "straight_line_tracks_pct": _pct(int((r2 >= 0.999).sum()), len(r2)),
+            "evenly_spaced_tracks_pct": _pct(int((cv < 0.05).sum()), len(cv))}
+
+
+def gps_arrival_feasibility(driver_events: pd.DataFrame | None, fo: pd.DataFrame, restaurants: pd.DataFrame | None,
+                            customers: pd.DataFrame | None = None, lat_range=None, lon_range=None) -> tuple[pd.DataFrame, dict]:
     if driver_events is None or restaurants is None or len(driver_events) == 0 or len(fo) == 0:
         return pd.DataFrame(), {}
     rest = restaurants[restaurants.get("coords_valid", True) == True][["restaurant_id", "lat", "lon"]].rename(columns={"lat": "r_lat", "lon": "r_lon"})  # noqa: E712
@@ -255,10 +287,47 @@ def gps_arrival_feasibility(driver_events: pd.DataFrame | None, fo: pd.DataFrame
         {"check": "median distance of the last pre-pickup ping to the restaurant (km)", "value": round(float(last.median()), 2)},
     ])
     share = float(approaching.mean()) if len(approaching) else 0.0
+    moving_away = (last.loc[multi] > first.loc[multi])
     feasible = share >= 0.6 and float(last.median()) < 1.0
+    all_pings = p[p["lat"].notna() & p["lon"].notna() & p["pickup_at"].notna()]
     head = {"orders_with_pre_pickup_pings": int(pre["order_id"].nunique()), "approaching_pct": round(100 * share, 1),
+            "moving_away_before_pickup_pct": _pct(int(moving_away.sum()), len(moving_away)),
+            "pings_before_pickup_pct": _pct(int((all_pings["timestamp"] <= all_pings["pickup_at"]).sum()), len(all_pings)),
             "within_1km_pct": _pct(int(within_1km.sum()), len(within_1km)), "median_last_ping_km": round(float(last.median()), 2),
             "verdict": "GPS could approximate arrival (geofence)" if feasible else "GPS cannot stand in for an arrival event - pings do not converge on the restaurant"}
+    head.update(gps_track_shape(driver_events[driver_events["type"] == "gps_ping"], lat_range, lon_range))
+    table = pd.concat([table, pd.DataFrame([
+        {"check": "of orders with >= 2 pre-pickup pings, last ping FARTHER from the restaurant than the first (%)", "value": head["moving_away_before_pickup_pct"]},
+        {"check": "GPS pings recorded before pickup (%) - Class 6 expected pings only before pickup", "value": head["pings_before_pickup_pct"]},
+        {"check": "orders with >= 3 in-area pings", "value": head.get("orders_with_3plus_pings")},
+        {"check": "of those, perfectly straight constant-speed track, R^2 >= 0.999 (%)", "value": head.get("straight_line_tracks_pct")},
+        {"check": "of those, perfectly even time gaps between pings, CV < 0.05 (%)", "value": head.get("evenly_spaced_tracks_pct")},
+    ])], ignore_index=True)
+
+    # the other leg: do pings between pickup and delivery head for the customer? (Class 6 said this leg had no pings)
+    if customers is not None and {"customer_id", "lat", "lon"} <= set(customers.columns) and "customer_id" in fo.columns:
+        end_col = "ev_delivered_at" if "ev_delivered_at" in fo.columns else ("actual_delivery_at" if "actual_delivery_at" in fo.columns else None)
+        if end_col is not None:
+            cust = customers[["customer_id", "lat", "lon"]].rename(columns={"lat": "c_lat", "lon": "c_lon"})
+            q = driver_events[driver_events["type"] == "gps_ping"][["order_id", "timestamp", "lat", "lon"]]
+            q = q.merge(fo[["order_id", "customer_id", "pickup_at", end_col]], on="order_id", how="inner").merge(cust, on="customer_id", how="inner")
+            post = q[(q["timestamp"] > q["pickup_at"]) & (q["timestamp"] <= q[end_col]) & q["lat"].notna()].copy()
+            delivered = int(fo[end_col].notna().sum())
+            if len(post) and delivered:
+                post["km_to_customer"] = _haversine_km(post["lat"], post["lon"], post["c_lat"], post["c_lon"])
+                post = post.sort_values("timestamp")
+                g = post.groupby("order_id")["km_to_customer"].agg(first="first", last="last", n="size")
+                g2 = g[g["n"] >= 2]
+                head["orders_with_post_pickup_pings_pct"] = _pct(int(post["order_id"].nunique()), delivered)
+                head["post_pickup_converging_pct"] = _pct(int((g2["last"] < g2["first"]).sum()), len(g2))
+                table = pd.concat([table, pd.DataFrame([
+                    {"check": "delivered orders with GPS pings between pickup and delivery (%)", "value": head["orders_with_post_pickup_pings_pct"]},
+                    {"check": "of those with >= 2 pings, last ping closer to the customer than the first (%)", "value": head["post_pickup_converging_pct"]},
+                ])], ignore_index=True)
+    straight, away = head.get("straight_line_tracks_pct"), head.get("moving_away_before_pickup_pct")
+    if not feasible and straight is not None and straight >= 80 and away is not None and away >= 60:
+        head["verdict"] = ("GPS pings look interpolated, not measured: each track is a straight constant-speed line from the restaurant "
+                           "to the customer that ignores the pickup time, so GPS cannot show when the rider reached the restaurant")
     return table, head
 
 
@@ -305,7 +374,8 @@ def compute_insights(model, clean: dict, metrics: pd.DataFrame, cfg: PipelineCon
     out.tables["fair_ranking_restaurants"], out.tables["fair_ranking_drivers"] = rr, dr
     wl, wlate, wx_h = weather_truth(fo, clean.get("weather_obs"), cfg)
     out.tables["weather_label_vs_observed"], out.tables["late_rate_label_vs_observed_weather"] = wl, wlate
-    gps, gps_h = gps_arrival_feasibility(clean.get("driver_events"), fo, model.tables.get("dim_restaurant"))
+    gps, gps_h = gps_arrival_feasibility(clean.get("driver_events"), fo, model.tables.get("dim_restaurant"), model.tables.get("dim_customer"),
+                                         cfg.lat_range, cfg.lon_range)
     out.tables["gps_arrival_feasibility"] = gps
     out.tables["late_rate_heatmap_weekday_hour"] = hour_weekday_heatmap(fo).reset_index()
     out.tables["impact_whatif"] = impact_whatif(ew, metrics, cfg)
@@ -343,10 +413,22 @@ def compute_insights(model, clean: dict, metrics: pd.DataFrame, cfg: PipelineCon
                   "so_what": "'Weather causes delays' cannot be defended with this field; ask who writes weather_bucket and when, before any weather-aware ETA or staffing plan.",
                   "owner": "Operations / Data Team"})
     if gps_h:
-        f.append({"id": "D5", "title": "GPS cannot replace the missing arrival event",
-                  "finding": f"Before pickup, the last GPS ping is closer to the restaurant than the first in only {gps_h.get('approaching_pct')}% of orders; "
-                             f"the median last ping is {gps_h.get('median_last_ping_km')} km away.",
-                  "so_what": "A geofence built on this feed would invent arrivals. Instrument an explicit 'arrived at restaurant' tap instead.",
+        shape = ""
+        if gps_h.get("straight_line_tracks_pct") is not None:
+            shape = (f" {gps_h['straight_line_tracks_pct']}% of tracks with 3+ pings are perfectly straight, constant-speed lines and "
+                     f"{gps_h.get('evenly_spaced_tracks_pct')}% have perfectly even time gaps - real device tracks are never that clean.")
+        timing = ""
+        if gps_h.get("pings_before_pickup_pct") is not None:
+            timing = (f" Class 6 found pings only before pickup; here {gps_h['pings_before_pickup_pct']}% of pings fall before pickup and the rest after it"
+                      + (f" ({gps_h['post_pickup_converging_pct']}% of post-pickup tracks close in on the customer)." if gps_h.get("post_pickup_converging_pct") is not None else "."))
+        interpolated = str(gps_h.get("verdict", "")).startswith("GPS pings look interpolated")
+        f.append({"id": "D5", "title": ("GPS pings look drawn, not measured - they cannot show arrival at the restaurant" if interpolated
+                                        else "GPS cannot show when the rider reached the restaurant"),
+                  "finding": f"Before pickup, the last ping is FARTHER from the restaurant than the first in {gps_h.get('moving_away_before_pickup_pct')}% of orders "
+                             f"(closer in only {gps_h.get('approaching_pct')}%) - a rider cannot leave with the food before picking it up." + shape + timing,
+                  "so_what": "Do not build a geofence or a live GPS ETA on this feed: it would invent arrivals. Ask Fleet Ops whether pings are device readings "
+                             "or app interpolation, and instrument an explicit 'arrived at restaurant' tap - the one event that splits kitchen delay from rider delay, "
+                             "which is where the lateness builds.",
                   "owner": "Fleet Ops / Product"})
     for x in f:
         log.info("insight %s %s | %s", x["id"], x["title"], x["finding"][:150])

@@ -68,9 +68,18 @@ def main() -> None:
     st.sidebar.markdown(f"**Gate:** {STATUS_ICON.get(gate.get('overall_status'), '')} {gate.get('overall_status', 'n/a')}")
     st.sidebar.caption(f"status {manifest.get('status', 'n/a')} · {manifest.get('duration_s', '?')} s · policy {Path(manifest.get('config', {}).get('config_file') or 'defaults').name}")
 
-    tabs = st.tabs(["📊 Executive", "🧭 Decision memo", "⏱️ Early-warning simulator", "📐 ETA calibration", "⚖️ Fair ranking",
-                    "🌧️ Weather check", "🧪 Data quality", "🔎 Order explorer", "🗂️ Run history"])
+    story_tab, *tabs = st.tabs(["🖼️ Visual story", "📊 Executive", "🧭 Decision memo", "⏱️ Early-warning simulator", "📐 ETA calibration",
+                                "⚖️ Fair ranking", "🌧️ Weather check", "🧪 Data quality", "🔎 Order explorer", "🗂️ Run history"])
     metrics = load(rdir / "metrics.csv")
+
+    with story_tab:
+        vdir = rdir / "visuals" if (rdir / "visuals").is_dir() else OUTPUT / "visuals"
+        pngs = sorted(vdir.glob("*.png")) if vdir.is_dir() else []
+        if not pngs:
+            st.info("No visual story for this run yet: run `python run_pipeline.py --start-api` or `python make_visuals.py`.")
+        st.caption("Every figure is drawn by the pipeline from this run's own evidence files (src/flasheats_pipeline/visuals.py).")
+        for p in pngs:
+            st.image(str(p), caption=p.stem.replace("_", " "), width="stretch")
 
     with tabs[0]:
         st.subheader(f"Run {run_id}")

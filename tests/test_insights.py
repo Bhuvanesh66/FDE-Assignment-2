@@ -4,7 +4,7 @@ import pytest
 
 from flasheats_pipeline.cleaning import standardise
 from flasheats_pipeline.insights import (compute_insights, early_warning_backtest, eta_calibration, fair_ranking, gps_arrival_feasibility,
-                                         impact_whatif, weather_truth, wilson_interval)
+                                         gps_track_shape, impact_whatif, weather_truth, wilson_interval)
 from flasheats_pipeline.metrics import compute_metrics
 from flasheats_pipeline.model import build_model
 from flasheats_pipeline.rules import cohen_kappa, run_rules
@@ -100,7 +100,24 @@ def test_gps_feasibility_detects_converging_and_diverging_pings():
     t_ok, h_ok = gps_arrival_feasibility(pd.DataFrame(pings(True)), fo, rest)
     assert h_ok["approaching_pct"] == 100.0 and h_ok["verdict"].startswith("GPS could")
     t_bad, h_bad = gps_arrival_feasibility(pd.DataFrame(pings(False)), fo, rest)
-    assert h_bad["approaching_pct"] == 0.0 and h_bad["verdict"].startswith("GPS cannot")
+    assert h_bad["approaching_pct"] == 0.0 and h_bad["moving_away_before_pickup_pct"] == 100.0
+    # evenly spaced, perfectly straight tracks that leave the restaurant before pickup are flagged as interpolated
+    assert h_bad["straight_line_tracks_pct"] == 100.0 and h_bad["evenly_spaced_tracks_pct"] == 100.0
+    assert h_bad["verdict"].startswith("GPS pings look interpolated")
+
+
+def test_gps_track_shape_tells_measured_from_drawn_tracks():
+    t0 = pd.Timestamp("2026-08-01 10:00")
+    drawn = [{"order_id": "D", "type": "gps_ping", "timestamp": t0 + pd.Timedelta(minutes=10 * i), "lat": 12.90 + 0.01 * i, "lon": 77.50 + 0.02 * i}
+             for i in range(5)]
+    wiggly_lat, gaps = [12.90, 12.93, 12.915, 12.95, 12.94], [0, 4, 13, 15, 31]
+    measured = [{"order_id": "M", "type": "gps_ping", "timestamp": t0 + pd.Timedelta(minutes=g), "lat": la, "lon": 77.50 + 0.01 * k}
+                for k, (g, la) in enumerate(zip(gaps, wiggly_lat))]
+    outlier = [{"order_id": "D", "type": "gps_ping", "timestamp": t0 + pd.Timedelta(minutes=5), "lat": 81.4, "lon": 171.5}]   # RG-03 outlier
+    shape = gps_track_shape(pd.DataFrame(drawn + measured + outlier), lat_range=(12.6, 13.4), lon_range=(77.3, 77.9))
+    assert shape["orders_with_3plus_pings"] == 2
+    assert shape["straight_line_tracks_pct"] == 50.0          # only the drawn track is a perfect line (the outlier is ignored)
+    assert shape["evenly_spaced_tracks_pct"] == 50.0
 
 
 def test_impact_whatif_and_full_insights(modelled):
