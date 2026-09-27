@@ -17,6 +17,10 @@ data_quality:
   lat_range: [12.5, 13.5]                # owner: Operations/GIS - Bengaluru service area
   lon_range: [77.2, 78.0]
   status_freshness_sla_min: 15           # owner: Restaurant Ops - a 'ready' written later than this after pickup is stale
+  # tolerance before a defect stops publication (the gate turns FAIL); tight partitions breach these on purpose
+  max_unexpected_status_pct: 10          # owner: VP Operations  - unknown final_status values (ST-01)
+  max_unparseable_kpi_timestamp_pct: 10  # owner: Data Team      - KPI timestamps that cannot be parsed (TS-00)
+  max_missing_delivery_time_pct: 15      # owner: Fleet Ops      - delivered orders with no delivery time (TS-04)
 
 dispatch_api:                            # owner: Dispatch       - client system
   base_url: http://127.0.0.1:8000

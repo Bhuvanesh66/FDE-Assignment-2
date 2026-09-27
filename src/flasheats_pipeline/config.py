@@ -56,6 +56,9 @@ class PipelineConfig:
     lon_range: tuple[float, float] = (77.2, 78.0)
     source_timezone: str = "Asia/Kolkata"            # owner: Data Team
     status_freshness_sla_min: float = 15.0           # owner: Restaurant Ops
+    max_unexpected_status_pct: float = 10.0          # owner: VP Operations  - above this, ST-01 FAILS the gate
+    max_unparseable_kpi_timestamp_pct: float = 10.0  # owner: Data Team      - above this, TS-00 FAILS the gate
+    max_missing_delivery_time_pct: float = 15.0      # owner: Fleet Ops      - above this, TS-04 FAILS the gate
 
     # ------------------------------------------------------ decision layer
     ew_grace_minutes_grid: tuple[int, ...] = (0, 5, 10, 15, 20, 25, 30)
@@ -68,6 +71,13 @@ class PipelineConfig:
     impact_prevented_share_scenarios: tuple[float, ...] = (0.25, 0.50)
     kpi_drift_alert_pp: float = 2.0
 
+    # ------------------------------------------------------ run scope / mode
+    period_start: str | None = None          # inclusive YYYY-MM-DD; None = everything the sources hold
+    period_end: str | None = None            # inclusive YYYY-MM-DD
+    period_label: str | None = None          # e.g. 2026-08-01_2026-08-07 (partitions processed/ and output/)
+    replay_run_id: str | None = None         # rebuild from data/raw/<run_id> instead of the live systems
+    schema_contract_file: Path | None = None  # default <root>/config/schema_contract.yaml (optional)
+
     # -------------------------------------------------------------- behaviour
     fail_on_gate: str = "FAIL"               # "FAIL" -> abort publishing when any check FAILs; "NEVER" to always write
     write_charts: bool = True
@@ -78,6 +88,13 @@ class PipelineConfig:
         self.source_root = Path(self.source_root) if self.source_root else self.project_root / "source_systems"
         self.data_dir = Path(self.data_dir) if self.data_dir else self.project_root / "data"
         self.output_dir = Path(self.output_dir) if self.output_dir else self.project_root / "output"
+        if self.schema_contract_file is None:
+            default_contract = self.project_root / "config" / "schema_contract.yaml"
+            self.schema_contract_file = default_contract if default_contract.exists() else None
+        if (self.period_start is None) != (self.period_end is None):
+            raise ValueError("period_start and period_end must be given together")
+        if self.period_start and not self.period_label:
+            self.period_label = f"{self.period_start}_{self.period_end}"
         self.lat_range = tuple(self.lat_range)
         self.lon_range = tuple(self.lon_range)
         self.ew_grace_minutes_grid = tuple(int(x) for x in self.ew_grace_minutes_grid)
@@ -112,7 +129,18 @@ class PipelineConfig:
 
     @property
     def processed_dir(self) -> Path:
-        return self.data_dir / "processed"
+        base = self.data_dir / "processed"
+        if self.replay_run_id:
+            return base / "replays" / self.run_id
+        return base / "periods" / self.period_label if self.period_label else base
+
+    @property
+    def period_window(self):
+        """(start, end_exclusive) timestamps, or None when the run covers everything."""
+        if not self.period_start:
+            return None
+        import pandas as pd
+        return pd.Timestamp(self.period_start), pd.Timestamp(self.period_end) + pd.Timedelta(days=1)
 
     @property
     def external_cache_dir(self) -> Path:
@@ -134,6 +162,9 @@ YAML_MAP: dict[tuple[str, str], str] = {
     ("data_quality", "lat_range"): "lat_range",
     ("data_quality", "lon_range"): "lon_range",
     ("data_quality", "status_freshness_sla_min"): "status_freshness_sla_min",
+    ("data_quality", "max_unexpected_status_pct"): "max_unexpected_status_pct",
+    ("data_quality", "max_unparseable_kpi_timestamp_pct"): "max_unparseable_kpi_timestamp_pct",
+    ("data_quality", "max_missing_delivery_time_pct"): "max_missing_delivery_time_pct",
     ("dispatch_api", "base_url"): "api_base_url",
     ("dispatch_api", "page_size"): "api_page_size",
     ("dispatch_api", "timeout_s"): "api_timeout_s",

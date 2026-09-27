@@ -161,7 +161,18 @@ R = {
 
 
 # --------------------------------------------------------------------------- engine
+def _policy_rules(cfg: PipelineConfig) -> dict[str, Rule]:
+    """The rule catalogue with the FAIL tolerances taken from the stakeholder policy file."""
+    from dataclasses import replace
+    rules = dict(R)
+    rules["ST-01"] = replace(R["ST-01"], fail_pct=cfg.max_unexpected_status_pct)
+    rules["TS-00"] = replace(R["TS-00"], fail_pct=cfg.max_unparseable_kpi_timestamp_pct)
+    rules["TS-04"] = replace(R["TS-04"], fail_pct=cfg.max_missing_delivery_time_pct)
+    return rules
+
+
 def run_rules(clean: dict[str, pd.DataFrame], rep: CleaningReport, cfg: PipelineConfig, metric_definitions: dict | None = None) -> list[RuleResult]:
+    R = _policy_rules(cfg)  # noqa: N806 - local, policy-adjusted copy of the catalogue
     log = get_logger()
     res: list[RuleResult] = []
     o = clean.get("orders", pd.DataFrame())

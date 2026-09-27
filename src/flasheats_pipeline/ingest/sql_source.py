@@ -32,6 +32,7 @@ class SqlExtract:
     sql_file: str
     raw_path: str
     params: dict = field(default_factory=dict)
+    sha256: str = ""
 
 
 class SqlSource:
@@ -85,7 +86,7 @@ class SqlSource:
             raise SqlSourceError(f"Query {sql_file.name} failed on table '{table}': {exc}") from exc
         raw_path = write_csv(df, self.raw_dir / f"{name}.csv")
         write_text(sql, self.raw_dir / f"{name}.sql")
-        self.extracts.append(SqlExtract(name, len(df), list(df.columns), str(sql_file.name), str(raw_path), params))
+        self.extracts.append(SqlExtract(name, len(df), list(df.columns), str(sql_file.name), str(raw_path), params, sha256_file(raw_path)))
         self.log.info("SQL extract %-22s table=%-12s rows=%5d cols=%d -> %s", name, table, len(df), len(df.columns), raw_path.name)
         if len(df) == 0:
             self.log.warning("SQL extract %s returned ZERO rows - downstream metrics will be UNKNOWN", name)
@@ -99,6 +100,16 @@ class SqlSource:
         with self._connect() as con:
             df = pd.read_sql_query(sql_file.read_text(encoding="utf-8"), con)
         return {} if df.empty else {k: (None if pd.isna(v) else v) for k, v in df.iloc[0].to_dict().items()}
+
+    def count(self, sql: str, params: dict | None = None) -> int:
+        """Server-side COUNT(*) used to prove an extract is complete (rows retrieved == rows that exist)."""
+        with self._connect() as con:
+            return int(con.execute(sql, params or {}).fetchone()[0])
+
+    def distinct_order_ids(self) -> set[str]:
+        with self._connect() as con:
+            rows = con.execute("SELECT DISTINCT order_id FROM orders WHERE order_id IS NOT NULL").fetchall()
+        return {str(r[0]).strip().upper() for r in rows if str(r[0]).strip()}
 
     def manifest(self) -> dict:
         return {

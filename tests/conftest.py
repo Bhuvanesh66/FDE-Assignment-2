@@ -308,6 +308,16 @@ def make_config(tmp_path: Path):
     return _make
 
 
+MESSY_CONTROL_TOTALS = {"orders_rows": 16, "unique_orders": 14, "support_tickets_rows": 6, "dispatch_records": 15, "drivers": 2, "restaurants": 3}
+
+
+def write_control_totals(pack: Path, counts: dict | None = None) -> Path:
+    """The client's published control totals (source_systems/manifest.json) for the messy pack."""
+    p = pack / "manifest.json"
+    p.write_text(json.dumps({"pack_name": "test pack", "record_counts": counts or MESSY_CONTROL_TOTALS}), encoding="utf-8")
+    return p
+
+
 # --------------------------------------------------------------------------- fake Open-Meteo archive
 def weather_payload(rain_hours: set[str] | None = None, tz: str = "Asia/Kolkata") -> dict:
     """Hourly payload for 2026-08-01 .. 2026-08-05; ``rain_hours`` are 'YYYY-MM-DDTHH:00' strings with 2.0 mm."""

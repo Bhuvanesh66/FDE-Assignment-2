@@ -32,6 +32,9 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--no-weather", action="store_true", help="skip the external observed-weather cross-check")
     p.add_argument("--late-threshold", type=float, default=None, help="minutes beyond promised ETA that count as late (KPI definition)")
     p.add_argument("--meaningful-late-threshold", type=float, default=None)
+    p.add_argument("--period", default=None, metavar="START..END", help="process only orders created in this inclusive date window, e.g. 2026-08-01..2026-08-07")
+    p.add_argument("--weekly", action="store_true", help="split the data span into 7-day windows, run the full pipeline once per window, then write output/scorecard.md")
+    p.add_argument("--replay", default=None, metavar="RUN_ID", help="rebuild from the preserved raw inputs of data/raw/RUN_ID (hash-verified, no client system contacted)")
     p.add_argument("--no-charts", action="store_true")
     p.add_argument("--publish-even-if-gate-fails", action="store_true")
     return p
@@ -53,11 +56,31 @@ def main(argv: list[str] | None = None) -> int:
         overrides["write_charts"] = False
     if args.publish_even_if_gate_fails:
         overrides["fail_on_gate"] = "NEVER"
+    if args.replay:
+        overrides["replay_run_id"] = args.replay
+    if args.period:
+        try:
+            start, end = [x.strip() for x in args.period.split("..")]
+        except ValueError:
+            print("period must look like 2026-08-01..2026-08-07")
+            return 1
+        overrides.update(period_start=start, period_end=end)
     try:
         cfg = load_config(config_path, **overrides)
     except ConfigError as exc:
         print(f"config error: {exc}")
         return 1
+    if args.weekly:
+        from .periods import run_periods, weekly_periods
+        result = run_periods(cfg, weekly_periods(cfg))
+        print(f"\nweekly runs {cfg.run_id}: {result['overall']}  (policy: {cfg.config_file or 'built-in defaults'})")
+        for r in result["scorecard"].itertuples():
+            print(f"  {r.period}: {r.status:9s} gate={r.gate}  late rate={r.late_rate_pct}%  ({r.late_orders}/{r.validated_population})  {r.error}")
+        print(f"partition check: {result['partition_check']}")
+        print(f"scorecard: {cfg.output_dir / 'scorecard.md'}")
+        if result["overall"] == "COMPLETE":
+            return 0
+        return 1 if any(r.status == "FAILED" for r in result["scorecard"].itertuples()) else 2
     run = run_pipeline(cfg)
     print(f"\nrun {cfg.run_id}: {run.status}  (policy: {cfg.config_file or 'built-in defaults'})")
     if run.error:
@@ -65,7 +88,10 @@ def main(argv: list[str] | None = None) -> int:
         return 1
     print(f"gate: {run.gate.get('overall_status')} — {run.gate.get('publish_decision')}")
     print(f"headline: {run.headline}")
-    print(f"outputs: {cfg.output_dir}  ·  decision memo: {cfg.output_dir / 'decision_memo.md'}")
+    if cfg.replay_run_id:
+        print(f"replay proof: {cfg.output_dir / 'replay_proof.md'}")
+    else:
+        print(f"outputs: {cfg.output_dir}  ·  decision memo: {cfg.output_dir / 'decision_memo.md'}")
     return 0 if run.status == "COMPLETED" else 2
 
 

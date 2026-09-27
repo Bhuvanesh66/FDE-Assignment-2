@@ -22,13 +22,15 @@ def build_ledger(rep: CleaningReport, fact_order: pd.DataFrame | None = None) ->
         exact = sum(a.count for a in acts if a.action == "drop_exact_duplicate_rows")
         conflict = sum(a.count for a in acts if a.action.startswith("drop_conflicting_duplicate"))
         quarantined = sum(a.count for a in acts if a.action.startswith("quarantine"))
+        out_of_period = sum(a.count for a in acts if a.action.startswith("out_of_period"))
         clean = rep.clean_row_counts.get(ds, 0)
         rows.append({"dataset": ds, "raw_rows": raw, "exact_duplicates_dropped": exact, "conflicting_duplicates_dropped": conflict,
-                     "quarantined": quarantined, "clean_rows": clean, "balanced": raw == clean + exact + conflict + quarantined})
+                     "quarantined": quarantined, "out_of_period": out_of_period, "clean_rows": clean,
+                     "balanced": raw == clean + exact + conflict + quarantined + out_of_period})
     ledger = pd.DataFrame(rows)
-    checks = [{"check": "record ledger: raw = clean + dropped duplicates + quarantined (every dataset)",
+    checks = [{"check": "record ledger: raw = clean + dropped duplicates + quarantined + out of period (every dataset)",
                "status": "PASS" if len(ledger) and bool(ledger["balanced"].all()) else ("UNKNOWN" if not len(ledger) else "FAIL"),
-               "evidence": "; ".join(f"{r.dataset}: {r.raw_rows}={r.clean_rows}+{r.exact_duplicates_dropped}+{r.conflicting_duplicates_dropped}+{r.quarantined}"
+               "evidence": "; ".join(f"{r.dataset}: {r.raw_rows}={r.clean_rows}+{r.exact_duplicates_dropped}+{r.conflicting_duplicates_dropped}+{r.quarantined}+{r.out_of_period}"
                                      for r in ledger.itertuples() if (r.raw_rows != r.clean_rows) or not r.balanced) or "no rows removed anywhere"}]
     if fact_order is not None and len(fact_order):
         b = fact_order["outcome_bucket"].value_counts()
@@ -39,10 +41,40 @@ def build_ledger(rep: CleaningReport, fact_order: pd.DataFrame | None = None) ->
     return ledger, checks
 
 
+# outputs whose bytes depend only on the inputs and the policy (no run id, no timestamps)
+FINGERPRINTED = ["metrics.csv", "metric_checks.csv", "data_quality_rules.csv", "reconciliation_ledger.csv", "sql_metric_layer_check.csv"]
+FINGERPRINTED_DIRS = ["breakdowns", "insights", "sql_metric_views", "quarantine"]
+
+
+def fingerprint_outputs(run_out, processed_dir) -> dict:
+    """SHA-256 of every deterministic output - proves that a rerun on the same inputs is byte-identical."""
+    from pathlib import Path
+    from .io_utils import sha256_file
+    run_out, processed_dir = Path(run_out), Path(processed_dir)
+    fingerprints = {}
+    for name in FINGERPRINTED:
+        f = run_out / name
+        if f.exists():
+            fingerprints[name] = sha256_file(f)
+    for d in FINGERPRINTED_DIRS:
+        folder = run_out / d
+        if folder.exists():
+            for f in sorted(folder.glob("*.csv")):
+                fingerprints[f"{d}/{f.name}"] = sha256_file(f)
+    for f in sorted(processed_dir.glob("*.csv")):
+        fingerprints[f"processed/{f.name}"] = sha256_file(f)
+    return fingerprints
+
+
 def compare_runs(previous: dict | None, current: dict, drift_pp: float) -> dict:
-    """Compare the current run with the last published run manifest."""
-    if not previous or previous.get("run_id") == current.get("run_id"):
+    """Compare the current run with the last published run manifest.
+
+    A re-run under the same run id is compared with that id's previous publication: re-running the
+    same inputs must reproduce the same evidence, which is exactly what this check should prove."""
+    if not previous:
         return {"status": "UNKNOWN", "baseline_run": None, "summary": "no previous published run to compare with (first run)", "headline": [], "rules": []}
+    same_id = previous.get("run_id") == current.get("run_id")
+    base_label = f"{previous.get('run_id')} (its previous publication, {previous.get('finished_at', 'time unknown')})" if same_id else previous.get("run_id")
     ph = (previous.get("stages", {}).get("metrics", {}) or {}).get("headline", {}) or {}
     ch = current.get("headline", {}) or {}
     head = []
@@ -62,12 +94,20 @@ def compare_runs(previous: dict | None, current: dict, drift_pp: float) -> dict:
             rules.append({"rule": rid, "previous_status": s0, "current_status": s1, "previous_violations": v0, "current_violations": v1})
         if s0 in ORDER and s1 in ORDER and ORDER[s1] > ORDER[s0]:
             worsened.append(rid)
+    pf, cf = previous.get("fingerprints") or {}, current.get("fingerprints") or {}
+    common = sorted(set(pf) & set(cf))
+    changed = [k for k in common if pf[k] != cf[k]]
+    fp = {"compared": len(common), "identical": len(common) - len(changed), "changed": changed,
+          "only_in_previous": sorted(set(pf) - set(cf)), "only_in_current": sorted(set(cf) - set(pf))}
     kpi = next((h for h in head if h["metric"] == "late_delivery_rate_pct"), None)
     drift = kpi is not None and kpi["delta"] is not None and abs(kpi["delta"]) > drift_pp
     status = "WARN" if (drift or worsened) else "PASS"
-    summary = (f"KPI moved {kpi['delta']:+.2f} pp vs {previous.get('run_id')}" if kpi and kpi["delta"] is not None else "KPI not comparable") + \
+    summary = (f"KPI moved {kpi['delta']:+.2f} pp vs {base_label}" if kpi and kpi["delta"] is not None else "KPI not comparable") + \
               (f"; rules worsened: {worsened}" if worsened else "; no rule got worse") + ("; DRIFT above threshold" if drift else "")
-    return {"status": status, "baseline_run": previous.get("run_id"), "summary": summary, "headline": head, "rules": rules, "drift_threshold_pp": drift_pp}
+    if fp["compared"]:
+        summary += f"; {fp['identical']}/{fp['compared']} deterministic outputs byte-identical"
+    return {"status": status, "baseline_run": previous.get("run_id"), "summary": summary, "headline": head, "rules": rules,
+            "drift_threshold_pp": drift_pp, "fingerprints": fp}
 
 
 def comparison_to_markdown(cmp: dict) -> str:
@@ -80,4 +120,8 @@ def comparison_to_markdown(cmp: dict) -> str:
         lines += [f"| {r['rule']} | {r['previous_status']} | {r['current_status']} | {r['previous_violations']} | {r['current_violations']} |" for r in cmp["rules"]]
     elif cmp.get("baseline_run"):
         lines += ["", "No rule changed status or violation count."]
+    fp = cmp.get("fingerprints") or {}
+    if fp.get("compared"):
+        tail = (f"; changed: {', '.join(fp['changed'][:15])}" if fp["changed"] else " (same inputs + same policy = same evidence).")
+        lines += ["", f"**Reproducibility:** {fp['identical']} of {fp['compared']} deterministic outputs are byte-identical to the baseline run" + tail]
     return "\n".join(lines)

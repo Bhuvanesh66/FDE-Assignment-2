@@ -24,7 +24,7 @@ from pathlib import Path
 import pandas as pd
 import requests
 
-from ..io_utils import write_json
+from ..io_utils import sha256_file, write_json
 from ..logging_utils import get_logger
 
 RETRYABLE = {408, 425, 429, 500, 502, 503, 504}
@@ -46,6 +46,7 @@ class WeatherReport:
     retries: int = 0
     errors: list[str] = field(default_factory=list)
     raw_path: str | None = None
+    raw_sha256: str | None = None
 
     def as_dict(self) -> dict:
         return self.__dict__.copy()
@@ -142,6 +143,7 @@ class ObservedWeatherClient:
                 raw_path = self.raw_dir / "open_meteo_archive.json"
                 write_json({"fetched_at": time.strftime("%Y-%m-%dT%H:%M:%S"), "request": {"url": self.base_url, "params": params}, "payload": payload}, raw_path)
                 rep.raw_path = str(raw_path)
+                rep.raw_sha256 = sha256_file(raw_path)
                 cache = self._cache_file(start_date, end_date)
                 if cache is not None and not cache.exists():          # seed the reference copy once; never overwrite it
                     write_json({"request": {"url": self.base_url, "params": params}, "payload": payload}, cache)

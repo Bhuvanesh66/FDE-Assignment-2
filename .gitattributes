@@ -1,0 +1,7 @@
+# Evidence is fingerprinted byte for byte (SHA-256) and replayed on any OS
+# (python run_pipeline.py --replay run_example). Git must never rewrite its
+# line endings, or a clone on Linux/macOS would see "tampered" files.
+data/raw/** -text
+data/external/** -text
+data/processed/** -text
+output/** -text

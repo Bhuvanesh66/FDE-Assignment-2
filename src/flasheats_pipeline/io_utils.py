@@ -37,9 +37,11 @@ def _json_default(o: Any):
     return str(o)
 
 
+# Every text artefact is written with "\n" line endings on every OS: evidence is fingerprinted
+# byte for byte (SHA-256), so a replay on Linux must see exactly the bytes a Windows run wrote.
 def write_json(obj: Any, path: Path) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "w", encoding="utf-8") as f:
+    with open(path, "w", encoding="utf-8", newline="\n") as f:
         json.dump(obj, f, indent=2, default=_json_default, ensure_ascii=False)
     return path
 
@@ -51,13 +53,14 @@ def read_json(path: Path) -> Any:
 
 def write_csv(df: pd.DataFrame, path: Path) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
-    df.to_csv(path, index=False)
+    df.to_csv(path, index=False, lineterminator="\n")
     return path
 
 
 def write_text(text: str, path: Path) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(text, encoding="utf-8")
+    with open(path, "w", encoding="utf-8", newline="\n") as f:
+        f.write(text)
     return path
 
 

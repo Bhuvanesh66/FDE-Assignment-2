@@ -1,0 +1,43 @@
+# Schema contract - what each client source must contain for the pipeline to trust it.
+#
+#   required: missing  -> the run STOPS (schema drift), the error names the column
+#   optional: missing  -> WARN, the dependent rule becomes UNKNOWN
+#   anything else      -> WARN "uncontracted column" (recorded, never silently used)
+#
+# Owner: Data Team, agreed with each source owner. Column names are compared after trim + lower-case.
+
+sql:
+  orders:
+    required: [order_id, customer_id, restaurant_id, driver_id, created_at, promised_eta, pickup_at, actual_delivery_at, final_status]
+    optional: [city, distance_km_estimate, traffic_bucket, weather_bucket]
+  restaurants:
+    required: [restaurant_id]
+    optional: [restaurant_name, cuisine, lat, lon, manual_status_updates]
+  drivers:
+    required: [driver_id]
+    optional: [rating, vehicle_type, experience_months]
+  customers:
+    required: [customer_id]
+    optional: [lat, lon]
+
+files:
+  support_tickets.csv:
+    required: [ticket_id, order_id, created_at, category]
+    optional: [customer_message]
+  restaurant_status.csv:
+    required: [order_id, restaurant_id, status, last_updated_at]
+    optional: []
+  customer_app_actions.csv:
+    required: [action_id, order_id, customer_id, action_type, action_at]
+    optional: [channel]
+  order_interventions.csv:
+    required: [intervention_id, order_id, intervention_type, intervention_at, initiated_by]
+    optional: [reason]
+  order_outcomes.csv:          # client's derived file - reconciliation only
+    required: [order_id, late_flag, delay_min]
+    optional: [final_status_norm, delivered_flag, outcome_bucket]
+
+api:
+  dispatch:
+    required: [order_id, driver_id, assigned_at, dispatch_status]
+    optional: [original_driver_id, reassigned_at, estimated_pickup_at, current_delivery_eta, eta_model_version]

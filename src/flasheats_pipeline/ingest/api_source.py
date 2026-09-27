@@ -23,7 +23,7 @@ from pathlib import Path
 
 import requests
 
-from ..io_utils import write_json
+from ..io_utils import sha256_file, write_json
 from ..logging_utils import get_logger
 
 PAYLOAD_REQUIRED_KEYS = {"data"}
@@ -57,6 +57,7 @@ class IngestionReport:
     complete: bool = False
     duration_s: float = 0.0
     raw_pages: list[str] = field(default_factory=list)
+    raw_page_sha256: dict = field(default_factory=dict)
     mode: str = "live"                    # live | snapshot
 
     def as_dict(self) -> dict:
@@ -177,6 +178,7 @@ class DispatchApiClient:
             raw_path = self.raw_dir / f"dispatch_page_{page:03d}.json"
             write_json({"fetched_at": time.strftime("%Y-%m-%dT%H:%M:%S"), "request": {"page": page, "page_size": self.page_size}, "payload": payload}, raw_path)
             report.raw_pages.append(str(raw_path))
+            report.raw_page_sha256[raw_path.name] = sha256_file(raw_path)
             report.pages_fetched += 1
 
             total = payload.get("total_records")

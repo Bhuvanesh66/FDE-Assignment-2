@@ -37,11 +37,27 @@ def build_gate(ingestion: dict, results: list[RuleResult], metrics: MetricsResul
     empty_files = [k for k, v in files.items() if v.get("empty")]
     sql = ingestion.get("sql", {}) or {}
     zero_sql = [e["name"] for e in sql.get("extracts", []) if e.get("rows", 0) == 0]
-    retrieval = _worst([api_status, "FAIL" if missing_files else "PASS", "WARN" if empty_files else "PASS", "FAIL" if "orders_extract" in zero_sql else ("WARN" if zero_sql else "PASS")])
+    # completeness against the client's own published control totals and a server-side COUNT(*)
+    ct = ingestion.get("control_totals") or {}
+    ct_status = ct.get("status", "UNKNOWN")
+    ct_text = "; ".join(f"{r['control']} {r['observed']}/{r['published']}" for r in ct.get("rows", [])) or "none published"
+    server = ingestion.get("orders_extract_vs_server_count") or {}
+    contract_fail = [f"{c['kind']}:{c['source']}" for c in ingestion.get("schema_contract", []) if c.get("status") == "FAIL"]
+    replay = ingestion.get("replay")
+    replay_text = f"; REPLAY of {replay['source_run']} ({replay['verified']}/{replay['artifacts']} preserved artefacts hash-verified)" if replay else ""
+    retrieval = _worst([api_status, "FAIL" if missing_files else "PASS", "WARN" if empty_files else "PASS",
+                        "FAIL" if "orders_extract" in zero_sql else ("WARN" if zero_sql else "PASS"),
+                        "FAIL" if ct_status == "FAIL" else ("WARN" if ct_status == "WARN" else "PASS"),
+                        "FAIL" if server and not server.get("match") else "PASS",
+                        "FAIL" if contract_fail else "PASS"])
     checks.append({"check": "Retrieval completeness", "status": retrieval,
                    "evidence": f"API: {api.get('records_fetched')} records / expected {api.get('expected_total')} in {api.get('pages_fetched')} pages, retries={api.get('retries')}, mode={api.get('mode')}; "
-                               f"missing files={missing_files or 'none'}; missing optional reference files={missing_optional or 'none'}; empty files={empty_files or 'none'}; zero-row SQL extracts={zero_sql or 'none'}",
-                   "action": "raw pages + file copies + SQL extracts preserved under data/raw/<run_id>"})
+                               f"client control totals {ct_status} (observed/published: {ct_text}); "
+                               f"orders extract vs server COUNT(*): {server.get('extracted')}/{server.get('server_count')}; "
+                               f"schema-contract failures={contract_fail or 'none'}; "
+                               f"missing files={missing_files or 'none'}; missing optional reference files={missing_optional or 'none'}; empty files={empty_files or 'none'}; zero-row SQL extracts={zero_sql or 'none'}"
+                               + replay_text,
+                   "action": "a count mismatch against the owner's control totals refuses publication; raw pages + file copies + SQL extracts preserved with SHA-256 under data/raw/<run_id>"})
 
     # 2. business grain ---------------------------------------------------------------------
     gr = _rule(results, "GR-01")
