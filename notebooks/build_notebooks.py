@@ -255,16 +255,29 @@ p["km"] = 6371 * 2 * np.arcsin(np.sqrt(np.sin((R(p.lat) - R(p.r_lat)) / 2) ** 2 
 g = p.groupby("order_id").km.agg(first="first", last="last", n="size")
 g = g[g.n >= 2]
 print(f"orders with >=2 pre-pickup pings: {len(g)} | last ping closer to the restaurant than the first: {(g['last'] < g['first']).mean():.1%} "
-      f"| median last-ping distance: {g['last'].median():.1f} km")
+      f"| FARTHER: {(g['last'] > g['first']).mean():.1%} | median last-ping distance: {g['last'].median():.1f} km")
+
+# ...and do the pings look MEASURED or DRAWN? A real device track wiggles and has uneven gaps;
+# an app that interpolates a straight line between two points does not.
+allp = ev[ev.type == "gps_ping"].merge(orders, on="order_id")
+print(f"pings before pickup: {(allp.timestamp <= allp.pickup_at).mean():.1%} of {len(allp)} (Session 6 expected pings only before pickup)")
+def straightness(t):
+    if len(t) < 3:
+        return np.nan
+    x = (t.timestamp - t.timestamp.iloc[0]).dt.total_seconds().to_numpy(float)
+    return min(1.0 if np.ptp(t[c]) == 0 else np.corrcoef(x, t[c].to_numpy(float))[0, 1] ** 2 for c in ("lat", "lon"))
+inside = ev[(ev.type == "gps_ping") & ev.lat.between(12.5, 13.5) & ev.lon.between(77.2, 78.0)].sort_values("timestamp")
+shape = inside.groupby("order_id")[["timestamp", "lat", "lon"]].apply(straightness).dropna()
+print(f"tracks with >=3 in-area pings: {len(shape)} | perfectly straight, constant-speed (R^2 >= 0.999): {(shape >= 0.999).mean():.1%}")
 '''), answer("""
 | Event / fact | Observed? | Source | Reliability concern |
 |---|---|---|---|
 | Driver assigned | **Observed** | driver app `assigned`, Dispatch `assigned_at` | 14 orders show `picked_up` *before* `assigned` |
-| Driver at restaurant | **Not observed; not inferable either** | GPS pings | pings do **not** converge on the restaurant before pickup (<1 % of orders), so a geofence would invent arrivals |
+| Driver at restaurant | **Not observed; not inferable either** | GPS pings | before pickup the pings move *away* from the restaurant in about 99 % of orders, and about 9 in 10 tracks are perfect straight constant-speed lines. The pings look drawn by the app, not measured, so a geofence would invent arrivals |
 | Picked up | **Observed** | `orders.pickup_at`, driver app | agree to the second for 1527 orders |
 | Delivered | **Observed** | `orders.actual_delivery_at`, driver app | 37 delivered orders lack the DB timestamp but have the driver event |
 
-The class concluded that arrival *could* be inferred from GPS. This test shows that it cannot be inferred with this feed. The only fix is a new event, such as a driver-app tap on arrival.""")],
+The class exercise names GPS as the signal from which arrival could be *inferred*. On this feed it cannot: the pings look interpolated. Session 6 also said pings stop at pickup; here about 30 % fall before pickup and the rest after it. The only fix is a new event, such as a driver-app tap on arrival, and a question to Fleet Ops: are these pings device readings?""")],
         17: [answer("""
 **Problem size:** 56.3 % of validated deliveries are late (837 of 1486). The median late order is 8 minutes late, and one in four deliveries is more than 10 minutes late.
 
@@ -378,7 +391,7 @@ print("delivered orders missing actual time that DO have a driver 'delivered' ev
 | Event / fact | Observed? | Source | Reliability concern |
 |---|---|---|---|
 | Driver assigned | **Observed** | Dispatch `assigned_at`; driver app `assigned` | 14 orders are picked up *before* they are assigned |
-| Driver at restaurant | **Not observed** | none | GPS pings do not converge on the restaurant (see the Class 5 Starter), so the event cannot be inferred |
+| Driver at restaurant | **Not observed** | none | GPS pings do not converge on the restaurant and look interpolated (see the Class 5 Starter), so the event cannot be inferred |
 | Picked up | **Observed** | `orders.pickup_at`; driver app | agree for 1527 orders |
 | Delivered | **Observed** | `orders.actual_delivery_at`; driver app | 37 DB gaps, all recoverable from the driver event, pending the owner's decision |""")],
         18: [answer("""
