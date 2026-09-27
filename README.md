@@ -1,6 +1,6 @@
 # FlashEats: a trustworthy path from client systems to a business decision
 
-**FDE Assignment 2 · Track A (FlashEats) · Bhuvanesh M S** · 🎥 demo video: _add the Loom link after recording_ · [video script](docs/demo-script.md)
+**FDE Assignment 2 · Track A (FlashEats) · Bhuvanesh M S**
 
 > *"Late deliveries are increasing and our ETAs are unreliable, so figure out what's happening before we invest in an AI delay predictor."* Leadership: *"Late Delivery Rate is 56 %."*
 
@@ -127,4 +127,4 @@ python notebooks/build_notebooks.py                      # re-execute the 4 clas
 | [`config/`](config/) · [`sql/`](sql/) | owned thresholds and schema contract · extracts and SQL metric views |
 | [`data/raw/run_example/`](data/raw/run_example/) | preserved raw inputs with SHA-256 |
 | [`output/`](output/) | evidence, decision memo, gate, ledger, replay proof, weekly scorecard, pictures |
-| [`docs/`](docs/) | [rubric map](docs/rubric-map.md) · [video script](docs/demo-script.md) · source map · data model · rules · metrics · assumptions · testing · dependability · traceability |
+| [`docs/`](docs/) | [rubric map](docs/rubric-map.md) · source map · data model · rules · metrics · assumptions · testing · dependability · traceability |
