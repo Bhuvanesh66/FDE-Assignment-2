@@ -17,6 +17,17 @@ def test_evidence_is_written_with_lf_on_every_os(tmp_path):
         assert b"\n" in data and b"\r" not in data, f.name
 
 
+def test_manifest_preserved_on_windows_replays_on_linux(tmp_path):
+    """Found by CI: raw-copy paths recorded on Windows ("B:\\...\\x.csv") must still name the right file on Linux."""
+    from flasheats_pipeline.ingest.replay import preserved_artifacts
+    manifest = {"files": {
+        "support_tickets": {"status": "ok", "raw_copy": r"B:\proj\data\raw\run_x\files\support_tickets.csv", "sha256": "a"},
+        "app_actions": {"status": "ok", "raw_copy": "/home/runner/proj/data/raw/run_x/files/customer_app_actions.csv", "sha256": "b"}}}
+    arts = {a["artifact"]: a["path"] for a in preserved_artifacts(tmp_path, manifest)}
+    assert set(arts) == {"files/support_tickets.csv", "files/customer_app_actions.csv"}
+    assert arts["files/support_tickets.csv"] == tmp_path / "files" / "support_tickets.csv"
+
+
 @pytest.fixture
 def original(messy_pack, api_server, make_config):
     cfg = make_config(messy_pack, api_server.url, run_id="run_orig")

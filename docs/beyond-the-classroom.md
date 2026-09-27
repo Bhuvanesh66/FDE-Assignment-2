@@ -39,7 +39,7 @@ An FDE is paid for the step after the diagnosis: **what can the client do on Mon
 | 15 | **Weekly partitions** *(monthly-partition idea from the rajasurya reference repo, applied to weeks)* | one monthly number | `--weekly`: one gated run per week, a scorecard, a drift flag, and a partition check that the weeks add up to the month | 4/4 weeks published; 1,600 orders each in exactly one week; the weeks sum to 1,486 deliveries and 837 late; two moves above 2 pp flagged | `periods.py` · `output/scorecard.md` · `weekly_scorecard.png` |
 | 16 | **SQL metric layer** *(SQL metric views: idea from the rajasurya reference repo)* | metrics computed once, in pandas | the same metrics as SQL views over the modelled tables (aggregate in a CTE, then join), compared with pandas on every run | 6/6 SQL values = pandas | `sql/40_metric_views.sql` · `sql_metrics.py` |
 | 17 | **Visual story drawn from the evidence** *(instructor feedback: "more images, pipelines and graphical representation")* | text answers and a few charts | 15 pictures (source map, retrieval proof, KPI funnel, gate, one-order swimlane, workflow, data model, metrics, K/U/A/L, pipeline, reproducibility, judgement call) redrawn by every run from its own files, so a picture cannot disagree with the numbers | `output/visuals/` · README · the dashboard's first tab | `visuals.py` · `make_visuals.py` |
-| 18 | **Continuous integration** *(idea from the rajasurya reference repo)* | tests run by hand | the whole suite runs on every push | 132 tests | `.github/workflows/tests.yml` |
+| 18 | **Continuous integration** *(idea from the rajasurya reference repo)* | tests run by hand | the whole suite runs on every push | 133 tests | `.github/workflows/tests.yml` |
 
 ## Why these, and not something bigger
 

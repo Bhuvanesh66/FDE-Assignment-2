@@ -98,7 +98,7 @@ Every requirement → source → implementation → test → evidence. Paths are
 | Client control totals + server `COUNT(*)` | `scope.control_totals`, `ingest/sql_source.py › SqlSource.count` | `test_completeness.py::test_control_total_mismatch_refuses_publication` | `data/raw/run_example/control_totals.csv`, gate row "Retrieval completeness" |
 | Schema contract (schema drift stops the run) | `contracts.py`, `config/schema_contract.yaml` | `test_schema_contract_rules`, `test_contract_drives_required_columns_of_a_file` | `ingestion_manifest.json › schema_contract` |
 | SQL metric layer = pandas | `sql/40_metric_views.sql`, `sql_metrics.py` | `test_sql_metric_layer_agrees_with_pandas` | `output/sql_metric_layer_check.csv`, `output/sql_metric_views/` |
-| Replay with tamper detection | `ingest/replay.py`, `--replay` | `test_replay.py` (5) | `output/replay_proof.md`, `output/replay_integrity.csv` |
+| Replay with tamper detection | `ingest/replay.py`, `--replay` | `test_replay.py` (7) | `output/replay_proof.md`, `output/replay_integrity.csv` |
 | Output fingerprints, re-run comparison | `monitoring.fingerprint_outputs`, `compare_runs` | `test_rerun_on_same_inputs_is_byte_identical`, `test_rerun_with_same_id_is_compared_with_its_previous_publication` | `output/run_comparison.md` |
 | Weekly partitions, scorecard, partition check | `periods.py`, `--weekly` | `test_periods.py` (5) | `output/scorecard.md`, `output/periods/<week>/` |
 | Visual story drawn from the evidence | `visuals.py`, `make_visuals.py` | `test_messy_pack_end_to_end_outputs_and_raw_preservation` | `output/visuals/*.png`, README, dashboard's first tab |

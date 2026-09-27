@@ -8,7 +8,7 @@ run (``ReplayIntegrityError``) - evidence that has been edited is not evidence.
 from __future__ import annotations
 
 import json
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 
 import pandas as pd
 
@@ -35,7 +35,8 @@ def preserved_artifacts(run_dir: Path, manifest: dict) -> list[dict]:
         items.append({"artifact": f"sql/{e['name']}.csv", "path": run_dir / "sql" / f"{e['name']}.csv", "expected": e.get("sha256")})
     for name, f in (manifest.get("files") or {}).items():
         if f.get("status") == "ok" and f.get("raw_copy"):
-            fn = Path(f["raw_copy"]).name
+            # PureWindowsPath splits on both "\" and "/": a run preserved on Windows must replay on Linux (CI)
+            fn = PureWindowsPath(f["raw_copy"]).name
             items.append({"artifact": f"files/{fn}", "path": run_dir / "files" / fn, "expected": f.get("sha256")})
     for page, digest in ((manifest.get("dispatch_api") or {}).get("raw_page_sha256") or {}).items():
         items.append({"artifact": f"api/{page}", "path": run_dir / "api" / page, "expected": digest})

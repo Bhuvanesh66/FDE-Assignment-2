@@ -114,7 +114,7 @@ Every block says **what to show** and **what to say**. The words are simple on p
 **SAY:**
 > "Fifth: can it run again, and does it stop itself? One command runs all ten stages, from the raw client systems to every file and picture you have seen. The red badges are stop points. If a count doesn't match, a rule breaks its tolerance, or two methods disagree, nothing is published.
 >
-> Right now I'm replaying the whole run from the saved raw files. No client system is touched. All 28 fingerprints match, and all 46 outputs come out byte-identical. It also runs week by week: four gated weeks that add up exactly to the month. And 132 automated tests break it on purpose: API down, missing files, strange values."
+> Right now I'm replaying the whole run from the saved raw files. No client system is touched. All 28 fingerprints match, and all 46 outputs come out byte-identical. It also runs week by week: four gated weeks that add up exactly to the month. And 133 automated tests break it on purpose: API down, missing files, strange values."
 
 ---
 

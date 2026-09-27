@@ -1,7 +1,7 @@
 # Testing and validation
 
 ```
-python -m pytest            # 132 tests (123 functions, some parametrised), a few minutes; starts fault-injecting Dispatch and weather APIs on free ports
+python -m pytest            # 133 tests (124 functions, some parametrised), a few minutes; starts fault-injecting Dispatch and weather APIs on free ports
 ```
 
 The same suite runs on every push in GitHub Actions ([`.github/workflows/tests.yml`](../.github/workflows/tests.yml)).
@@ -46,12 +46,12 @@ Business-correctness tests (not just "it runs"): `test_model_metrics.py` checks 
 | `test_monitoring.py` (5) | the ledger balances and **detects a silently dropped row**; run comparison states (no baseline, stable, KPI drift, rule got worse); a rerun compares with the previous published run; **a re-run under the same run id is compared with its previous publication** |
 | `test_dashboard.py` (2) | the Streamlit app renders from real pipeline outputs, the trigger slider recomputes precision, the order explorer accepts lower-case ids, and with no runs it tells the user what to run |
 
-## Tests for completeness, reproducibility and scheduling (17 tests)
+## Tests for completeness, reproducibility and scheduling (19 tests)
 
 | File | What it proves |
 |---|---|
 | `test_completeness.py` (7) | the client's **control totals** match → PASS; **one missing row → the gate refuses publication**; no published totals → reported, not failed; the **schema contract** stops on a missing required column and only warns on an extra one; the contract drives a file's required columns; the **SQL metric views agree with pandas** |
-| `test_replay.py` (5) | `--replay` **rebuilds every output byte for byte** from preserved raw; **one edited byte** in a preserved file, or **one deleted API page**, stops the replay and names the file; an unknown run id is a clear error; a plain rerun on the same inputs is byte-identical |
+| `test_replay.py` (7) | `--replay` **rebuilds every output byte for byte** from preserved raw; **one edited byte** in a preserved file, or **one deleted API page**, stops the replay and names the file; an unknown run id is a clear error; a plain rerun on the same inputs is byte-identical; evidence is written with LF on every OS; **a manifest preserved on Windows replays on Linux** (a bug CI found on the first push) |
 | `test_periods.py` (5) | the weekly split follows the data span; periods **partition** the orders (each order in exactly one period) and add up to the full run; orders with unknown references survive scoping; the default policy refuses noisy partitions; **a failing period does not block the others** |
 
 Also in the core files: `test_model_metrics.py::test_checked_merge_never_multiplies_rows` shows that a naive 1:N join turns 3 orders into 4 rows and the model's checked merge does not. `test_pipeline_e2e.py::test_messy_pack_end_to_end_outputs_and_raw_preservation` checks that the **15-picture visual story** is drawn from the run's own evidence even on the 16-row pack, is listed in the manifest and is linked from `dashboard.html`.

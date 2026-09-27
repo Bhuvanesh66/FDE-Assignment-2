@@ -87,5 +87,5 @@ python run_pipeline.py --start-api --run-id run_example
 python run_pipeline.py --replay run_example --run-id run_replay_check
 python run_pipeline.py --start-api --weekly --run-id run_weekly
 python make_visuals.py                              # redraw the pictures with the replay + weekly panels
-python -m pytest                                    # 132 tests; the same suite runs in CI (.github/workflows/tests.yml)
+python -m pytest                                    # 133 tests; the same suite runs in CI (.github/workflows/tests.yml)
 ```
